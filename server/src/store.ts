@@ -4,7 +4,7 @@ import * as R from '../../shared/src/rules.ts';
 import { MISS_TITLES, pick } from '../../shared/src/messages.ts';
 import { uuidv7 } from '../../shared/src/ids.ts';
 import type {
-  Entry, Habit, HabitInput, HabitView, LogCell, LogView, Settings, StripDay, TodayView, UnseenMiss,
+  Entry, Habit, HabitDetail, HabitInput, HabitView, LogCell, LogView, Settings, StripDay, TodayView, UnseenMiss,
 } from '../../shared/src/api.ts';
 
 export const MAX_BRANCHES = 12;
@@ -256,6 +256,37 @@ export class Store {
       best: R.bestStreak(log, h.days_mask, today, since),
       patina: R.patina(log, h.days_mask, today, since),
       rest_left: R.restLeftThisWeek(log, today),
+    };
+  }
+
+  habitDetail(id: string): HabitDetail {
+    const h = this.habit(id);
+    const today = this.today();
+    const m = this.entries([h.id]).get(h.id)!;
+    const since = this.dayOf(h.created_at);
+    const monday = R.addDays(today, -R.weekday(today));
+    const grid: HabitDetail['grid'] = [];
+    for (let i = 0; i < 84; i++) {
+      const d = R.addDays(monday, i - 77);
+      const e = m.get(d);
+      let state: HabitDetail['grid'][number]['state'];
+      if (d > today) state = 'future';
+      else if (e) state = e.kind;
+      else if (d < since || !R.isScheduled(h.days_mask, d)) state = 'none';
+      else state = d === today ? 'open' : 'miss';
+      grid.push({ day: d, state });
+    }
+    const week = grid.slice(77);
+    const view = this.habitView(h, today, m);
+    return {
+      ...view,
+      total: [...m.values()].filter(e => e.kind === 'done').length,
+      week: {
+        complete: week.filter(c => c.state === 'done' || c.state === 'rest').length,
+        scheduled: week.filter(c => R.isScheduled(h.days_mask, c.day) && c.day >= since).length,
+      },
+      next_tag: R.nextTag(view.streak),
+      grid,
     };
   }
 

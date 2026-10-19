@@ -92,3 +92,13 @@ export interface LogView {
   /** Pass as `before` to load older days, or null at the start of the history. */
   next: string | null;
 }
+
+export type GridState = CellState | 'future';
+
+export interface HabitDetail extends HabitView {
+  total: number;
+  week: { complete: number; scheduled: number };
+  next_tag: { name: string; at: number; to_go: number } | null;
+  /** 12 weeks × 7 days, Monday first, oldest week first. The last week holds today. */
+  grid: { day: string; state: GridState }[];
+}

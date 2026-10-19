@@ -266,3 +266,22 @@ describe('log', () => {
     expect(json.habits.map((h: any) => h.slug)).toEqual(['walk']);
   });
 });
+
+describe('branch detail', () => {
+  it('returns the 12-week grid, totals and next tag', async () => {
+    await pairDevice();
+    const walk = (await req('POST', '/api/habits', { slug: 'walk' })).json.id;
+    store.rollover();
+    await commit(walk);
+    at('2026-10-21T03:30:00Z'); // Wed
+    store.rollover();
+    await commit(walk);
+    const { json } = await req('GET', `/api/habits/${walk}`);
+    expect(json.grid).toHaveLength(84);
+    expect(json.grid[77].day).toBe('2026-10-19'); // Monday of this week
+    expect(json.grid.slice(77, 81).map((c: any) => c.state)).toEqual(['done', 'miss', 'done', 'future']);
+    expect(json.grid[0].state).toBe('none');
+    expect(json).toMatchObject({ total: 2, streak: 2, week: { complete: 2, scheduled: 7 }, next_tag: { name: 'v0.1.0', to_go: 5 } });
+    expect((await req('GET', '/api/habits/nope')).status).toBe(404);
+  });
+});

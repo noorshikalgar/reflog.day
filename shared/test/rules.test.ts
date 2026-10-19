@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, bestStreak, dayStats, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
+  addDays, bestStreak, dayStats, nextTag, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
   patina, restLeftThisWeek, streak, tagFor, weekday, EVERY_DAY, type Kind,
 } from '../src/rules.ts';
 
@@ -131,6 +131,14 @@ describe('rest budget', () => {
     expect(restLeftThisWeek(log({}), '2026-10-21')).toBe(1);
     expect(restLeftThisWeek(log({ '2026-10-19': 'rest' }), '2026-10-21')).toBe(0);
     expect(restLeftThisWeek(log({ '2026-10-18': 'rest' }), '2026-10-21')).toBe(1); // last week
+  });
+});
+
+describe('nextTag', () => {
+  it('gives the next milestone and the days to go', () => {
+    expect(nextTag(0)).toEqual({ name: 'v0.1.0', at: 7, to_go: 7 });
+    expect(nextTag(7)).toEqual({ name: 'v1.0.0', at: 30, to_go: 23 });
+    expect(nextTag(365)).toBeNull();
   });
 });
 

@@ -118,9 +118,10 @@
 
   <div class="tl" class:fade={fading} style:--tc={fh ? `var(--l${fh.lane})` : 'var(--line)'}>
     {#if fh}
-      <div class="fhead" style:--c="var(--l{fh.lane})">
+      <button class="fhead" style:--c="var(--l{fh.lane})" onclick={() => (app.show = fh.id)} aria-label="show {fh.slug}">
         {#if stats}<b>{stats.streak}d</b> {fh.slug} · best {stats.best}{:else}<b>{fh.slug}</b> archived{/if}
-      </div>
+        <span class="go">show ›</span>
+      </button>
       {#each days as d (d.day)}
         {@const c = d.cells[fi]}
         {#if c.state === 'none'}
@@ -208,6 +209,8 @@
   .tl { transition: opacity .16s, transform .25s var(--ease); }
   .tl.fade { opacity: 0; transform: translateY(6px); }
   .fhead { display: flex; align-items: baseline; gap: 10px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--edge); border-radius: 20px; padding: 12px 16px; margin-bottom: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+  .fhead { width: 100%; text-align: left; }
+  .fhead .go { margin-left: auto; color: var(--dim); }
   .fhead b { font-family: var(--font-display); font-weight: 300; font-size: 36px; letter-spacing: -.03em; color: var(--c); }
 
   .rail { position: relative; align-self: stretch; }
