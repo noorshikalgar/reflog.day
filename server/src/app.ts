@@ -35,6 +35,12 @@ export function createApp(store: Store, pairing: Pairing) {
 
   app.get('/api/today', c => c.json(store.todayView()));
 
+  app.get('/api/log', c => {
+    const before = c.req.query('before');
+    if (before !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(before)) return c.json({ error: 'before must be YYYY-MM-DD' }, 400);
+    return c.json(store.logView(before, Number(c.req.query('days') ?? 14)));
+  });
+
   app.get('/api/habits', c => c.json(store.habits(true)));
   app.post('/api/habits', async c => c.json(store.createHabit(await c.req.json()), 201));
   app.patch('/api/habits/:id', async c => c.json(store.updateHabit(c.req.param('id'), await c.req.json())));

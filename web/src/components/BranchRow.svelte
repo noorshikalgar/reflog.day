@@ -6,7 +6,7 @@
   let { habit, pending = false, ontap }: { habit: HabitView; pending?: boolean; ontap: (h: HabitView) => void } = $props();
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const state = $derived(pending ? 'done' : (habit.entry?.kind ?? 'open'));
+  const state = $derived(pending ? 'done' : habit.entry && habit.entry.kind !== 'miss' ? habit.entry.kind : 'open');
   const sub = $derived(habit.remind_at ? `remind ${habit.remind_at}` : habit.days_mask === 127 ? 'every day' : daysText(habit.days_mask));
 
   // Type the hash in, one character at a time, when a new commit arrives.

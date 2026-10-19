@@ -16,7 +16,7 @@
   const t = $derived(app.today!);
   const pending = new SvelteSet<string>();
   const rows = $derived(t.habits.filter(h => h.scheduled));
-  const isDone = (h: HabitView) => pending.has(h.id) || !!h.entry;
+  const isDone = (h: HabitView) => pending.has(h.id) || h.entry?.kind === 'done' || h.entry?.kind === 'rest';
   const done = $derived(rows.filter(isDone).length);
   const left = $derived(rows.length - done);
   const strip = $derived(t.strip.map((d, i) => i === t.strip.length - 1 && rows.length && left === 0 ? { ...d, state: 'full' as const } : d));

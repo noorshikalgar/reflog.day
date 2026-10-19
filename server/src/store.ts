@@ -4,7 +4,7 @@ import * as R from '../../shared/src/rules.ts';
 import { MISS_TITLES, pick } from '../../shared/src/messages.ts';
 import { uuidv7 } from '../../shared/src/ids.ts';
 import type {
-  Entry, Habit, HabitInput, HabitView, Settings, StripDay, TodayView, UnseenMiss,
+  Entry, Habit, HabitInput, HabitView, LogCell, LogView, Settings, StripDay, TodayView, UnseenMiss,
 } from '../../shared/src/api.ts';
 
 export const MAX_BRANCHES = 12;
@@ -286,6 +286,46 @@ export class Store {
     }
 
     return { day: today, can_amend: this.canAmend(), settings: this.settings(), habits: views, strip, misses };
+  }
+
+  /** History for the log screen, newest day first. Refer to docs/03-ux-ui.md §2.3. */
+  logView(before?: string, days = 14): LogView {
+    const today = this.today();
+    const habits = this.habits(true);
+    const all = this.entries(habits.map(h => h.id));
+    const born = new Map(habits.map(h => [h.id, this.dayOf(h.created_at)]));
+    const gone = new Map(habits.map(h => [h.id, h.archived_at ? this.dayOf(h.archived_at) : null]));
+    const first = [...born.values()].sort()[0];
+    const start = before && before <= today ? R.addDays(before, -1) : today;
+    const n = Math.min(Math.max(1, Math.floor(days)), 60);
+
+    const out: LogView['days'] = [];
+    let d = start;
+    for (let i = 0; i < n && first && d >= first; i++, d = R.addDays(d, -1)) {
+      const cells = habits.map((h): LogCell => {
+        const e = all.get(h.id)!.get(d);
+        const archived = gone.get(h.id);
+        if (e) {
+          const log = this.kinds(all.get(h.id)!);
+          return {
+            state: e.kind,
+            entry: { id: e.id, hash: e.hash, message: e.message, created_at: e.created_at, amended: e.amended },
+            rebase: e.kind === 'miss' && R.missIsRebase(log, h.days_mask, d),
+          };
+        }
+        if (d < born.get(h.id)! || (archived && d >= archived) || !R.isScheduled(h.days_mask, d)) return { state: 'none', entry: null, rebase: false };
+        return { state: d === today ? 'open' : 'miss', entry: null, rebase: false };
+      });
+      out.push({ day: d, cells });
+    }
+    // Hide archived branches with no entry in this page.
+    const keep = habits.map((h, i) => !h.archived_at || out.some(x => x.cells[i].state !== 'none'));
+    return {
+      today,
+      habits: habits.filter((_, i) => keep[i]).map(h => ({ id: h.id, slug: h.slug, emoji: h.emoji, lane: h.lane, archived_at: h.archived_at })),
+      days: out.map(x => ({ day: x.day, cells: x.cells.filter((_, i) => keep[i]) })),
+      next: first && d >= first ? R.addDays(d, 1) : null,
+    };
   }
 
   // ---------- rollover ----------
