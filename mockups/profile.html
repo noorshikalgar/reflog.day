@@ -3,370 +3,559 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Profile mockups</title>
+<title>Profile mockup</title>
 <style>
-:root { --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; --font-mono: ui-monospace, "SF Mono", Menlo, monospace; --font-ui: system-ui, -apple-system, sans-serif; --ease: cubic-bezier(.2,.8,.2,1); }
+:root { --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; --font-mono: ui-monospace, "SF Mono", Menlo, monospace; --font-ui: system-ui, -apple-system, sans-serif; --ease: cubic-bezier(.2,.8,.2,1); --push: cubic-bezier(.32,.72,0,1); }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { background: #06070a; color: #e7e9ee; font-family: var(--font-ui); }
-body { padding: 32px 16px 80px; }
+body { padding: 28px 16px 60px; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: left; -webkit-tap-highlight-color: transparent; }
-.page-head { max-width: 1240px; margin: 0 auto 20px; font-family: var(--font-mono); }
-.page-head h1 { font-family: var(--font-display); font-weight: 300; font-size: 40px; letter-spacing: -.03em; }
+input, select { font: inherit; color: inherit; }
+
+.page-head { max-width: 1100px; margin: 0 auto 18px; font-family: var(--font-mono); }
+.page-head h1 { font-family: var(--font-display); font-weight: 300; font-size: 38px; letter-spacing: -.03em; }
 .page-head h1 b { color: #3ddc97; font-weight: 500; }
-.page-head p { color: #8b92a1; font-size: 13px; margin-top: 8px; line-height: 1.6; max-width: 880px; }
-.page-head code { color: #c3e88d; }
-.tbar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0 auto 32px; position: sticky; top: 0; z-index: 9; padding: 10px 0; background: color-mix(in srgb, #06070a 85%, transparent); backdrop-filter: blur(10px); }
-.tbtn { font-family: var(--font-mono); font-size: 13px; padding: 10px 16px; border-radius: 14px; background: #12151c; color: #8b92a1; }
-.tbtn.on { background: #e7e9ee; color: #0b0d12; }
-.grid { display: flex; flex-wrap: wrap; gap: 48px 36px; justify-content: center; max-width: 1640px; margin: 0 auto; }
-figure { display: flex; flex-direction: column; gap: 14px; align-items: center; }
-figcaption { font-family: var(--font-mono); font-size: 12px; color: #8b92a1; max-width: 340px; line-height: 1.55; }
-figcaption b { color: #e7e9ee; font-weight: 500; }
+.page-head p { color: #8b92a1; font-size: 13px; margin-top: 8px; line-height: 1.6; max-width: 820px; }
+.stage { display: flex; gap: 40px; justify-content: center; align-items: flex-start; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
+
+.map { width: 300px; font-family: var(--font-mono); font-size: 12px; color: #8b92a1; position: sticky; top: 20px; }
+.map h3 { font-size: 11px; color: #5a6170; font-weight: 500; margin: 0 0 8px; letter-spacing: 1px; }
+.map button { display: block; width: 100%; padding: 6px 10px; border-radius: 8px; color: #c5cad4; }
+.map button:hover { background: #12151c; }
+.map button.on { background: #e7e9ee; color: #0b0d12; }
+.map .l2 { padding-left: 26px; } .map .l3 { padding-left: 44px; }
+.map .themes { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.map .themes button { width: auto; background: #12151c; color: #8b92a1; padding: 8px 12px; border-radius: 10px; }
+.map .themes button.on { background: #e7e9ee; color: #0b0d12; }
+.map .tip { margin-top: 16px; line-height: 1.6; color: #5a6170; }
 
 .phone {
   --bg:#0b0d12; --surface:#12151c; --surface-2:#1a1e28; --line:#252a36; --text:#e7e9ee; --muted:#8b92a1; --dim:#788092; --ok:#3ddc97; --on-ok:#05130c; --rest:#f2b84b; --miss:#798194;
-  --ring1:#3ddc97; --ring2:#4cc9f0; --ring3:#a78bfa;
   --l1:#3ddc97; --l2:#4cc9f0; --l3:#a78bfa; --l4:#ff9f5a; --l5:#f472b6; --l6:#6ea8ff; --l7:#c3e88d; --l8:#2dd4bf; --l9:#ff8a80; --l10:#b8c4d8;
-  width: min(360px, calc(100vw - 32px)); height: 760px; border-radius: 46px; padding: 10px; background: #1b1d22; box-shadow: 0 0 0 1px #2c2f36, 0 30px 80px -20px rgba(0,0,0,.8); position: relative;
+  width: 390px; max-width: calc(100vw - 32px); height: 820px; border-radius: 52px; padding: 11px; background: #1b1d22; box-shadow: 0 0 0 1px #2c2f36, 0 30px 80px -20px rgba(0,0,0,.8); flex: none;
 }
-body.bathory .phone { --bg:#000; --surface:#0e0e0e; --surface-2:#1a1a1a; --line:#222; --text:#f1f1f1; --muted:#999; --dim:#7c7c7c; --ok:#fbcb97; --on-ok:#000; --rest:#e78a43; --miss:#7d7d7d; --ring1:#fbcb97; --ring2:#e78a43; --ring3:#8fb3b3;
+.phone.t-bathory { --bg:#000; --surface:#0e0e0e; --surface-2:#1c1c1c; --line:#232323; --text:#f1f1f1; --muted:#999; --dim:#7c7c7c; --ok:#fbcb97; --on-ok:#000; --rest:#e78a43; --miss:#7d7d7d;
   --l1:#fbcb97; --l2:#e78a43; --l3:#5f8787; --l4:#c1c1c1; --l5:#9b99a3; --l6:#d9a679; --l7:#8fb3b3; --l8:#aaa; --l9:#b5776a; --l10:#888; background:#141414; }
-body.gruvbox .phone { --bg:#282828; --surface:#32302f; --surface-2:#3c3836; --line:#504945; --text:#ebdbb2; --muted:#bdae93; --dim:#a3978c; --ok:#b8bb26; --on-ok:#1d2021; --rest:#fabd2f; --miss:#a4978b; --ring1:#b8bb26; --ring2:#83a598; --ring3:#d3869b;
+.phone.t-gruvbox { --bg:#282828; --surface:#32302f; --surface-2:#3c3836; --line:#4a4542; --text:#ebdbb2; --muted:#bdae93; --dim:#a3978c; --ok:#b8bb26; --on-ok:#1d2021; --rest:#fabd2f; --miss:#a4978b;
   --l1:#b8bb26; --l2:#83a598; --l3:#d3869b; --l4:#fe8019; --l5:#8ec07c; --l6:#56a6aa; --l7:#a1a01b; --l8:#74a576; --l9:#c489a4; --l10:#f17626; background:#1d2021; }
-body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#dcdad2; --text:#1a1d24; --muted:#4f5562; --dim:#686f7a; --ok:#117d4e; --on-ok:#fff; --rest:#966319; --miss:#666d7e; --ring1:#117d4e; --ring2:#0a769c; --ring3:#6d4fd8;
+.phone.t-paper { --bg:#f2f1ec; --surface:#fff; --surface-2:#ecebe5; --line:#e2e0d9; --text:#1a1d24; --muted:#4f5562; --dim:#686f7a; --ok:#117d4e; --on-ok:#fff; --rest:#966319; --miss:#666d7e;
   --l1:#107d4e; --l2:#0a769c; --l3:#6d4fd8; --l4:#b25210; --l5:#c0307a; --l6:#2a5fd0; --l7:#517813; --l8:#0d7a6d; --l9:#c2463c; --l10:#56657e; background:#d9d7d0; }
-.screen { height: 100%; border-radius: 36px; overflow: hidden; background: var(--bg); color: var(--text); position: relative; display: flex; flex-direction: column; }
-.body { flex: 1; overflow: hidden auto; padding: 46px 18px 24px; scrollbar-width: none; }
-.body::-webkit-scrollbar { display: none; }
-.mono { font-family: var(--font-mono); }
-.cmd { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
-.h1 { font-family: var(--font-display); font-weight: 300; font-size: 38px; letter-spacing: -.03em; margin-bottom: 12px; }
-.sect { font-family: var(--font-mono); font-size: 11px; color: var(--dim); margin: 22px 4px 8px; display: flex; justify-content: space-between; align-items: baseline; }
-.sect b { color: var(--muted); font-weight: 500; }
-.card { background: var(--surface); border-radius: 20px; padding: 14px 16px; }
+.screen { height: 100%; border-radius: 42px; overflow: hidden; background: var(--bg); color: var(--text); position: relative; display: flex; flex-direction: column; transition: background .3s, color .3s; }
+.island { position: absolute; top: 11px; left: 50%; translate: -50% 0; width: 118px; height: 34px; border-radius: 20px; background: #000; z-index: 30; }
+.sbar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; justify-content: space-between; align-items: center; padding: 0 34px 0 40px; font-size: 15px; font-weight: 600; z-index: 25; pointer-events: none; }
 
-/* tab bar, 4 tabs */
-.tabs { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px 22px; border-top: 1px solid var(--line); background: var(--bg); }
-.tab { display: flex; flex-direction: column; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10.5px; color: var(--dim); padding: 6px 0; }
-.tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.tab.on { color: var(--text); } .tab.on svg { stroke: var(--ok); }
+.stack { flex: 1; position: relative; overflow: hidden; }
+.pg { position: absolute; inset: 0; overflow: hidden auto; background: var(--bg); padding: 54px 0 24px; scrollbar-width: none; transition: transform .45s var(--push), opacity .45s var(--push); will-change: transform; }
+.pg::-webkit-scrollbar { display: none; }
+.pg.enter { transform: translateX(100%); }
+.pg.under { transform: translateX(-28%); opacity: .55; }
+.pg.leave { transform: translateX(100%); }
 
-/* identity */
-.me { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; background: var(--surface); border-radius: 22px; padding: 16px; }
-.av { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--ok); position: relative; }
-.av::after { content: "✎"; position: absolute; right: -2px; bottom: -2px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; background: var(--text); color: var(--bg); }
-.me .nm { font-family: var(--font-display); font-size: 26px; font-weight: 400; letter-spacing: -.02em; }
-.me .git { font-family: var(--font-mono); font-size: 11px; color: var(--dim); }
-.me .git b { color: var(--ok); font-weight: 500; }
-.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-.kpi { background: var(--surface); border-radius: 16px; padding: 10px 12px; }
-.kpi .v { font-family: var(--font-display); font-size: 24px; font-weight: 400; letter-spacing: -.02em; }
-.kpi .k { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+.nav { position: sticky; top: -54px; z-index: 5; height: 44px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 12px; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.back { display: inline-flex; align-items: center; gap: 4px; color: var(--ok); font-size: 16px; padding: 8px 4px; min-height: 44px; }
+.back svg { width: 11px; height: 19px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.nav .ttl { font-size: 16px; font-weight: 600; opacity: 0; transition: opacity .2s; white-space: nowrap; }
+.pg.scrolled .nav .ttl, .nav.always .ttl { opacity: 1; }
+.big { font-family: var(--font-display); font-size: 34px; font-weight: 600; letter-spacing: -.02em; padding: 2px 20px 10px; }
+.cmd { font-family: var(--font-mono); font-size: 11px; color: var(--dim); padding: 0 20px; margin-top: -6px; margin-bottom: 10px; }
 
-/* range chips */
-.range { display: inline-flex; background: var(--surface); border-radius: 12px; padding: 3px; gap: 2px; }
-.range button { font-family: var(--font-mono); font-size: 11px; padding: 6px 10px; border-radius: 9px; color: var(--muted); transition: background .2s, color .2s; }
-.range button.on { background: var(--text); color: var(--bg); }
+.grp { margin: 0 16px 26px; }
+.grp-h { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: .6px; padding: 0 16px 7px; font-weight: 500; }
+.grp-f { font-size: 12px; color: var(--dim); padding: 7px 16px 0; line-height: 1.45; }
+.list { background: var(--surface); border-radius: 14px; overflow: hidden; }
+.r { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; width: 100%; min-height: 52px; padding: 10px 14px; transition: background .15s; }
+.r.tap:active { background: color-mix(in srgb, var(--text) 7%, transparent); }
+.r + .r::before { content: ""; position: absolute; top: 0; left: 56px; right: 0; height: 1px; background: var(--line); }
+.r.noi::before { left: 16px; }
+.r.noi { grid-template-columns: 0 1fr auto; gap: 0 12px; }
+.ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-2); }
+.ico svg { width: 17px; height: 17px; stroke: var(--text); fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.r .tx { min-width: 0; }
+.r .lb { font-size: 16px; line-height: 1.25; }
+.r .sb { font-size: 12.5px; color: var(--dim); line-height: 1.3; margin-top: 2px; }
+.r .rt { display: flex; align-items: center; gap: 6px; color: var(--dim); font-size: 15px; }
+.r .rt .val { max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chev { width: 8px; height: 14px; stroke: var(--dim); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; flex: none; }
+.r.danger .lb { color: #ff6b6b; }
+.t-paper .r.danger .lb { color: #c0392b; }
+.r.center { grid-template-columns: 1fr; text-align: center; }
+.r.center .lb { color: var(--ok); font-weight: 500; }
 
-/* contribution graph */
-.heat { overflow-x: auto; scrollbar-width: none; direction: rtl; }
+.sw { position: relative; width: 51px; height: 31px; border-radius: 16px; background: var(--line); transition: background .25s; flex: none; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.25); transition: transform .25s var(--ease); }
+.sw.on { background: var(--ok); }
+.sw.on::after { transform: translateX(20px); }
+
+.me { display: grid; grid-template-columns: 62px 1fr auto; gap: 14px; align-items: center; width: 100%; padding: 14px; }
+.av { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--ok); }
+.av.ini { font-family: var(--font-mono); font-size: 20px; font-weight: 600; }
+.me .nm { font-size: 21px; font-weight: 600; }
+.me .sb { font-size: 13px; color: var(--dim); margin-top: 2px; }
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+.kpi { padding: 10px 14px 12px; }
+.kpi + .kpi { border-left: 1px solid var(--line); }
+.kpi .v { font-family: var(--font-display); font-size: 22px; font-weight: 500; letter-spacing: -.01em; }
+.kpi .k { font-size: 11.5px; color: var(--dim); }
+
+.themes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px; }
+.th { border-radius: 14px; padding: 8px; box-shadow: inset 0 0 0 1.5px var(--line); text-align: center; transition: box-shadow .2s, transform .15s var(--ease); }
+.th:active { transform: scale(.97); }
+.th.on { box-shadow: inset 0 0 0 2.5px var(--ok); }
+.th .pv { height: 96px; border-radius: 9px; padding: 10px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.th .pv .n { font-family: var(--font-display); font-size: 26px; font-weight: 300; line-height: 1; }
+.th .pv .bars { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
+.th .pv .bars i { display: flex; align-items: center; gap: 5px; height: 12px; border-radius: 4px; padding-left: 4px; }
+.th .pv .bars i b { width: 6px; height: 6px; border-radius: 50%; }
+.th .nm2 { font-size: 14px; margin-top: 8px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 6px; }
+.th .nm2 .ck { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1.5px var(--line); }
+.th.on .nm2 .ck { background: var(--ok); box-shadow: none; }
+.th .nm2 .ck svg { width: 10px; height: 10px; stroke: var(--on-ok); fill: none; stroke-width: 3; opacity: 0; }
+.th.on .nm2 .ck svg { opacity: 1; }
+.th .ds { font-size: 11.5px; color: var(--dim); margin-top: 2px; }
+
+.radio { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line); flex: none; transition: box-shadow .2s; }
+.radio.on { box-shadow: inset 0 0 0 7px var(--ok); }
+.lvp { margin-top: 8px; border-radius: 10px; background: var(--bg); padding: 8px 10px; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.6; color: var(--muted); }
+.lvp .s { color: var(--c); }
+.lvp .h { color: var(--dim); background: var(--surface-2); padding: 0 4px; border-radius: 4px; font-size: 9.5px; }
+.lvp .y { color: var(--rest); }
+
+.seg { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--surface-2); border-radius: 10px; padding: 2px; margin: 0 16px 16px; }
+.seg button { text-align: center; padding: 7px 0; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--muted); transition: background .2s, color .2s; }
+.seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+
+.chart { padding: 14px; }
+.heat-wrap { display: grid; grid-template-columns: 16px 1fr; gap: 6px; }
+.wd { display: grid; grid-template-rows: repeat(7, var(--cs)); gap: 3px; font-family: var(--font-mono); font-size: 9px; color: var(--dim); line-height: var(--cs); }
+.heat { overflow-x: auto; direction: rtl; scrollbar-width: none; }
 .heat::-webkit-scrollbar { display: none; }
 .heat .g { direction: ltr; display: grid; grid-template-rows: repeat(7, var(--cs)); grid-auto-flow: column; grid-auto-columns: var(--cs); gap: 3px; width: max-content; }
 .heat i { border-radius: 3px; background: var(--surface-2); }
-.heat i.l1 { background: color-mix(in srgb, var(--ok) 28%, var(--surface-2)); }
-.heat i.l2 { background: color-mix(in srgb, var(--ok) 52%, var(--surface-2)); }
-.heat i.l3 { background: color-mix(in srgb, var(--ok) 76%, var(--surface-2)); }
-.heat i.l4 { background: var(--ok); }
-.heat i.f { background: none; }
-.heat i.t { box-shadow: 0 0 0 1.5px var(--text); }
-.heat-wrap { display: grid; grid-template-columns: 18px 1fr; gap: 6px; }
-.wd { display: grid; grid-template-rows: repeat(7, var(--cs)); gap: 3px; font-family: var(--font-mono); font-size: 9px; color: var(--dim); line-height: var(--cs); }
-.foot { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin-top: 10px; }
-.scale { display: inline-flex; gap: 3px; align-items: center; }
+.heat i.l1 { background: color-mix(in srgb, var(--ok) 28%, var(--surface-2)); } .heat i.l2 { background: color-mix(in srgb, var(--ok) 52%, var(--surface-2)); }
+.heat i.l3 { background: color-mix(in srgb, var(--ok) 76%, var(--surface-2)); } .heat i.l4 { background: var(--ok); }
+.heat i.f { background: none; } .heat i.t { box-shadow: 0 0 0 1.5px var(--text); }
+.foot { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--dim); margin-top: 10px; }
+.scale { display: inline-flex; gap: 3px; align-items: center; font-size: 10px; }
 .scale i { width: 10px; height: 10px; border-radius: 2px; }
-
-/* trend */
-.trend svg { display: block; width: 100%; height: auto; overflow: visible; }
-.trend .ax { font-family: var(--font-mono); font-size: 9px; fill: var(--dim); }
-.trend-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.trend-top .v { font-family: var(--font-display); font-size: 30px; font-weight: 300; }
-.trend-top .d { font-family: var(--font-mono); font-size: 11px; color: var(--ok); }
-
-/* branch table */
-.bt { display: flex; flex-direction: column; }
-.br { display: grid; grid-template-columns: 1fr 70px 38px; gap: 10px; align-items: center; padding: 10px 2px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; }
-.br:last-child { border-bottom: 0; }
-.br .n { display: flex; gap: 8px; align-items: center; min-width: 0; }
-.br .n i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex: none; }
-.br .n small { color: var(--dim); font-size: 10px; margin-left: auto; }
-.br .bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
-.br .bar i { display: block; height: 100%; background: var(--c); border-radius: 3px; }
-.br .p { text-align: right; color: var(--muted); }
-.bh { display: grid; grid-template-columns: 1fr 70px 38px; gap: 10px; font-family: var(--font-mono); font-size: 10px; color: var(--dim); padding: 0 2px 4px; }
-.bh span:last-child { text-align: right; }
-
-/* weekday + hours */
-.wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 96px; }
+.tr-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.tr-top .v { font-family: var(--font-display); font-size: 30px; font-weight: 400; }
+.tr-top .d { font-size: 12px; color: var(--ok); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ax { font-family: var(--font-mono); font-size: 9px; fill: var(--dim); }
+.bt .br { display: grid; grid-template-columns: 1fr 84px 38px; gap: 10px; align-items: center; padding: 11px 14px; position: relative; }
+.bt .br + .br::before { content: ""; position: absolute; top: 0; left: 14px; right: 0; height: 1px; background: var(--line); }
+.bt .n { display: flex; align-items: center; gap: 8px; min-width: 0; font-family: var(--font-mono); font-size: 13px; }
+.bt .n i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; }
+.bt .n small { margin-left: auto; color: var(--dim); font-size: 11px; }
+.bt .bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.bt .bar i { display: block; height: 100%; background: var(--c); border-radius: 3px; }
+.bt .p { text-align: right; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end; height: 110px; }
 .wk .c { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
-.wk .b { width: 100%; max-width: 26px; border-radius: 7px 7px 4px 4px; background: color-mix(in srgb, var(--ok) 70%, var(--surface-2)); }
-.wk .c.low .b { background: var(--miss); opacity: .7; }
-.wk .c span { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
-.wk .c.low span { color: var(--text); }
-.hrs { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; align-items: end; height: 56px; }
-.hrs i { border-radius: 2px 2px 1px 1px; background: color-mix(in srgb, var(--ok) 60%, var(--surface-2)); min-height: 2px; }
+.wk .b { width: 100%; max-width: 28px; border-radius: 7px 7px 4px 4px; background: color-mix(in srgb, var(--ok) 70%, var(--surface-2)); }
+.wk .c.low .b { background: var(--miss); }
+.wk .c span { font-size: 11px; color: var(--dim); }
+.wk .c.low span { color: var(--text); font-weight: 600; }
+.hrs { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; align-items: end; height: 64px; }
+.hrs i { border-radius: 2px 2px 1px 1px; background: color-mix(in srgb, var(--ok) 55%, var(--surface-2)); min-height: 2px; }
 .hrs i.pk { background: var(--ok); }
-.hlbl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: var(--dim); margin-top: 4px; }
-.insight { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 10px; }
-.insight b { color: var(--text); font-weight: 500; }
+.hl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: var(--dim); margin-top: 4px; }
+.ins { font-size: 13px; color: var(--muted); margin-top: 12px; }
+.ins b { color: var(--text); }
+.kind { font-size: 10px; padding: 2px 7px; border-radius: 6px; background: var(--surface-2); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+.pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; color: var(--ok); background: color-mix(in srgb, var(--ok) 16%, transparent); white-space: nowrap; }
+.pill.dim { color: var(--dim); background: var(--surface-2); }
 
-/* records / rows list */
-.rows { background: var(--surface); border-radius: 20px; overflow: hidden; }
-.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; min-height: 50px; width: 100%; }
-.row:last-child { border-bottom: 0; }
-.row .v { color: var(--muted); font-size: 12px; text-align: right; }
-.row .v b { color: var(--text); font-weight: 500; }
-.row small { color: var(--dim); font-size: 10px; }
-.chips { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-.chip { font-family: var(--font-mono); font-size: 11px; padding: 6px 9px; border-radius: 9px; background: var(--surface-2); color: var(--muted); }
-.chip.on { background: var(--text); color: var(--bg); }
-.sw { width: 44px; height: 26px; border-radius: 13px; background: var(--line); position: relative; flex: none; }
-.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .2s; }
-.sw.on { background: var(--ok); } .sw.on::after { left: 21px; }
-.dev { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; }
-.dev .ic { width: 30px; height: 30px; border-radius: 9px; background: var(--surface-2); display: grid; place-items: center; font-size: 14px; }
-.dev .t { font-size: 13px; } .dev .t small { display: block; }
-.tagme { font-size: 10px; color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); padding: 1px 6px; border-radius: 6px; }
-.x { color: var(--dim); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.inp { width: 100%; background: none; border: 0; outline: none; font-size: 16px; color: var(--text); }
+.sel { background: none; border: 0; outline: none; color: var(--dim); font-size: 15px; text-align: right; appearance: none; -webkit-appearance: none; cursor: pointer; }
+.time { background: var(--surface-2); border: 0; border-radius: 8px; padding: 6px 8px; color: var(--text); font-family: var(--font-mono); font-size: 14px; color-scheme: dark; }
+.t-paper .time { color-scheme: light; }
+.avs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; padding: 14px; }
+.avs button { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--surface-2); transition: box-shadow .2s, transform .15s; }
+.avs button.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ok); }
+.avs button:active { transform: scale(.92); }
+.avs .ini { font-family: var(--font-mono); font-size: 14px; font-weight: 600; }
+.hero-av { display: grid; place-items: center; padding: 6px 0 22px; }
+.hero-av .av { width: 96px; height: 96px; font-size: 46px; }
+.hero-av .av.ini { font-size: 30px; }
+.code { font-family: var(--font-mono); font-size: 34px; letter-spacing: .3em; text-align: center; padding: 18px 0 6px; color: var(--ok); }
 
-/* sheets */
-.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 5; }
-.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-radius: 30px 30px 36px 36px; padding: 10px 18px 26px; max-height: 88%; overflow: auto; scrollbar-width: none; }
-.grab { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 16px; }
-.sheet h2 { font-family: var(--font-display); font-weight: 300; font-size: 30px; letter-spacing: -.03em; margin: 2px 0 14px; }
-.bk { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; }
-.bk:last-child { border-bottom: 0; }
-.bk small { color: var(--dim); font-size: 10px; }
-.bk .acts { grid-row: 1 / 3; grid-column: 2; display: flex; gap: 10px; align-self: center; font-size: 11px; }
-.bk .acts span { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
-.kind { font-size: 9px; padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); margin-left: 6px; }
-.btn { width: 100%; height: 52px; border-radius: 16px; font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-align: center; }
-.btn.ok { background: var(--ok); color: var(--on-ok); }
-.btn.ghost { box-shadow: inset 0 0 0 1.5px var(--line); color: var(--muted); font-weight: 400; }
-.remote { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; }
-.remote:last-child { border-bottom: 0; }
-.remote .ic { width: 30px; height: 30px; border-radius: 9px; background: var(--surface-2); display: grid; place-items: center; font-size: 13px; }
-.remote .soon { font-size: 10px; color: var(--dim); }
-.note { font-family: var(--font-mono); font-size: 11px; color: var(--dim); line-height: 1.5; margin: 10px 2px 14px; }
-.avs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 10px 0 16px; }
-.avs span { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--surface-2); }
-.avs span.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ok); }
-.inp { background: var(--bg); border-radius: 14px; padding: 14px; font-family: var(--font-mono); font-size: 16px; box-shadow: inset 0 0 0 1px var(--line); display: flex; justify-content: space-between; }
-.inp small { color: var(--dim); font-size: 11px; align-self: center; }
+.tabs { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); padding: 7px 8px 24px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(14px); z-index: 10; }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 10.5px; color: var(--dim); padding: 5px 0; }
+.tab svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tab.on { color: var(--text); } .tab.on svg { stroke: var(--ok); }
+
+.toast { position: absolute; left: 16px; right: 16px; bottom: 96px; z-index: 40; background: var(--text); color: var(--bg); border-radius: 14px; padding: 13px 16px; font-family: var(--font-mono); font-size: 12.5px; transform: translateY(150%); opacity: 0; transition: transform .35s var(--ease), opacity .25s; pointer-events: none; }
+.toast.show { transform: none; opacity: 1; }
 </style>
 </head>
 <body>
 <header class="page-head">
-  <h1><b>profile</b> tab — mockups</h1>
-  <p>Plan: <code>docs/10-profile.md</code>. Four tabs now: <code>status · log · branches · profile</code>. Phone 01–02 are one long scroll, split in two. The range chips are live (30d / 90d / 1y / all). Stats use neutral colors; only the branch table uses lane colors.</p>
+  <h1><b>profile</b> — settings-style mockup</h1>
+  <p>One phone, real navigation. Tap a row to go one or two levels deep. Tap the green back button to return. Every control works: theme cards change the phone, switches switch, pickers change values, "back up now" adds a backup, devices can be removed. The map on the right jumps to any page.</p>
 </header>
-<nav class="tbar" id="tbar">
-  <button class="tbtn on" data-t="">terminal</button><button class="tbtn" data-t="bathory">bathory</button><button class="tbtn" data-t="gruvbox">gruvbox</button><button class="tbtn" data-t="paper">paper</button>
-</nav>
 
-<main class="grid">
-  <figure><div class="phone"><div class="screen"><div class="body" id="p1"></div><nav class="tabs"></nav></div></div>
-    <figcaption><b>01 · profile (top)</b>. Identity card (tap to edit), three totals, the range chips, the GitHub-style contribution graph and the 7-day trend line.</figcaption></figure>
-  <figure><div class="phone"><div class="screen"><div class="body" id="p2"></div><nav class="tabs"></nav></div></div>
-    <figcaption><b>02 · profile (stats, scrolled)</b>. Branch table (done % in range), weekday bars with "your hard day", time of day, records.</figcaption></figure>
-  <figure><div class="phone"><div class="screen"><div class="body" id="p3"></div><nav class="tabs"></nav></div></div>
-    <figcaption><b>03 · profile (bottom)</b>. Settings moved here from branches (<code>git config --list</code>), data, devices (<code>git remote -v</code>), about.</figcaption></figure>
-  <figure><div class="phone"><div class="screen"><div class="body" id="p4"></div><nav class="tabs"></nav>
-      <div class="scrim"></div><div class="sheet" id="s4"></div></div></div>
-    <figcaption><b>04 · backups sheet</b>. Phase A: local backups with backup now, download, restore. Phase B (later): remotes, encrypted. Folder first — iCloud / Syncthing folders give cloud with no keys.</figcaption></figure>
-  <figure><div class="phone"><div class="screen"><div class="body" id="p5"></div><nav class="tabs"></nav>
-      <div class="scrim"></div><div class="sheet" id="s5"></div></div></div>
-    <figcaption><b>05 · edit identity</b>. Name and avatar only. Emoji or initials, no photo upload (nothing to store, nothing to leak).</figcaption></figure>
-</main>
+<div class="stage">
+  <div class="phone" id="phone"><div class="screen">
+    <div class="island"></div>
+    <div class="sbar"><span>9:41</span><span style="font-size:12px;letter-spacing:1px">●●● ▮</span></div>
+    <div class="stack" id="stack"></div>
+    <nav class="tabs" id="tabs"></nav>
+    <div class="toast" id="toast"></div>
+  </div></div>
+
+  <aside class="map">
+    <h3>THEME</h3>
+    <div class="themes" id="mapThemes"></div>
+    <h3>PAGES</h3>
+    <div id="mapPages"></div>
+    <p class="tip">Rules: label on top, help text below. A value on the right plus a chevron means the row opens a page. Switches only for on/off. Danger actions in red, alone in the last group.</p>
+  </aside>
+</div>
 
 <script>
+const I = {
+  stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  branch: '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-12 2-12 6"/>',
+  pulse: '<path d="M3 12h4l2-6 4 12 2-6h6"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
+  paint: '<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2"/><circle cx="12" cy="7" r="1.2"/><circle cx="16" cy="10" r="1.2"/><path d="M12 21c-1.5 0-2-1-2-2s1-2 2-2h2a3 3 0 0 0 3-3"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  bell: '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/>',
+  arrows: '<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>',
+  db: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+  cloud: '<path d="M7 18a5 5 0 0 1-.5-10A6 6 0 0 1 18 8a4 4 0 0 1-1 10z"/>',
+  phone: '<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',
+  laptop: '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  code: '<path d="m8 6-6 6 6 6M16 6l6 6-6 6"/>',
+  heart: '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3"/>',
+  test: '<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+  folder: '<path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  bucket: '<path d="M4 7h16l-2 13H6zM4 7c0-2 3.6-3 8-3s8 1 8 3"/>',
+  git: '<circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M12 8v8"/>',
+  list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+};
+const svg = k => `<svg viewBox="0 0 24 24">${I[k]}</svg>`;
+const CHEV = '<svg class="chev" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg>';
+const BACK = '<svg viewBox="0 0 12 20"><path d="M10 2 2 10l8 8"/></svg>';
+
+const S = {
+  theme: 'terminal', logView: 'normal', name: 'noor', avatar: '🦉',
+  dayStart: '04:00', tz: 'Asia/Kolkata', reminders: true, evening: true, eveningAt: '21:30', notif: true, quiet: false,
+  range: '90d', retention: '14',
+  backups: [['19 oct', '03:00', 'daily', '412 KB'], ['18 oct', '21:14', 'pre-import', '409 KB'], ['18 oct', '03:00', 'daily', '407 KB'], ['17 oct', '03:00', 'daily', '405 KB']],
+  devices: [['iphone', 'paired 01 oct', 'now', 'phone', true], ['browser · mac', 'paired 12 oct', '2 days ago', 'laptop', false]],
+  code: null,
+};
+const THEMES = {
+  terminal: { d: 'cool slate, green', bg: '#0b0d12', s: '#1a1e28', t: '#e7e9ee', a: ['#3ddc97', '#4cc9f0', '#a78bfa'] },
+  bathory: { d: 'black metal, warm', bg: '#000', s: '#1c1c1c', t: '#f1f1f1', a: ['#fbcb97', '#e78a43', '#5f8787'] },
+  gruvbox: { d: 'retro, cream', bg: '#282828', s: '#3c3836', t: '#ebdbb2', a: ['#b8bb26', '#83a598', '#fe8019'] },
+  paper: { d: 'light, calm', bg: '#f2f1ec', s: '#e6e4dc', t: '#1a1d24', a: ['#107d4e', '#0a769c', '#6d4fd8'] },
+};
+
+let seed = 9; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const N = 365;
+const hist = Array.from({ length: N }, (_, i) => {
+  const ramp = Math.min(1, .45 + i / 260), sat = ((i + 1) % 7) === 5;
+  let p = Math.min(1, Math.max(0, ramp + (rnd() - .5) * .5 - (sat ? .25 : 0)));
+  if (i < 18) p = 0;
+  return Math.round(p * 9) / 9;
+});
+hist[N - 1] = 6 / 9;
+const RANGES = { '30d': 30, '90d': 91, '1y': 364, all: 347 };
+const BR = [['walk', 1, 25, .97], ['read', 2, 29, .95], ['water', 6, 28, .96], ['meditate', 8, 27, .9], ['journal', 5, 25, .88], ['no-sugar', 7, 24, .86], ['stretch', 3, 20, .83], ['sleep-11', 10, 29, .8], ['gym', 4, 12, .71], ['guitar', 9, 8, .62]];
+const lvl = p => p >= 1 ? 4 : p >= .75 ? 3 : p >= .5 ? 2 : p > 0 ? 1 : 0;
+
+/* building blocks */
+const row = o => {
+  const tag = o.go || o.act || o.toggle ? 'button' : 'div';
+  const right = o.toggle ? `<span class="sw ${S[o.toggle] ? 'on' : ''}"></span>`
+    : o.right !== undefined ? `<span class="rt">${o.right}</span>`
+    : `<span class="rt">${o.value !== undefined ? `<span class="val">${o.value}</span>` : ''}${o.go ? CHEV : ''}</span>`;
+  const attrs = [o.go && `data-go="${o.go}"`, o.act && `data-act="${o.act}"`, o.toggle && `data-toggle="${o.toggle}"`].filter(Boolean).join(' ');
+  return `<${tag} class="r ${o.icon ? '' : 'noi'} ${o.cls || ''} ${tag === 'button' ? 'tap' : ''}" ${attrs}>
+    ${o.icon ? `<span class="ico">${svg(o.icon)}</span>` : '<span></span>'}
+    <span class="tx"><div class="lb">${o.label}</div>${o.sub ? `<div class="sb">${o.sub}</div>` : ''}</span>${right}</${tag}>`;
+};
+const group = (h, rows, f) => `<section class="grp">${h ? `<div class="grp-h">${h}</div>` : ''}<div class="list">${rows.join('')}</div>${f ? `<div class="grp-f">${f}</div>` : ''}</section>`;
+const card = (h, inner, f) => group(h, [inner], f);
+const seg = () => `<div class="seg">${Object.keys(RANGES).map(r => `<button data-range="${r}" class="${S.range === r ? 'on' : ''}">${r}</button>`).join('')}</div>`;
+const avatar = () => `<span class="av ${/^[A-Z]{1,2}$/.test(S.avatar) ? 'ini' : ''}">${S.avatar}</span>`;
+
+function heat() {
+  const slice = hist.slice(-RANGES[S.range]);
+  const pad = ((1 - slice.length) % 7 + 7) % 7;
+  const cells = [...Array(pad).fill(null), ...slice]; while (cells.length % 7) cells.push(null);
+  const cols = cells.length / 7, cs = Math.max(12, Math.min(22, Math.floor((290 - (cols - 1) * 3) / cols)));
+  const sc = ['var(--surface-2)', 'color-mix(in srgb, var(--ok) 28%, var(--surface-2))', 'color-mix(in srgb, var(--ok) 52%, var(--surface-2))', 'color-mix(in srgb, var(--ok) 76%, var(--surface-2))', 'var(--ok)'];
+  return `<div class="chart" style="--cs:${cs}px"><div class="heat-wrap"><div class="wd"><span>m</span><span></span><span>w</span><span></span><span>f</span><span></span><span>s</span></div>
+    <div class="heat"><div class="g">${cells.map((p, i) => p == null ? '<i class="f"></i>' : `<i class="l${lvl(p)} ${i === pad + slice.length - 1 ? 't' : ''}"></i>`).join('')}</div></div></div>
+    <div class="foot"><span>${slice.filter(p => p >= 1).length} clean days</span><span class="scale">less ${sc.map(c => `<i style="background:${c}"></i>`).join('')} more</span></div></div>`;
+}
+function trend(h = 90) {
+  const sl = hist.slice(-RANGES[S.range] - 6);
+  const roll = sl.slice(6).map((_, i) => sl.slice(i, i + 7).reduce((a, b) => a + b, 0) / 7);
+  const W = 320, n = roll.length, pts = roll.map((p, i) => [i / (n - 1) * W, h - p * h]);
+  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+  const now = roll[n - 1], then = roll[0];
+  return `<div class="chart"><div class="tr-top"><span class="v">${Math.round(now * 100)}%</span><span class="d">${now >= then ? '▲' : '▼'} ${Math.abs(Math.round((now - then) * 100))} pts in ${S.range}</span></div>
+    <svg viewBox="0 0 ${W} ${h + 14}"><defs><linearGradient id="tg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--ok)" stop-opacity=".28"/><stop offset="1" stop-color="var(--ok)" stop-opacity="0"/></linearGradient></defs>
+    ${[0, .5, 1].map(y => `<line x1="0" x2="${W}" y1="${h - y * h}" y2="${h - y * h}" stroke="var(--line)" stroke-dasharray="3 4"/>`).join('')}
+    <path d="${d} L${W} ${h} L0 ${h} Z" fill="url(#tg)"/><path d="${d}" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${pts[n - 1][0]}" cy="${pts[n - 1][1]}" r="4" fill="var(--ok)"/>
+    <text class="ax" x="0" y="${h + 12}">${S.range} ago</text><text class="ax" x="${W}" y="${h + 12}" text-anchor="end">today</text></svg></div>`;
+}
+
+/* pages */
+const P = {
+  root: { title: 'Profile', large: true, cmd: '$ git config --list', render: () => `
+    ${card('', `<button class="me tap" data-go="edit">${avatar()}<span><div class="nm">${S.name}</div><div class="sb">committing since 06 nov 2025</div></span>${CHEV}</button>
+      <div class="kpis"><div class="kpi"><div class="v">1,605</div><div class="k">commits</div></div><div class="kpi"><div class="v">29d</div><div class="k">best now</div></div><div class="kpi"><div class="v">17</div><div class="k">tags</div></div></div>`)}
+    ${group('Insights', [
+      row({ icon: 'stats', label: 'Stats', sub: 'Activity, trend, branches, rhythm', go: 'stats' }),
+      row({ icon: 'trophy', label: 'Records', sub: 'Longest streaks and tags', go: 'records' }),
+    ])}
+    ${group('Preferences', [
+      row({ icon: 'paint', label: 'Appearance', sub: 'Theme and log view', value: S.theme, go: 'appearance' }),
+      row({ icon: 'clock', label: 'Day & time', sub: 'When a day starts, time zone', value: S.dayStart, go: 'daytime' }),
+      row({ icon: 'bell', label: 'Notifications', sub: 'Reminders and evening summary', value: S.notif ? 'On' : 'Off', go: 'notifications' }),
+    ])}
+    ${group('Data', [
+      row({ icon: 'db', label: 'Backups', sub: `${S.backups.length} local · last ${S.backups[0][0]}, ${S.backups[0][1]}`, go: 'backups' }),
+      row({ icon: 'arrows', label: 'Export & import', sub: 'One JSON file with all history', go: 'data' }),
+    ])}
+    ${group('', [
+      row({ icon: 'phone', label: 'Devices', sub: `${S.devices.length} paired`, go: 'devices' }),
+      row({ icon: 'info', label: 'About reflog', sub: 'v0.5.0 · open source', go: 'about' }),
+    ])}` },
+
+  edit: { title: 'Edit profile', render: () => `
+    <div class="hero-av">${avatar()}</div>
+    ${card('Name', `<div class="r noi"><span></span><span class="tx"><input class="inp" id="nameInp" value="${S.name}" maxlength="24" placeholder="Your name"></span><span class="rt" id="nameCount" style="font-size:12px">${S.name.length}/24</span></div>`, 'Shown in the app only. It is never sent anywhere.')}
+    ${card('Avatar', `<div class="avs">${['🦉', '🐙', '🦊', '🌱', '⚡', '🧭', '🪴', '🐢', '🔥', '🌙', '🎧', 'NS'].map(a => `<button data-av="${a}" class="${S.avatar === a ? 'on' : ''} ${a === 'NS' ? 'ini' : ''}">${a}</button>`).join('')}</div>`, 'Emoji or initials. No photo upload: nothing to store, nothing to leak.')}` },
+
+  stats: { title: 'Stats', render: () => `
+    <div class="cmd">$ git shortlog --stat</div>${seg()}
+    ${card('Activity', heat())}
+    ${card('7-day done %', trend())}
+    ${group('Details', [
+      row({ icon: 'branch', label: 'Branches', sub: 'Done % and streak per branch', go: 'stats.branches' }),
+      row({ icon: 'pulse', label: 'Rhythm', sub: 'Your weekdays and hours', go: 'stats.rhythm' }),
+    ])}` },
+  'stats.branches': { title: 'Branches', render: () => `${seg()}
+    ${card('Done % · ' + S.range, `<div class="bt">${BR.map(([s, l, st, p]) => `<div class="br" style="--c:var(--l${l})"><span class="n"><i></i>${s}<small>${st}d</small></span><span class="bar"><i style="width:${p * 100}%"></i></span><span class="p">${Math.round(p * 100)}%</span></div>`).join('')}</div>`, 'Sorted by done %. The small number is the current streak.')}` },
+  'stats.rhythm': { title: 'Rhythm', render: () => {
+    const wk = [.86, .9, .88, .84, .8, .58, .72];
+    const hrs = [0, 0, 0, 0, 0, 1, 6, 14, 18, 9, 4, 3, 5, 3, 2, 3, 4, 6, 8, 5, 4, 7, 10, 3], mx = 18;
+    return `${seg()}
+    ${card('Weekdays', `<div class="chart"><div class="wk">${wk.map((p, i) => `<div class="c ${i === 5 ? 'low' : ''}"><span class="b" style="height:${p * 100}%"></span><span>${'MTWTFSS'[i]}</span></div>`).join('')}</div><div class="ins">Your hard day is <b>Saturday</b> (58%).</div></div>`)}
+    ${card('Time of day', `<div class="chart"><div class="hrs">${hrs.map(h => `<i class="${h === mx ? 'pk' : ''}" style="height:${h / mx * 100}%"></i>`).join('')}</div><div class="hl"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div><div class="ins">You commit most at <b>07–09</b>.</div></div>`)}`; } },
+  records: { title: 'Records', render: () => `
+    ${group('Streaks', [
+      row({ label: 'Longest streak', sub: 'read · may → jun 2026', value: '41 days' }),
+      row({ label: 'Longest clean run', sub: 'Every branch done', value: '12 days' }),
+      row({ label: 'Best week', sub: 'v2026.33', value: '98%' }),
+    ])}
+    ${group('History', [
+      row({ label: 'First commit', sub: 'walk', value: '06 nov 2025' }),
+      row({ label: 'Rest days used', value: '38' }),
+      row({ label: 'Misses', sub: '9 of them rebased a streak', value: '112' }),
+    ])}
+    ${group('Tags', [
+      row({ label: 'v0.1.0', sub: '7-day streak', value: '× 10' }),
+      row({ label: 'v1.0.0', sub: '30-day streak', value: '× 6' }),
+      row({ label: 'v2.0.0', sub: '100-day streak', value: '× 1' }),
+      row({ label: 'LTS', sub: '365-day streak', right: '<span class="pill dim">locked</span>' }),
+    ])}` },
+
+  appearance: { title: 'Appearance', render: () => `
+    ${card('Theme', `<div class="themes">${Object.entries(THEMES).map(([k, t]) => `
+      <button class="th ${S.theme === k ? 'on' : ''}" data-theme="${k}">
+        <div class="pv" style="background:${t.bg};color:${t.t}"><span class="n">6<span style="opacity:.45">/9</span></span>
+          <span class="bars">${t.a.map(c => `<i style="background:${t.s}"><b style="background:${c}"></b></i>`).join('')}</span></div>
+        <div class="nm2"><span class="ck"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-6"/></svg></span>${k}</div><div class="ds">${t.d}</div></button>`).join('')}</div>`, 'Synced to all your devices.')}
+    ${card('Log view', ['normal', 'compact'].map(v => `
+      <button class="r noi tap" data-logview="${v}" style="align-items:start"><span></span>
+        <span class="tx"><div class="lb">${v === 'normal' ? 'Normal' : 'Compact'}</div><div class="sb">${v === 'normal' ? 'Two lines per commit. Easy to read.' : 'Raw git log --graph. More on one screen.'}</div>
+        <div class="lvp">${v === 'normal'
+          ? '<span class="s" style="--c:var(--l1)">walk</span> park, 4.2k<br><span class="h">7b56d50</span> 18:40'
+          : '* (HEAD -&gt; today) 6/9<br>| <span class="s" style="--c:var(--l1)">*</span> <span class="y">7b56d50</span> (<span class="s" style="--c:var(--l1)">walk</span>) park'}</div></span>
+        <span class="rt" style="padding-top:2px"><span class="radio ${S.logView === v ? 'on' : ''}"></span></span></button>`).join(''), 'This device only.')}` },
+
+  daytime: { title: 'Day & time', render: () => `
+    ${group('', [
+      row({ label: 'Day starts at', sub: 'A commit at 01:30 still counts for the day before', right: `<select class="sel" data-sel="dayStart">${['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00'].map(h => `<option ${S.dayStart === h ? 'selected' : ''}>${h}</option>`).join('')}</select>${CHEV}` }),
+      row({ label: 'Time zone', sub: 'For reminders and day changes', value: S.tz }),
+    ], 'A new day start does not move old commits.')}
+    ${group('Amend', [
+      row({ label: 'Amend yesterday until', sub: 'After this time, a missed day is final', value: '12:00' }),
+    ], 'Fixed. This keeps "never miss twice" honest.')}` },
+
+  notifications: { title: 'Notifications', render: () => `
+    ${group('This device', [
+      row({ label: 'Allow notifications', sub: S.notif ? 'On for this iPhone' : 'Off for this iPhone', toggle: 'notif' }),
+      row({ icon: 'test', label: 'Send test push', sub: 'Check that it arrives', act: 'test' }),
+    ], 'On iPhone, push works only when reflog is on the Home Screen.')}
+    ${group('All devices', [
+      row({ label: 'Branch reminders', sub: 'At each reminder time, if the branch is open', toggle: 'reminders' }),
+      row({ label: 'Evening summary', sub: 'One message with the open count', toggle: 'evening' }),
+      row({ label: 'Summary time', sub: 'When the evening message comes', right: `<input type="time" class="time" data-time="eveningAt" value="${S.eveningAt}">` }),
+      row({ label: 'Quiet on rest days', sub: 'No reminder on a rest day', toggle: 'quiet' }),
+    ])}` },
+
+  backups: { title: 'Backups', render: () => `
+    <div class="cmd">$ git stash list</div>
+    ${group('', [row({ label: 'Back up now', cls: 'center', act: 'backup' })])}
+    ${group('Local · on this server', S.backups.map(([d, t, k, s]) => row({ label: `${d}, ${t}<span class="kind">${k}</span>`, sub: s, right: `<span style="color:var(--ok);font-size:15px">Restore</span>` })),
+      'Runs every day at 03:00. A restore makes a safety backup first.')}
+    ${group('', [
+      row({ label: 'Keep daily backups', sub: 'Manual backups are kept until you delete them', right: `<select class="sel" data-sel="retention">${['7', '14', '30'].map(n => `<option value="${n}" ${S.retention === n ? 'selected' : ''}>${n} days</option>`).join('')}</select>${CHEV}` }),
+    ])}
+    ${group('Off this machine', [
+      row({ icon: 'cloud', label: 'Remotes', sub: 'Folder, S3, WebDAV, git', right: '<span class="pill dim">soon</span>' + CHEV, go: 'remotes' }),
+    ])}` },
+  remotes: { title: 'Remotes', render: () => `
+    <div class="cmd">$ git remote add backup …</div>
+    ${group('Targets', [
+      row({ icon: 'folder', label: 'Folder', sub: 'iCloud Drive, Syncthing, another disk', right: '<span class="pill dim">phase B</span>' }),
+      row({ icon: 'bucket', label: 'S3-compatible', sub: 'Cloudflare R2, Backblaze B2, MinIO', right: '<span class="pill dim">phase B</span>' }),
+      row({ icon: 'cloud', label: 'WebDAV', sub: 'Nextcloud, NAS', right: '<span class="pill dim">phase B</span>' }),
+      row({ icon: 'git', label: 'Git remote', sub: 'Push the JSON to a private repo', right: '<span class="pill dim">phase B</span>' }),
+    ])}
+    ${group('Security', [row({ icon: 'key', label: 'Encryption passphrase', sub: 'AES-256-GCM before upload', value: 'Not set' })], 'Keys never go in exports, logs or git.')}` },
+
+  data: { title: 'Export & import', render: () => `
+    ${group('', [
+      row({ icon: 'arrows', label: 'Export JSON', sub: 'All branches, commits and settings', act: 'export' }),
+      row({ icon: 'arrows', label: 'Import JSON', sub: 'Replaces everything. Makes a backup first.', act: 'import' }),
+    ], 'Exports never contain keys, tokens or device cookies.')}
+    ${group('', [row({ label: 'Delete all history', sub: 'Keeps branches, removes every commit', cls: 'danger', act: 'danger' })])}` },
+
+  devices: { title: 'Devices', render: () => `
+    <div class="cmd">$ git remote -v</div>
+    ${group('Paired', S.devices.map(([n, s, seen, ic, me], i) => row({ icon: ic, label: n, sub: `${s} · last seen ${seen}`, right: me ? '<span class="pill">This device</span>' : `<span data-rm="${i}" style="color:#ff6b6b;font-size:15px">Remove</span>` })),
+      'Removing a device signs it out at once.')}
+    ${group('', [row({ icon: 'link', label: 'Pair a new device', sub: 'Shows a 6-digit code for 10 minutes', go: 'pair' })])}` },
+  pair: { title: 'Pair device', render: () => `
+    ${card('', `<div class="code">${S.code ??= String(Math.floor(Math.random() * 1e6)).padStart(6, '0')}</div><div class="grp-f" style="text-align:center;padding-bottom:16px">Valid for 10 minutes</div>`, 'Open reflog on the new device and type this code.')}` },
+
+  about: { title: 'About', render: () => `
+    <div style="text-align:center;padding:4px 0 22px"><div style="font-family:var(--font-display);font-size:30px;font-weight:600">reflog</div><div style="font-family:var(--font-mono);font-size:12px;color:var(--dim);margin-top:4px">git log for your day</div></div>
+    ${group('', [
+      row({ label: 'Version', value: 'v0.5.0' }),
+      row({ label: 'Build', value: '3f9c1e2' }),
+      row({ icon: 'code', label: 'Source code', sub: 'github.com/noorshikalgar/reflog.day', value: '' }),
+    ])}
+    ${group('', [
+      row({ icon: 'list', label: 'Licence', value: 'MIT' }),
+      row({ icon: 'heart', label: 'Credits', sub: 'black-metal.nvim (bathory), gruvbox' }),
+    ])}` },
+};
+
+/* navigation stack */
+const stack = [];
+const host = document.getElementById('stack');
+
+function pageHTML(id) {
+  const p = P[id], i = stack.indexOf(id), parent = i > 0 ? stack[i - 1] : null;
+  return `<div class="nav ${p.large ? '' : 'always'}">
+      <span>${parent ? `<button class="back" data-back>${BACK}${P[parent].title}</button>` : ''}</span>
+      <span class="ttl">${p.title}</span><span></span></div>
+    ${p.large ? `<div class="big">${p.title}</div>${p.cmd ? `<div class="cmd">${p.cmd}</div>` : ''}` : '<div style="height:12px"></div>'}
+    ${p.render()}`;
+}
+function mount(id, cls = '') {
+  const el = document.createElement('div');
+  el.className = `pg ${cls}`; el.dataset.id = id;
+  el.innerHTML = pageHTML(id);
+  el.addEventListener('scroll', () => el.classList.toggle('scrolled', el.scrollTop > 40));
+  host.appendChild(el); wire(el);
+  return el;
+}
+function push(id) {
+  if (!P[id] || stack[stack.length - 1] === id) return;
+  const cur = host.lastElementChild;
+  stack.push(id);
+  const el = mount(id, 'enter');
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.remove('enter'); cur?.classList.add('under'); }));
+  syncMap();
+}
+function pop() {
+  if (stack.length < 2) return;
+  stack.pop();
+  const top = host.lastElementChild, under = top.previousElementSibling;
+  const y = under.scrollTop; under.innerHTML = pageHTML(under.dataset.id); wire(under); under.scrollTop = y; // values may have changed deeper
+  top.classList.add('leave'); under.classList.remove('under');
+  setTimeout(() => top.remove(), 460);
+  syncMap();
+}
+function jump(path) {
+  host.innerHTML = ''; stack.length = 0;
+  path.forEach((id, i) => { stack.push(id); const el = mount(id); if (i < path.length - 1) el.classList.add('under'); });
+  syncMap();
+}
+function rerender() {
+  const top = host.lastElementChild, y = top.scrollTop;
+  top.innerHTML = pageHTML(top.dataset.id); wire(top); top.scrollTop = y;
+}
+let toastT;
+function toast(t) { const el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2200); }
+
+function wire(el) {
+  el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => push(b.dataset.go));
+  el.querySelectorAll('[data-back]').forEach(b => b.onclick = pop);
+  el.querySelectorAll('[data-toggle]').forEach(b => b.onclick = () => { S[b.dataset.toggle] = !S[b.dataset.toggle]; rerender(); });
+  el.querySelectorAll('[data-range]').forEach(b => b.onclick = () => { S.range = b.dataset.range; rerender(); });
+  el.querySelectorAll('[data-theme]').forEach(b => b.onclick = () => setTheme(b.dataset.theme));
+  el.querySelectorAll('[data-logview]').forEach(b => b.onclick = () => { S.logView = b.dataset.logview; rerender(); });
+  el.querySelectorAll('[data-av]').forEach(b => b.onclick = () => { S.avatar = b.dataset.av; rerender(); });
+  el.querySelectorAll('[data-sel]').forEach(s => { s.onclick = e => e.stopPropagation(); s.onchange = () => { S[s.dataset.sel] = s.value; toast(`Saved: ${s.selectedOptions[0].text}`); }; });
+  el.querySelectorAll('[data-time]').forEach(s => s.onchange = () => { S[s.dataset.time] = s.value; toast(`Summary at ${s.value}`); });
+  el.querySelectorAll('[data-rm]').forEach(b => b.onclick = e => { e.stopPropagation(); const d = S.devices.splice(+b.dataset.rm, 1)[0]; rerender(); toast(`Removed ${d[0]}. It is signed out.`); });
+  const ni = el.querySelector('#nameInp');
+  if (ni) ni.oninput = () => { S.name = ni.value.trim() || 'you'; el.querySelector('#nameCount').textContent = `${ni.value.length}/24`; };
+  el.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
+    const a = b.dataset.act;
+    if (a === 'backup') { S.backups.unshift(['19 oct', '20:41', 'manual', '413 KB']); rerender(); toast('Backup made · 413 KB'); }
+    if (a === 'test') toast(S.notif ? 'Test push sent to 1 device.' : 'Notifications are off here.');
+    if (a === 'export') toast('reflog-2026-10-19.json downloaded');
+    if (a === 'import') toast('Choose a file… (mock)');
+    if (a === 'danger') toast('Asks twice before it deletes. (mock)');
+  });
+}
+function setTheme(t) {
+  S.theme = t;
+  document.getElementById('phone').className = 'phone' + (t === 'terminal' ? '' : ` t-${t}`);
+  rerender(); syncMap();
+}
+
 const TABS = [
   ['status', '<circle cx="12" cy="12" r="4"/><path d="M12 2v6M12 16v6"/>'],
   ['log', '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-12 2-12 6"/>'],
   ['branches', '<path d="M4 6h16M4 12h16M4 18h10"/>'],
   ['profile', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'],
 ];
-document.querySelectorAll('.tabs').forEach(n => n.innerHTML = TABS.map(([t, p]) => `<span class="tab ${t === 'profile' ? 'on' : ''}"><svg viewBox="0 0 24 24">${p}</svg>${t}</span>`).join(''));
+document.getElementById('tabs').innerHTML = TABS.map(([t, p]) => `<span class="tab ${t === 'profile' ? 'on' : ''}"><svg viewBox="0 0 24 24">${p}</svg>${t}</span>`).join('');
 
-// ---- fake history: 365 days, done fraction per day (today = last) ----
-let seed = 9; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-const N = 365;
-const hist = Array.from({ length: N }, (_, i) => {
-  const ramp = Math.min(1, .45 + i / 260); // getting better over time
-  const sat = ((i + 1) % 7) === 5; // weekday pattern: saturdays are hard
-  let p = Math.min(1, Math.max(0, ramp + (rnd() - .5) * .5 - (sat ? .25 : 0)));
-  if (i < 18) p = 0; // before the first commit
-  return Math.round(p * 9) / 9;
-});
-hist[N - 1] = 6 / 9;
-const lvl = p => p >= 1 ? 4 : p >= .75 ? 3 : p >= .5 ? 2 : p > 0 ? 1 : 0;
-const RANGES = { '30d': 30, '90d': 91, '1y': 364, all: 347 };
-let range = '90d';
-
-const BR = [['walk', 1, 25, 214], ['read', 2, 29, 201], ['water', 6, 28, 230], ['meditate', 8, 27, 188], ['journal', 5, 25, 170], ['no-sugar', 7, 24, 160], ['stretch', 3, 20, 151], ['sleep-11', 10, 29, 142], ['gym', 4, 12, 88], ['guitar', 9, 8, 61]];
-
-function rangeChips(id) {
-  return `<span class="range">${Object.keys(RANGES).map(r => `<button data-r="${r}" class="${r === range ? 'on' : ''}">${r}</button>`).join('')}</span>`;
+const MAP = [
+  [['root'], 'profile', 1], [['root', 'edit'], 'edit profile', 2],
+  [['root', 'stats'], 'stats', 2], [['root', 'stats', 'stats.branches'], 'branches', 3], [['root', 'stats', 'stats.rhythm'], 'rhythm', 3],
+  [['root', 'records'], 'records', 2],
+  [['root', 'appearance'], 'appearance', 2], [['root', 'daytime'], 'day & time', 2], [['root', 'notifications'], 'notifications', 2],
+  [['root', 'backups'], 'backups', 2], [['root', 'backups', 'remotes'], 'remotes', 3], [['root', 'data'], 'export & import', 2],
+  [['root', 'devices'], 'devices', 2], [['root', 'devices', 'pair'], 'pair device', 3], [['root', 'about'], 'about', 2],
+];
+function syncMap() {
+  document.getElementById('mapPages').innerHTML = MAP.map(([path, label, l], i) => `<button class="l${l} ${path.join('/') === stack.join('/') ? 'on' : ''}" data-i="${i}">${label}</button>`).join('');
+  document.querySelectorAll('#mapPages button').forEach(b => b.onclick = () => jump(MAP[+b.dataset.i][0]));
+  document.getElementById('mapThemes').innerHTML = Object.keys(THEMES).map(t => `<button class="${S.theme === t ? 'on' : ''}" data-t="${t}">${t}</button>`).join('');
+  document.querySelectorAll('#mapThemes button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
 }
-
-function heatHTML() {
-  const days = RANGES[range];
-  const slice = hist.slice(-days);
-  // Align to weeks: today is a Monday in this mock, so it sits in row 0 of the last column.
-  const pad = ((1 - slice.length) % 7 + 7) % 7; // today (a Monday) lands in row 0 of the last week
-  const cells = [...Array(pad).fill(null), ...slice];
-  while (cells.length % 7) cells.push(undefined);
-  const html = cells.map((p, i) => p === null ? '<i class="f"></i>' : p === undefined ? '<i class="f"></i>' : `<i class="l${lvl(p)} ${i === pad + slice.length - 1 ? 't' : ''}" title="${Math.round(p * 100)}%"></i>`).join('');
-  const clean = slice.filter(p => p >= 1).length;
-  // Short ranges grow the squares to fill the card; long ranges scroll sideways from today.
-  const cols = cells.length / 7, room = 244;
-  const cs = Math.max(13, Math.min(22, Math.floor((room - (cols - 1) * 3) / cols)));
-  return `<div class="card" style="--cs:${cs}px"><div class="heat-wrap"><div class="wd"><span>m</span><span></span><span>w</span><span></span><span>f</span><span></span><span>s</span></div>
-    <div class="heat"><div class="g">${html}</div></div></div>
-    <div class="foot"><span>${clean} clean days in ${range}</span><span class="scale">less ${[0, 1, 2, 3, 4].map(l => `<i style="background:${['var(--surface-2)', 'color-mix(in srgb, var(--ok) 28%, var(--surface-2))', 'color-mix(in srgb, var(--ok) 52%, var(--surface-2))', 'color-mix(in srgb, var(--ok) 76%, var(--surface-2))', 'var(--ok)'][l]}"></i>`).join('')} more</span></div></div>`;
-}
-
-function trendHTML() {
-  const days = RANGES[range];
-  const slice = hist.slice(-days - 6);
-  const roll = slice.slice(6).map((_, i) => slice.slice(i, i + 7).reduce((a, b) => a + b, 0) / 7);
-  const W = 300, H = 90, n = roll.length;
-  const pts = roll.map((p, i) => [i / (n - 1) * W, H - p * H]);
-  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
-  const now = roll[n - 1], then = roll[0];
-  return `<div class="card trend"><div class="trend-top"><span class="v">${Math.round(now * 100)}%</span><span class="d">${now >= then ? '▲' : '▼'} ${Math.abs(Math.round((now - then) * 100))} pts vs ${range} ago</span></div>
-    <svg viewBox="0 0 ${W} ${H + 14}">
-      <defs><linearGradient id="tg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--ok)" stop-opacity=".28"/><stop offset="1" stop-color="var(--ok)" stop-opacity="0"/></linearGradient></defs>
-      ${[0, .5, 1].map(y => `<line x1="0" x2="${W}" y1="${H - y * H}" y2="${H - y * H}" stroke="var(--line)" stroke-dasharray="3 4"/>`).join('')}
-      <path d="${d} L${W} ${H} L0 ${H} Z" fill="url(#tg)"/>
-      <path d="${d}" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-      <circle cx="${pts[n - 1][0]}" cy="${pts[n - 1][1]}" r="4" fill="var(--ok)"/>
-      <text class="ax" x="0" y="${H + 12}">${range} ago</text><text class="ax" x="${W}" y="${H + 12}" text-anchor="end">today</text>
-    </svg></div>`;
-}
-
-function p1() {
-  const el = document.getElementById('p1');
-  el.innerHTML = `
-    <div class="cmd">$ git config user.name</div>
-    <div class="h1">profile</div>
-    <button class="me" style="width:100%"><span class="av">🦉</span><span><div class="nm">noor</div><div class="git">committing since <b>06 nov 2025</b><br>347 days · 10 branches</div></span></button>
-    <div class="kpis">
-      <div class="kpi"><div class="v">1,605</div><div class="k">commits</div></div>
-      <div class="kpi"><div class="v">29d</div><div class="k">best now</div></div>
-      <div class="kpi"><div class="v">4</div><div class="k">tags</div></div>
-    </div>
-    <div class="sect"><b>activity</b>${rangeChips()}</div>
-    ${heatHTML()}
-    <div class="sect"><b>7-day trend</b><span>done %</span></div>
-    ${trendHTML()}`;
-  el.querySelectorAll('.range button').forEach(b => b.onclick = () => { range = b.dataset.r; p1(); });
-}
-
-function p2() {
-  const wk = [.86, .9, .88, .84, .8, .58, .72];
-  const hours = [0, 0, 0, 0, 0, 1, 6, 14, 18, 9, 4, 3, 5, 3, 2, 3, 4, 6, 8, 5, 4, 7, 10, 3];
-  const mx = Math.max(...hours);
-  const low = wk.indexOf(Math.min(...wk));
-  document.getElementById('p2').innerHTML = `
-    <div class="sect" style="margin-top:4px"><b>branches</b>${rangeChips()}</div>
-    <div class="card"><div class="bh"><span>branch · streak</span><span>done %</span><span></span></div><div class="bt">
-      ${BR.map(([s, l, st, t], i) => { const p = [.97, .95, .96, .9, .88, .86, .83, .8, .71, .62][i]; return `<div class="br" style="--c:var(--l${l})"><span class="n"><i></i>${s}<small>${st}d</small></span><span class="bar"><i style="width:${p * 100}%"></i></span><span class="p">${Math.round(p * 100)}%</span></div>`; }).join('')}
-    </div></div>
-    <div class="sect"><b>weekdays</b><span>done %</span></div>
-    <div class="card"><div class="wk">${wk.map((p, i) => `<div class="c ${i === low ? 'low' : ''}"><span class="b" style="height:${p * 100}%"></span><span>${['m', 't', 'w', 't', 'f', 's', 's'][i]}</span></div>`).join('')}</div>
-      <div class="insight">your hard day: <b>saturday</b> (58%)</div></div>
-    <div class="sect"><b>time of day</b><span>commits</span></div>
-    <div class="card"><div class="hrs">${hours.map((h, i) => `<i class="${h === mx ? 'pk' : ''}" style="height:${h / mx * 100}%"></i>`).join('')}</div>
-      <div class="hlbl"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
-      <div class="insight">you commit most at <b>07–09</b></div></div>
-    <div class="sect"><b>records</b></div>
-    <div class="rows">
-      <div class="row"><span>longest streak</span><span class="v"><b>41d</b> · read<br><small>may → jun 2026</small></span></div>
-      <div class="row"><span>longest clean run</span><span class="v"><b>12 days</b></span></div>
-      <div class="row"><span>first commit</span><span class="v"><b>06 nov 2025</b> · walk</span></div>
-      <div class="row"><span>rest days used</span><span class="v"><b>38</b></span></div>
-      <div class="row"><span>misses · rebases</span><span class="v"><b>112</b> · 9</span></div>
-      <div class="row"><span>tags earned</span><span class="v"><b>v0.1.0 ×10 · v1.0.0 ×6 · v2.0.0 ×1</b></span></div>
-    </div>`;
-}
-
-function p3() {
-  document.getElementById('p3').innerHTML = `
-    <div class="sect" style="margin-top:4px"><b>settings</b><span>git config --list</span></div>
-    <div class="rows">
-      <div class="row"><span>theme</span><span class="chips"><span class="chip on">terminal</span><span class="chip">bathory</span><span class="chip">gruvbox</span><span class="chip">paper</span></span></div>
-      <div class="row"><span>log view <small>· this device</small></span><span class="chips"><span class="chip on">normal</span><span class="chip">compact</span></span></div>
-      <div class="row"><span>day starts</span><span class="v">04:00</span></div>
-      <div class="row"><span>time zone</span><span class="v">Asia/Kolkata</span></div>
-      <div class="row"><span>reminders <small>· all devices</small></span><i class="sw on"></i></div>
-      <div class="row"><span>evening summary</span><span class="v">21:30</span></div>
-      <div class="row"><span>notifications <small>· this device</small></span><span class="v" style="color:var(--ok)">on ✓</span></div>
-    </div>
-    <div class="sect"><b>data</b></div>
-    <div class="rows">
-      <div class="row"><span>export json</span><span class="v">↓</span></div>
-      <div class="row"><span>import json <small>· replaces data</small></span><span class="v">↑</span></div>
-      <div class="row"><span>backups</span><span class="v">14 local · last 03:00 ›</span></div>
-    </div>
-    <div class="sect"><b>devices</b><span>git remote -v</span></div>
-    <div class="rows">
-      <div class="row dev"><span class="ic">📱</span><span class="t">iphone <span class="tagme">this device</span><small>last seen now</small></span><span></span></div>
-      <div class="row dev"><span class="ic">💻</span><span class="t">browser<small>last seen 2 days ago</small></span><span class="x">remove</span></div>
-      <div class="row"><span>pair device</span><span class="v">code ›</span></div>
-    </div>
-    <div class="sect"><b>about</b></div>
-    <div class="rows">
-      <div class="row"><span>version</span><span class="v">v0.5.0 · 3f9c1e2</span></div>
-      <div class="row"><span>source</span><span class="v">github.com/…/reflog.day</span></div>
-      <div class="row"><span>licence · credits</span><span class="v">MIT ›</span></div>
-    </div>`;
-}
-
-function sheets() {
-  document.getElementById('p4').innerHTML = document.getElementById('p3').innerHTML;
-  document.getElementById('s4').innerHTML = `
-    <div class="grab"></div><div class="cmd">$ git stash list</div><h2>backups</h2>
-    <div class="card" style="padding:4px 14px">
-      <div class="bk"><span>19 oct · 03:00<span class="kind">daily</span></span><span class="acts"><span>↓</span><span>restore</span></span><small>412 KB</small></div>
-      <div class="bk"><span>18 oct · 21:14<span class="kind">pre-import</span></span><span class="acts"><span>↓</span><span>restore</span></span><small>409 KB</small></div>
-      <div class="bk"><span>18 oct · 03:00<span class="kind">daily</span></span><span class="acts"><span>↓</span><span>restore</span></span><small>407 KB</small></div>
-      <div class="bk"><span>+11 older</span><span class="acts"><span>keep 14 ▾</span></span><small>daily, kept 14</small></div>
-    </div>
-    <div style="height:10px"></div>
-    <button class="btn ok">backup now</button>
-    <div class="sect"><b>remotes</b><span>git remote add backup …</span></div>
-    <div class="card" style="padding:4px 14px">
-      <div class="remote"><span class="ic">📁</span><span>folder<br><small style="color:var(--dim);font-size:10px">iCloud / Syncthing / disk</small></span><span class="soon">phase B</span></div>
-      <div class="remote"><span class="ic">🪣</span><span>s3 · r2 · b2</span><span class="soon">phase B</span></div>
-      <div class="remote"><span class="ic">☁</span><span>webdav</span><span class="soon">phase B</span></div>
-      <div class="remote"><span class="ic">⑂</span><span>git remote</span><span class="soon">phase B</span></div>
-    </div>
-    <div class="note">Remote backups are encrypted (AES-256-GCM) before they leave this machine. Keys never go in exports or git.</div>`;
-  document.getElementById('p5').innerHTML = document.getElementById('p1').innerHTML;
-  document.getElementById('s5').innerHTML = `
-    <div class="grab"></div><div class="cmd">$ git config --global user.name</div><h2>edit profile</h2>
-    <div class="inp"><span>noor</span><small>4/24</small></div>
-    <div class="sect" style="margin:16px 2px 4px"><b>avatar</b><span>emoji or initials</span></div>
-    <div class="avs">${['🦉', '🐙', '🦊', '🌱', '⚡', 'NS'].map((a, i) => `<span class="${i === 0 ? 'on' : ''}" style="${a === 'NS' ? 'font-family:var(--font-mono);font-size:15px;font-weight:600' : ''}">${a}</span>`).join('')}</div>
-    <button class="btn ok">save</button>`;
-}
-
-p1(); p2(); p3(); sheets();
-document.getElementById('tbar').addEventListener('click', e => {
-  const b = e.target.closest('.tbtn'); if (!b) return;
-  document.querySelectorAll('.tbtn').forEach(x => x.classList.toggle('on', x === b));
-  document.body.className = b.dataset.t;
-});
+jump(['root']);
 </script>
 </body>
 </html>
