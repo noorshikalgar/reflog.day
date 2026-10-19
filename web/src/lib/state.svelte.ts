@@ -1,8 +1,9 @@
 import type { Theme, TodayView } from '../../../shared/src/api.ts';
 import { api, ApiError, fromCache } from './api.ts';
 import { flush, isNetworkError, outbox, type QueuedEntry } from './outbox.ts';
+import { popToRoot } from './profile.svelte.ts';
 
-export type Tab = 'status' | 'log' | 'branches';
+export type Tab = 'status' | 'log' | 'branches' | 'profile';
 export type LogMode = 'normal' | 'compact';
 
 const readLogView = (): LogMode => { try { return localStorage.getItem('rl_log_view') === 'compact' ? 'compact' : 'normal'; } catch { return 'normal'; } };
@@ -117,7 +118,7 @@ export async function refresh() {
 
 export function go(tab: Tab) {
   app.show = null;
-  if (tab === app.tab) return;
+  if (tab === app.tab) { if (tab === 'profile') popToRoot(); return; }
   const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (doc.startViewTransition && !reduce) doc.startViewTransition(() => { app.tab = tab; });

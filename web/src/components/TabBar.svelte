@@ -4,6 +4,7 @@
     ['status', '<circle cx="12" cy="12" r="4"/><path d="M12 2v6M12 16v6"/>'],
     ['log', '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-12 2-12 6"/>'],
     ['branches', '<path d="M4 6h16M4 12h16M4 18h10"/>'],
+    ['profile', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'],
   ];
 </script>
 
@@ -17,7 +18,7 @@
 
 <style>
   .tabs {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(3, 1fr);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr);
     padding: 8px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line);
     background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     view-transition-name: tabs;

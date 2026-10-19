@@ -1,4 +1,4 @@
-import type { Entry, Habit, HabitDetail, HabitInput, HabitView, LogView, Settings, TodayView } from '../../../shared/src/api.ts';
+import type { About, Device, Entry, Habit, HabitDetail, HabitInput, HabitView, LogView, Profile, Settings, TodayView } from '../../../shared/src/api.ts';
 
 export class ApiError extends Error {
   status: number;
@@ -40,6 +40,11 @@ export const api = {
   pushTest: () => call<{ sent: number }>('POST', '/api/push/test'),
   notesSeen: (version: string) => call<{ ok: true }>('POST', '/api/notes/seen', { version }),
   importAll: (data: unknown) => call<{ habits: number; entries: number }>('POST', '/api/import', data),
+  profile: () => call<Profile>('GET', '/api/profile'),
+  patchProfile: (p: { name?: string; avatar?: string }) => call<Profile>('PATCH', '/api/profile', p),
+  devices: () => call<Device[]>('GET', '/api/devices'),
+  removeDevice: (id: string) => call<Device[]>('DELETE', `/api/devices/${id}`),
+  about: () => call<About>('GET', '/api/about'),
   patchSettings: (s: Partial<Settings>) => call<Settings>('PATCH', '/api/settings', s),
 };
 
