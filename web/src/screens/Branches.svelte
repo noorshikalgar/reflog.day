@@ -4,7 +4,8 @@
   import { api } from '../lib/api.ts';
   import { daysText } from '../lib/format.ts';
   import { disablePush, enablePush, pushState, type PushState } from '../lib/push.ts';
-  import { app, applyTheme, refresh, showToast } from '../lib/state.svelte.ts';
+  import { app, refresh, setTheme, showToast } from '../lib/state.svelte.ts';
+  import { isNetworkError } from '../lib/outbox.ts';
 
   const MAX = 12;
   const SOFT = 8;
@@ -122,12 +123,17 @@
   }
 
   async function setSetting(p: Partial<Settings>) {
+    // The theme is a look: show it now, save it after. It also works offline.
+    if (p.theme) {
+      setTheme(p.theme);
+      if (settings) settings = { ...settings, theme: p.theme };
+      return;
+    }
     try {
       settings = await api.patchSettings(p);
-      if (p.theme) applyTheme(p.theme);
       if (app.today) app.today.settings = settings;
     } catch (err) {
-      showToast((err as Error).message, null, 4000);
+      showToast(isNetworkError(err) ? 'offline. change not saved.' : (err as Error).message, null, 4000);
     }
   }
 
