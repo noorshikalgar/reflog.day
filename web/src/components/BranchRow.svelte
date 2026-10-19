@@ -3,7 +3,12 @@
   import { untrack } from 'svelte';
   import { clock, daysText } from '../lib/format.ts';
 
-  let { habit, pending = false, ontap }: { habit: HabitView; pending?: boolean; ontap: (h: HabitView) => void } = $props();
+  let { habit, pending = false, ontap, onlong }: {
+    habit: HabitView;
+    pending?: boolean;
+    ontap: (h: HabitView) => void;
+    onlong: (h: HabitView) => void;
+  } = $props();
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const state = $derived(pending ? 'done' : habit.entry && habit.entry.kind !== 'miss' ? habit.entry.kind : 'open');
@@ -26,14 +31,39 @@
     timer = setInterval(() => { shown = h.slice(0, ++k); if (k >= h.length) clearInterval(timer); }, 35);
   });
 
+  // Long press (450 ms) opens the commit sheet. A short tap commits.
+  const LONG_MS = 450;
+  let pressTimer: ReturnType<typeof setTimeout> | undefined;
+  let pressed = $state(false);
+  let longFired = false;
+  let start = { x: 0, y: 0 };
+
+  function down(e: PointerEvent) {
+    if (pending) return;
+    longFired = false;
+    start = { x: e.clientX, y: e.clientY };
+    pressed = true;
+    pressTimer = setTimeout(() => { longFired = true; pressed = false; navigator.vibrate?.(10); onlong(habit); }, LONG_MS);
+  }
+  function cancel() { clearTimeout(pressTimer); pressed = false; }
+  function move(e: PointerEvent) {
+    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 10) cancel();
+  }
+
   function tap() {
-    if (state !== 'open') return;
+    cancel();
+    if (longFired) { longFired = false; return; }
+    if (state !== 'open') { onlong(habit); return; }
     just++;
     ontap(habit);
   }
 </script>
 
-<button class="row" data-state={state} style:--c="var(--l{habit.lane})" onclick={tap} aria-label="{habit.slug}, {state}">
+<button
+  class="row" class:pressed data-state={state} style:--c="var(--l{habit.lane})" aria-label="{habit.slug}, {state}"
+  onclick={tap} onpointerdown={down} onpointerup={() => clearTimeout(pressTimer)} onpointerleave={cancel} onpointercancel={cancel} onpointermove={move}
+  oncontextmenu={e => e.preventDefault()}
+>
   {#key just}
     <span class="node" class:pop={just > 0} style:filter={habit.patina ? `saturate(${1 - habit.patina * 0.18})` : null}></span>
   {/key}
@@ -56,9 +86,10 @@
   .row {
     display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 14px;
     width: 100%; height: 76px; padding: 0 18px; border-radius: 22px; background: var(--surface);
-    box-shadow: inset 0 0 0 1px var(--edge); text-align: left; user-select: none; -webkit-user-select: none;
+    box-shadow: inset 0 0 0 1px var(--edge); text-align: left; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
     transition: transform .12s var(--ease), background .2s;
   }
+  .row.pressed { transform: scale(.97); background: var(--surface-2); transition: transform .45s var(--ease), background .2s; }
   .row:active { transform: scale(.98); background: var(--surface-2); }
   .row:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
   .name { font-family: var(--font-mono); font-size: 18px; font-weight: 500; letter-spacing: -.01em; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

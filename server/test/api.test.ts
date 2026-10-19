@@ -128,6 +128,17 @@ describe('commits', () => {
     at('2026-10-20T03:30:00Z');
     expect((await commit(walk, { kind: 'rest' })).status).toBe(409);
   });
+  it('reports the kind of yesterday for amend', async () => {
+    await commit(walk, { kind: 'rest' });
+    at('2026-10-20T03:30:00Z');
+    expect((await view('walk')).yesterday).toBe('rest');
+  });
+  it('edits the message of a commit with the same id', async () => {
+    const id = uuidv7();
+    await req('PUT', `/api/entries/${id}`, { habit_id: walk, kind: 'done' });
+    const { json } = await req('PUT', `/api/entries/${id}`, { habit_id: walk, kind: 'done', message: 'felt good' });
+    expect(json.entry.message).toBe('felt good');
+  });
   it('amends yesterday before 12:00 only', async () => {
     at('2026-10-20T03:30:00Z'); // 09:00 IST
     const ok = await commit(walk, { day: '2026-10-19' });
