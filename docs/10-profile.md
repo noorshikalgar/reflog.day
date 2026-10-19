@@ -25,72 +25,62 @@ Rules:
 
 ## 3. Screen layout
 
-The profile screen is one scroll page with these sections, in this sequence.
+The profile tab looks like the iPhone Settings app: grouped lists on one short root page, and rows that open sub-pages. There is no long scroll. Mockup: `mockups/profile.html` (working navigation).
 
-### 3.1 Identity (`git config user.name`)
+### 3.1 Page tree
 
-| Item | Rule |
-|------|------|
-| Avatar | One emoji or two initials on a round tile. No photo upload (no file storage, no privacy risk). |
-| Name | Display name, 1–24 characters. Default: `you`. |
-| Line | `committing since 01 oct 2026 · 214 commits · 19 days clean` |
-| Edit | Tap the identity card. A sheet opens with name and avatar. |
+```
+Profile (root)
+├── identity card ─────────► Edit profile
+├── Insights
+│   ├── Stats ─────────────► Stats ──► Branches
+│   │                                 └► Rhythm
+│   └── Records ───────────► Records
+├── Preferences
+│   ├── Appearance ────────► Appearance (theme, log view)
+│   ├── Day & time ────────► Day & time
+│   └── Notifications ─────► Notifications
+├── Data
+│   ├── Backups ───────────► Backups ──► Remotes
+│   └── Export & import ───► Export & import
+├── Devices ───────────────► Devices ──► Pair device
+└── About reflog ──────────► About
+```
 
-### 3.2 Stats (`git shortlog --stat`)
+Maximum depth: 3 pages (root → page → sub-page).
 
-A range selector at the top of the section: `30d`, `90d`, `1y`, `all`. Default: `90d`. The selection is kept on this device.
+### 3.2 Row rules
 
-| No. | Block | What it shows | Visual |
-|-----|-------|---------------|--------|
-| 1 | Contribution graph | Done % for each day. 5 levels, like GitHub. | Grid of squares, 7 rows (Mon–Sun) × N weeks. Scroll sideways on a phone. Shows the `less ▢▢▢▢ more` scale. |
-| 2 | Trend | 7-day rolling done %. | Line chart with a soft area under the line. |
-| 3 | Branches | For each branch: streak, best streak, done % in the range, total commits. | Table with a small bar for done %. Sort by done %. Tap a row: `show <branch>`. |
-| 4 | Weekdays | Done % for each weekday. Marks the weakest day: `your hard day: sat`. | 7 vertical bars. |
-| 5 | Time of day | When commits happen. Example: `you commit most at 07–09`. | 24 small bars. |
-| 6 | Records | Longest streak ever, longest clean run, first commit, rest days used, misses, rebases, tags earned. | List of key–value rows. |
+| ID | Rule |
+|----|------|
+| R-01 | Put the label on the first line and the help text under it, in a smaller, dim style. |
+| R-02 | Put the current value on the right. Add a chevron (›) only when the row opens a page. |
+| R-03 | Use a switch only for on/off. Use a picker for a fixed list. Use a time field for a time. |
+| R-04 | Group rows under a short uppercase header. Put an explanation under the group, not inside rows. |
+| R-05 | A red label means a destructive action. Put it alone, in the last group of the page. |
+| R-06 | Each sub-page has a back button with the parent title, and a centered title. The root page has a large title. |
+| R-07 | Push and pop slide sideways (about 450 ms). Values changed on a sub-page show on the parent when you go back. |
 
-Rules for stats:
+### 3.3 Pages
 
-1. All stats are read-only.
-2. The contribution graph and the trend use neutral colors (`--ok` scale). Only the branch table uses lane colors, because each row is one branch.
-3. Each chart has a text summary for screen readers.
-4. Use small hand-made SVG components. Do not add a chart library: the bundle must stay small (now 28 KB gzip).
-5. A tap on a chart shows a small tooltip with the exact value. It does not open other screens.
+| Page | Content |
+|------|---------|
+| Root | Identity card (avatar, name, "committing since"), 3 totals (commits, best now, tags), then the groups in §3.1. |
+| Edit profile | Name (1–24 characters) and avatar (emoji or initials). No photo upload. |
+| Stats | Range control (30d, 90d, 1y, all), contribution graph (GitHub style, neutral `--ok` scale), 7-day done % trend line, links to Branches and Rhythm. |
+| Branches | Done % in the range and current streak for each branch, sorted by done %. Lane colors here only. |
+| Rhythm | Weekday bars with "your hard day", and commits by hour. |
+| Records | Streak records, history numbers, tags earned. |
+| Appearance | Theme as 4 preview cards (synced). Log view as 2 radio rows with a small sample (this device). |
+| Day & time | Day start, time zone, amend limit (fixed at 12:00, shown for clarity). |
+| Notifications | This device: allow, send test. All devices: branch reminders, evening summary, summary time, quiet on rest days. |
+| Backups | Back up now, local list with restore, retention, link to Remotes. |
+| Remotes | Phase B targets and the encryption passphrase. |
+| Export & import | Export, import, and "delete all history" (red, asks twice). |
+| Devices | Paired devices with last seen; remove; pair a new device (6-digit code). |
+| About | Version, build, source, licence, credits. |
 
-### 3.3 Settings (`git config --list`)
-
-These rows move here from `branches`:
-
-| Row | Scope |
-|-----|-------|
-| theme | all devices (synced) |
-| log view | this device |
-| day starts | all devices |
-| time zone | all devices |
-| reminders | all devices |
-| evening summary | all devices |
-| notifications | this device |
-| send test push | this device |
-
-### 3.4 Data
-
-| Row | Action |
-|-----|--------|
-| export json | Download all data. Secrets are never in the file. |
-| import json | Replace all data. The server makes a backup first. |
-| backups | Open the backups sheet (section 4). |
-
-### 3.5 Devices (`git remote -v`)
-
-| Row | Action |
-|-----|--------|
-| List | Each paired device: name, first seen, last seen. The current device has the mark `this device`. |
-| pair device | Show a new 6-digit code (moves here from `branches`). |
-| remove | Remove a device. Its cookie stops working at once. The user cannot remove the current device here. |
-
-### 3.6 About
-
-App version (`v0.4.0`), build commit hash, link to the repository, licence, theme credits.
+Stats rules (unchanged): read-only; neutral colors except per-branch rows; hand-made SVG, no chart library; each chart has a text summary for screen readers.
 
 ## 4. Backups
 
@@ -162,7 +152,7 @@ Notes:
 
 | Phase | Content | Tag |
 |-------|---------|-----|
-| 5a | 4th tab, move settings, identity card + edit sheet, devices, about | `v0.5.0` |
+| 5a | 4th tab, page stack, root page, move settings (Appearance, Day & time, Notifications), Edit profile, Devices, About | `v0.5.0` |
 | 5b | Stats API; contribution graph, trend, branch table, range selector | |
 | 5c | Weekdays, time of day, records | `v0.6.0` |
 | 5d | Local backups UI: list, backup now, download, restore, retention | `v0.7.0` |
