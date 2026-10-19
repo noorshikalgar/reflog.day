@@ -4,7 +4,7 @@
   import { api } from '../lib/api.ts';
   import { daysText } from '../lib/format.ts';
   import { disablePush, enablePush, pushState, type PushState } from '../lib/push.ts';
-  import { app, refresh, setTheme, showToast } from '../lib/state.svelte.ts';
+  import { app, refresh, setLogView, setTheme, showToast } from '../lib/state.svelte.ts';
   import { isNetworkError } from '../lib/outbox.ts';
 
   const MAX = 12;
@@ -207,6 +207,14 @@
         <span class="themes">
           {#each THEMES as th (th)}
             <button class="chip" class:on={settings.theme === th} onclick={() => setSetting({ theme: th })}>{th}</button>
+          {/each}
+        </span>
+      </div>
+      <div class="set">
+        <span>log view <span class="dim">· this device</span></span>
+        <span class="themes">
+          {#each [['normal', 'normal'], ['compact', 'compact']] as [v, label] (v)}
+            <button class="chip" class:on={app.logView === v} onclick={() => setLogView(v as 'normal' | 'compact')}>{label}</button>
           {/each}
         </span>
       </div>

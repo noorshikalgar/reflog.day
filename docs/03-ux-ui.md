@@ -52,23 +52,23 @@
 - Secondary button: `rest day (--allow-empty)`. It shows `1 left this week`.
 - Toggle: `amend yesterday` (only visible before 12:00).
 
-### 2.3 `log` — v2, one trunk (selected)
+### 2.3 `log` — two views
 
-v1 used one lane for each branch. With 10 branches, v1 shows 10 lines. This is too wide and too busy. v2 replaces v1. The mockup keeps v1 for comparison.
+The user selects the view in config → `log view` (this device only, stored in localStorage). Mockups: `mockups/log-rows.html` (L3, L4).
 
-Rules for v2:
+| View | Look | Use |
+|------|------|-----|
+| `normal` (default) | GitHub commit list. Each day has a commit icon, the date in bold and a relative word (`today`, `yesterday`, `3 days ago`). Each commit has two lines: branch + message, then hash chip · time · tag. A dot on the right shows the state. | Reading on a phone |
+| `compact` | Raw `git log --graph --oneline --decorate`. Day line: `* (HEAD -> today, mon 19 oct) 9/9`. Commit line: `| * hash (branch) message  time`. | Dense, developer feel |
 
-1. Show one vertical line only (the trunk). The number of branches has no effect on the width.
-2. Show one day node for each logical day. The day header shows:
-   - The date. Today also shows `HEAD`.
-   - A dot strip with one dot for each branch, in the branch sequence. `●` done, `■` rest, `◌` miss, ring = open, small grey dot = not scheduled. The strip wraps after 12 dots.
-   - The count `done/scheduled` in big numerals. Rest counts as done.
-3. Under the day header, show one row for each event: node in the lane color, then `hash  branch: message  time`.
-4. Put misses at the end of the day group. For a miss, the trunk bends to the right (wobble) and the node is a dashed ring.
-5. Fold days. Today and yesterday are open. Older days are folded and show a summary: `9 commits · 1 rest · 1 miss`. Tap a day header to fold or unfold.
-6. Filter chips in a horizontal scroll row at the top: `all · 10`, then one chip for each branch.
-7. With a branch filter, the trunk takes the lane color. The screen shows a streak header and one row for each day (date and message). A rebase shows the `rebased` tag.
-8. Tap a line: show a small detail popover with the full time and tags.
+Rules for both views:
+
+1. Today is HEAD. `normal` shows it with a lit ring icon, `compact` with `HEAD -> today`. There is no text badge.
+2. The day mark is neutral (`--muted`, `--text` when clean). Only branches have colors.
+3. Tap a day header to fold or unfold it. There is no chevron. A folded day shows a summary: `9 commits · 1 rest · 1 miss`.
+4. Misses come last in a day, in italic, with a dashed mark. A rebase shows the `rebased` tag. An amend shows `amended`.
+5. Filter chips at the top. With a branch filter, the screen shows a streak header and one row for each day.
+6. Infinite scroll: 14 days per page.
 
 | ID | Requirement |
 |----|-------------|

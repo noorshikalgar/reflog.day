@@ -3,6 +3,9 @@ import { api, ApiError, fromCache } from './api.ts';
 import { flush, isNetworkError, outbox, type QueuedEntry } from './outbox.ts';
 
 export type Tab = 'status' | 'log' | 'branches';
+export type LogMode = 'normal' | 'compact';
+
+const readLogView = (): LogMode => { try { return localStorage.getItem('rl_log_view') === 'compact' ? 'compact' : 'normal'; } catch { return 'normal'; } };
 
 export const app = $state({
   paired: true,
@@ -12,6 +15,8 @@ export const app = $state({
   queued: 0,
   /** Bumped after each local write, so other open screens can reload. */
   rev: 0,
+  /** Log density for this device. normal = two-line list, compact = raw git graph. */
+  logView: readLogView(),
   tab: 'status' as Tab,
   newBranch: false,
   /** Branch id shown on the `show` screen, over the current tab. */
@@ -117,4 +122,9 @@ export function go(tab: Tab) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (doc.startViewTransition && !reduce) doc.startViewTransition(() => { app.tab = tab; });
   else app.tab = tab;
+}
+
+export function setLogView(v: LogMode) {
+  app.logView = v;
+  try { localStorage.setItem('rl_log_view', v); } catch { /* private mode */ }
 }
