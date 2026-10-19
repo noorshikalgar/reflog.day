@@ -8,7 +8,7 @@
 | U-02 | Put all primary actions in the bottom half of the screen (thumb zone). |
 | U-03 | Minimum touch target: 56 px. Branch rows: 76 px high. |
 | U-04 | Use 20 px side padding. Use 12 px between rows. |
-| U-05 | Use a bottom tab bar with 3 tabs only: `status`, `log`, `branches`. |
+| U-05 | Use a bottom tab bar with 4 tabs maximum: `status`, `log`, `branches`, `profile` (refer to [10](10-profile.md)). |
 | U-06 | Respect the iPhone safe areas (`env(safe-area-inset-*)`). |
 | U-07 | Use no modal dialogs for normal work. Use bottom sheets. |
 | U-08 | On desktop (≥ 900 px), show `status` and `log` side by side. |
