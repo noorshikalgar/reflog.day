@@ -37,6 +37,9 @@
 └──────────────────────────────┘
 ```
 
+- Next to the big number: three rings, outside to inside: today (done of scheduled), 7d (mean done % of the last 7 days), tag (best current streak toward its next tag). A legend line under the state text gives the numbers. Ring colors are their own tokens (`--ring1..3`).
+- The 7-day strip is read-only (like `git status`: history is in `log`). Dots sit on a dashed line in a neutral color (`--muted`), never a branch color: filled = all done, ring with pie = part done, ring with a small center = nothing done, outlined = today.
+- The big number uses weight 300.
 - Tap a row: commit. Long press: commit sheet.
 - When all rows are done, the header text changes to `working tree clean.`
 

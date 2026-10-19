@@ -317,6 +317,7 @@ export class Store {
       strip.push({
         day: d,
         state: s.total === 0 ? 'none' : s.clean ? 'full' : i === 0 ? 'open' : s.complete > 0 ? 'half' : 'miss',
+        p: s.total ? s.complete / s.total : 0,
       });
     }
 
