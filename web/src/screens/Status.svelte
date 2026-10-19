@@ -8,6 +8,7 @@
   import CommitSheet, { type CommitRequest } from '../components/CommitSheet.svelte';
   import Confetti from '../components/Confetti.svelte';
   import MissCard from '../components/MissCard.svelte';
+  import ReleaseNotes from '../components/ReleaseNotes.svelte';
   import Odometer from '../components/Odometer.svelte';
   import Strip from '../components/Strip.svelte';
   import { api } from '../lib/api.ts';
@@ -109,6 +110,8 @@
       {app.queued ? `${app.queued} queued` : app.online ? 'synced' : 'offline'}
     </span>
   </div>
+
+  {#if t.release_notes}<ReleaseNotes notes={t.release_notes} />{/if}
 
   {#if t.misses.length}
     <MissCard misses={t.misses} today={t.day} canAmend={t.can_amend} />

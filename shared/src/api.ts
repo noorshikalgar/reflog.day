@@ -62,8 +62,19 @@ export interface UnseenMiss {
   rebase: boolean;
 }
 
+export interface ReleaseNotes {
+  /** ISO week of the notes, for example 'v2026.42'. */
+  version: string;
+  commits: number;
+  rest: number;
+  miss: number;
+  longest: { slug: string; streak: number } | null;
+  new_best: { slug: string; best: number }[];
+}
+
 export interface TodayView {
   day: string;
+  release_notes: ReleaseNotes | null;
   can_amend: boolean;
   settings: Settings;
   habits: HabitView[];

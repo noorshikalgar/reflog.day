@@ -4,7 +4,7 @@ import * as R from '../../shared/src/rules.ts';
 import { MISS_TITLES, pick } from '../../shared/src/messages.ts';
 import { uuidv7 } from '../../shared/src/ids.ts';
 import type {
-  Entry, Habit, HabitDetail, HabitInput, HabitView, LogCell, LogView, Settings, StripDay, TodayView, UnseenMiss,
+  Entry, Habit, HabitDetail, HabitInput, HabitView, LogCell, LogView, ReleaseNotes, Settings, StripDay, TodayView, UnseenMiss,
 } from '../../shared/src/api.ts';
 
 export const MAX_BRANCHES = 12;
@@ -328,7 +328,40 @@ export class Store {
       misses.push({ id: r.id, habit_id: r.habit_id, slug: r.slug, day: r.day, title: r.message, rebase: R.missIsRebase(log, r.days_mask, r.day) });
     }
 
-    return { day: today, can_amend: this.canAmend(), settings: this.settings(), habits: views, strip, misses };
+    return { day: today, release_notes: this.releaseNotes(today, habits, all), can_amend: this.canAmend(), settings: this.settings(), habits: views, strip, misses };
+  }
+
+  /** Notes for last ISO week, once, on the first open of a new week. Refer to docs/02-game-rules.md §9. */
+  private releaseNotes(today: string, habits: Habit[], all: Map<string, Map<string, Entry>>): ReleaseNotes | null {
+    const lastSunday = R.addDays(today, -R.weekday(today) - 1);
+    const lastMonday = R.addDays(lastSunday, -6);
+    const version = R.isoWeekLabel(lastMonday);
+    if (this.get('notes_seen') === version) return null;
+    let commits = 0, rest = 0, miss = 0;
+    let longest: ReleaseNotes['longest'] = null;
+    const newBest: ReleaseNotes['new_best'] = [];
+    for (const h of habits) {
+      const m = all.get(h.id)!;
+      for (const [d, e] of m) {
+        if (d < lastMonday || d > lastSunday) continue;
+        if (e.kind === 'done') commits++; else if (e.kind === 'rest') rest++; else miss++;
+      }
+      const log = this.kinds(m);
+      const since = this.dayOf(h.created_at);
+      if (since > lastSunday) continue;
+      const st = R.streak(log, h.days_mask, lastSunday, since);
+      if (st > 0 && (!longest || st > longest.streak)) longest = { slug: h.slug, streak: st };
+      const before = since <= R.addDays(lastMonday, -1) ? R.bestStreak(log, h.days_mask, R.addDays(lastMonday, -1), since) : 0;
+      const after = R.bestStreak(log, h.days_mask, lastSunday, since);
+      if (after > before && after >= 3) newBest.push({ slug: h.slug, best: after });
+    }
+    if (commits + rest + miss === 0) return null;
+    return { version, commits, rest, miss, longest, new_best: newBest };
+  }
+
+  notesSeen(version: string) {
+    if (!/^v\d{4}\.\d{2}$/.test(version)) throw new HttpError(400, 'bad version');
+    this.set('notes_seen', version);
   }
 
   /** History for the log screen, newest day first. Refer to docs/03-ux-ui.md §2.3. */
@@ -395,7 +428,50 @@ export class Store {
     return inserted;
   }
 
-  // ---------- export ----------
+  // ---------- export / import ----------
+
+  /** Replace all branches, entries and settings with an export. Devices, push and keys stay. */
+  importAll(data: unknown): { habits: number; entries: number } {
+    const d = data as ReturnType<Store['exportAll']>;
+    if (!d || d.app !== 'reflog' || d.version !== 1 || !Array.isArray(d.habits) || !Array.isArray(d.entries)) throw new HttpError(400, 'not a reflog export (version 1)');
+    const ids = new Set<string>();
+    const slugs = new Set<string>();
+    for (const h of d.habits) {
+      if (typeof h.id !== 'string' || !SLUG.test(h.slug) || !Number.isInteger(h.lane) || h.lane < 1 || h.lane > 10
+        || !Number.isInteger(h.days_mask) || h.days_mask < 1 || h.days_mask > 127 || (h.remind_at !== null && !HM.test(h.remind_at))
+        || typeof h.created_at !== 'string' || slugs.has(h.slug)) throw new HttpError(400, `bad branch in export: ${String(h.slug)}`);
+      ids.add(h.id);
+      slugs.add(h.slug);
+    }
+    for (const e of d.entries) {
+      if (typeof e.id !== 'string' || !ids.has(e.habit_id) || !/^\d{4}-\d{2}-\d{2}$/.test(e.day) || !['done', 'rest', 'miss'].includes(e.kind) || !/^[0-9a-f]{7}$/.test(e.hash))
+        throw new HttpError(400, `bad entry in export: ${String(e.id)}`);
+    }
+    this.db.exec('BEGIN');
+    try {
+      this.db.exec('DELETE FROM entry; DELETE FROM habit;');
+      const hs = this.db.prepare('INSERT INTO habit (id, slug, emoji, lane, days_mask, remind_at, position, created_at, archived_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+      for (const h of d.habits) hs.run(h.id, h.slug, h.emoji ?? null, h.lane, h.days_mask, h.remind_at ?? null, Number(h.position) || 0, h.created_at, h.archived_at ?? null);
+      const es = this.db.prepare('INSERT OR IGNORE INTO entry (id, habit_id, day, kind, hash, message, amended, seen_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+      for (const e of d.entries) es.run(e.id, e.habit_id, e.day, e.kind, e.hash, e.message ? String(e.message).slice(0, 72) : null, e.amended ? 1 : 0, e.seen_at ?? this.now().toISOString(), e.created_at);
+      this.db.exec('COMMIT');
+    } catch (e) {
+      this.db.exec('ROLLBACK');
+      throw e;
+    }
+    if (d.settings) {
+      const { tz, day_start_hour, evening_at, push_enabled, theme } = d.settings;
+      this.patchSettings({ tz, day_start_hour, evening_at, push_enabled, theme });
+    }
+    this.set('last_rollover', R.addDays(this.today(), -1));
+    return { habits: d.habits.length, entries: d.entries.length };
+  }
+
+  /** Copy the database to a file (VACUUM INTO). */
+  backupTo(file: string) {
+    this.db.exec(`VACUUM INTO '${file.replaceAll("'", "''")}'`);
+  }
+
 
   exportAll() {
     return {

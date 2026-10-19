@@ -14,12 +14,12 @@ const HOST = process.env.HOST ?? '127.0.0.1';
 const DATA = resolve(process.env.REFLOG_DATA ?? './data');
 const WEB = resolve(import.meta.dirname, '../../web/dist');
 
-mkdirSync(DATA, { recursive: true });
+mkdirSync(join(DATA, 'backups'), { recursive: true });
 const db = openDb(join(DATA, 'reflog.db'));
 const store = new Store(db);
 const pairing = new Pairing(db);
 const push = new Push(store);
-const app = createApp(store, pairing, push);
+const app = createApp(store, pairing, push, { backupDir: join(DATA, 'backups') });
 
 // Built web app. The service worker must not be cached by the browser.
 app.use('/sw.js', async (c, next) => { await next(); c.header('Cache-Control', 'no-cache'); });

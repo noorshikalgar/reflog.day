@@ -367,3 +367,51 @@ describe('push', () => {
     expect(push.count()).toBe(1);
   });
 });
+
+describe('import', () => {
+  beforeEach(pairDevice);
+
+  it('round-trips an export', async () => {
+    const h = (await req('POST', '/api/habits', { slug: 'walk', remind_at: '07:00' })).json;
+    await commit(h.id, { message: 'park' });
+    await req('PATCH', '/api/settings', { theme: 'gruvbox' });
+    const dump = (await req('GET', '/api/export')).json;
+    await req('PATCH', `/api/habits/${h.id}`, { slug: 'changed' });
+    await req('POST', '/api/habits', { slug: 'extra' });
+    const { status, json } = await req('POST', '/api/import', dump);
+    expect(status).toBe(200);
+    expect(json).toEqual({ habits: 1, entries: 1 });
+    const t = await today();
+    expect(t.habits.map(x => x.slug)).toEqual(['walk']);
+    expect(t.habits[0].entry?.message).toBe('park');
+    expect(t.settings.theme).toBe('gruvbox');
+  });
+  it('rejects bad files and keeps the data', async () => {
+    await req('POST', '/api/habits', { slug: 'walk' });
+    expect((await req('POST', '/api/import', { app: 'other' })).status).toBe(400);
+    expect((await req('POST', '/api/import', { app: 'reflog', version: 1, habits: [{ id: 'x', slug: 'Bad Slug' }], entries: [] })).status).toBe(400);
+    expect((await today()).habits).toHaveLength(1);
+  });
+});
+
+describe('release notes', () => {
+  it('shows last week once, on the first open of the new week', async () => {
+    await pairDevice();
+    at('2026-10-12T03:30:00Z'); // Mon of the previous week
+    const walk = (await req('POST', '/api/habits', { slug: 'walk' })).json.id;
+    store.rollover();
+    for (let i = 0; i < 6; i++) { at(`2026-10-${12 + i}T03:30:00Z`); store.rollover(); await commit(walk); }
+    at('2026-10-19T03:30:00Z'); // Mon; Sunday the 18th was missed
+    store.rollover();
+    const n = (await today()).release_notes!;
+    expect(n).toMatchObject({ version: 'v2026.42', commits: 6, rest: 0, miss: 1, longest: { slug: 'walk', streak: 6 } });
+    expect(n.new_best).toEqual([{ slug: 'walk', best: 6 }]);
+    await req('POST', '/api/notes/seen', { version: n.version });
+    expect((await today()).release_notes).toBeNull();
+  });
+  it('is empty with no activity last week', async () => {
+    await pairDevice();
+    await req('POST', '/api/habits', { slug: 'walk' });
+    expect((await today()).release_notes).toBeNull();
+  });
+});
