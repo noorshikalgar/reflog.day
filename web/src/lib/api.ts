@@ -17,6 +17,7 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(res.status, json.error ?? res.statusText);
+  if (res.headers.get('x-reflog-cache')) Object.defineProperty(json, 'fromCache', { value: true });
   return json as T;
 }
 
@@ -29,7 +30,7 @@ export const api = {
   habit: (id: string) => call<HabitDetail>('GET', `/api/habits/${id}`),
   createHabit: (h: HabitInput) => call<Habit>('POST', '/api/habits', h),
   updateHabit: (id: string, h: HabitInput & { archived?: boolean }) => call<Habit>('PATCH', `/api/habits/${id}`, h),
-  putEntry: (id: string, body: { habit_id: string; kind: 'done' | 'rest'; day?: string; message?: string | null }) =>
+  putEntry: (id: string, body: { habit_id: string; kind: 'done' | 'rest'; day?: string; message?: string | null; at?: string }) =>
     call<{ entry: Entry; habit: HabitView }>('PUT', `/api/entries/${id}`, body),
   deleteEntry: (id: string) => call<{ habit: HabitView }>('DELETE', `/api/entries/${id}`),
   missesSeen: (ids: string[]) => call<{ ok: true }>('POST', '/api/misses/seen', { ids }),
@@ -39,3 +40,6 @@ export const api = {
   pushTest: () => call<{ sent: number }>('POST', '/api/push/test'),
   patchSettings: (s: Partial<Settings>) => call<Settings>('PATCH', '/api/settings', s),
 };
+
+/** True when the service worker served the last cached copy (no network). */
+export const fromCache = (x: object) => (x as { fromCache?: boolean }).fromCache === true;

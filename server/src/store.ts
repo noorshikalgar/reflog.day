@@ -187,14 +187,25 @@ export class Store {
   }
 
   /** Create or replace the entry for one branch and one day. Same `id` again is a no-op update. */
-  putEntry(id: string, body: { habit_id: string; day?: string; kind: 'done' | 'rest'; message?: string | null }): { entry: Entry; habit: HabitView } {
+  putEntry(id: string, body: { habit_id: string; day?: string; kind: 'done' | 'rest'; message?: string | null; at?: string }): { entry: Entry; habit: HabitView } {
     const h = this.habit(body.habit_id);
     if (h.archived_at) throw new HttpError(409, 'branch is archived');
     if (body.kind !== 'done' && body.kind !== 'rest') throw new HttpError(400, 'kind must be done or rest');
+    const now = this.now();
+    // `at` is the tap time of a commit that waited in the offline outbox. The day rules
+    // apply at that time, not at upload time. Accept it for 48 h and never from the future.
+    let tap = now;
+    if (body.at !== undefined) {
+      const t = new Date(body.at);
+      if (Number.isNaN(t.getTime()) || t.getTime() > now.getTime() + 5 * 6e4 || t.getTime() < now.getTime() - 48 * 36e5) throw new HttpError(400, 'at must be within the last 48 h');
+      tap = t;
+    }
+    const s = this.settings();
     const today = this.today();
-    const day = body.day ?? today;
-    const yesterday = R.addDays(today, -1);
-    if (day !== today && !(day === yesterday && this.canAmend())) throw new HttpError(409, 'you can only log today, or yesterday before 12:00');
+    const tapDay = R.logicalDay(tap, s.tz, s.day_start_hour);
+    const day = body.day ?? tapDay;
+    const amendOk = day === R.addDays(tapDay, -1) && R.localClock(tap, s.tz).hour < R.AMEND_UNTIL_HOUR;
+    if (day !== tapDay && !amendOk) throw new HttpError(409, 'you can only log today, or yesterday before 12:00');
     if (day < this.dayOf(h.created_at)) throw new HttpError(409, 'branch did not exist on that day');
     const message = body.message ? String(body.message).slice(0, 72) : null;
 
@@ -204,14 +215,14 @@ export class Store {
     const log = this.kinds(this.entries([h.id]).get(h.id)!);
     if (body.kind === 'rest' && log.get(day) !== 'rest' && R.restLeftThisWeek(log, day) === 0) throw new HttpError(409, 'no rest day left this week');
 
-    const at = existing?.created_at ?? this.now().toISOString();
+    const at = existing?.created_at ?? tap.toISOString();
     const hash = existing?.hash && existing.kind === body.kind ? existing.hash : commitHash(h.id, day, at + body.kind);
     this.db.exec('BEGIN');
     try {
       this.db.prepare('DELETE FROM entry WHERE habit_id = ? AND day = ? AND id <> ?').run(h.id, day, id);
       this.db.prepare(`INSERT INTO entry (id, habit_id, day, kind, hash, message, amended, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET kind = excluded.kind, hash = excluded.hash, message = excluded.message`)
-        .run(id, h.id, day, body.kind, hash, message, day === today ? 0 : 1, at);
+        .run(id, h.id, day, body.kind, hash, message, day === tapDay ? 0 : 1, at);
       this.db.exec('COMMIT');
     } catch (e) {
       this.db.exec('ROLLBACK');
