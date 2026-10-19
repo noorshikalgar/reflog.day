@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Profile mockups</title>
+<style>
+:root { --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; --font-mono: ui-monospace, "SF Mono", Menlo, monospace; --font-ui: system-ui, -apple-system, sans-serif; --ease: cubic-bezier(.2,.8,.2,1); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #06070a; color: #e7e9ee; font-family: var(--font-ui); }
+body { padding: 32px 16px 80px; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: left; -webkit-tap-highlight-color: transparent; }
+.page-head { max-width: 1240px; margin: 0 auto 20px; font-family: var(--font-mono); }
+.page-head h1 { font-family: var(--font-display); font-weight: 300; font-size: 40px; letter-spacing: -.03em; }
+.page-head h1 b { color: #3ddc97; font-weight: 500; }
+.page-head p { color: #8b92a1; font-size: 13px; margin-top: 8px; line-height: 1.6; max-width: 880px; }
+.page-head code { color: #c3e88d; }
+.tbar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0 auto 32px; position: sticky; top: 0; z-index: 9; padding: 10px 0; background: color-mix(in srgb, #06070a 85%, transparent); backdrop-filter: blur(10px); }
+.tbtn { font-family: var(--font-mono); font-size: 13px; padding: 10px 16px; border-radius: 14px; background: #12151c; color: #8b92a1; }
+.tbtn.on { background: #e7e9ee; color: #0b0d12; }
+.grid { display: flex; flex-wrap: wrap; gap: 48px 36px; justify-content: center; max-width: 1640px; margin: 0 auto; }
+figure { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+figcaption { font-family: var(--font-mono); font-size: 12px; color: #8b92a1; max-width: 340px; line-height: 1.55; }
+figcaption b { color: #e7e9ee; font-weight: 500; }
+
+.phone {
+  --bg:#0b0d12; --surface:#12151c; --surface-2:#1a1e28; --line:#252a36; --text:#e7e9ee; --muted:#8b92a1; --dim:#788092; --ok:#3ddc97; --on-ok:#05130c; --rest:#f2b84b; --miss:#798194;
+  --ring1:#3ddc97; --ring2:#4cc9f0; --ring3:#a78bfa;
+  --l1:#3ddc97; --l2:#4cc9f0; --l3:#a78bfa; --l4:#ff9f5a; --l5:#f472b6; --l6:#6ea8ff; --l7:#c3e88d; --l8:#2dd4bf; --l9:#ff8a80; --l10:#b8c4d8;
+  width: min(360px, calc(100vw - 32px)); height: 760px; border-radius: 46px; padding: 10px; background: #1b1d22; box-shadow: 0 0 0 1px #2c2f36, 0 30px 80px -20px rgba(0,0,0,.8); position: relative;
+}
+body.bathory .phone { --bg:#000; --surface:#0e0e0e; --surface-2:#1a1a1a; --line:#222; --text:#f1f1f1; --muted:#999; --dim:#7c7c7c; --ok:#fbcb97; --on-ok:#000; --rest:#e78a43; --miss:#7d7d7d; --ring1:#fbcb97; --ring2:#e78a43; --ring3:#8fb3b3;
+  --l1:#fbcb97; --l2:#e78a43; --l3:#5f8787; --l4:#c1c1c1; --l5:#9b99a3; --l6:#d9a679; --l7:#8fb3b3; --l8:#aaa; --l9:#b5776a; --l10:#888; background:#141414; }
+body.gruvbox .phone { --bg:#282828; --surface:#32302f; --surface-2:#3c3836; --line:#504945; --text:#ebdbb2; --muted:#bdae93; --dim:#a3978c; --ok:#b8bb26; --on-ok:#1d2021; --rest:#fabd2f; --miss:#a4978b; --ring1:#b8bb26; --ring2:#83a598; --ring3:#d3869b;
+  --l1:#b8bb26; --l2:#83a598; --l3:#d3869b; --l4:#fe8019; --l5:#8ec07c; --l6:#56a6aa; --l7:#a1a01b; --l8:#74a576; --l9:#c489a4; --l10:#f17626; background:#1d2021; }
+body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#dcdad2; --text:#1a1d24; --muted:#4f5562; --dim:#686f7a; --ok:#117d4e; --on-ok:#fff; --rest:#966319; --miss:#666d7e; --ring1:#117d4e; --ring2:#0a769c; --ring3:#6d4fd8;
+  --l1:#107d4e; --l2:#0a769c; --l3:#6d4fd8; --l4:#b25210; --l5:#c0307a; --l6:#2a5fd0; --l7:#517813; --l8:#0d7a6d; --l9:#c2463c; --l10:#56657e; background:#d9d7d0; }
+.screen { height: 100%; border-radius: 36px; overflow: hidden; background: var(--bg); color: var(--text); position: relative; display: flex; flex-direction: column; }
+.body { flex: 1; overflow: hidden auto; padding: 46px 18px 24px; scrollbar-width: none; }
+.body::-webkit-scrollbar { display: none; }
+.mono { font-family: var(--font-mono); }
+.cmd { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.h1 { font-family: var(--font-display); font-weight: 300; font-size: 38px; letter-spacing: -.03em; margin-bottom: 12px; }
+.sect { font-family: var(--font-mono); font-size: 11px; color: var(--dim); margin: 22px 4px 8px; display: flex; justify-content: space-between; align-items: baseline; }
+.sect b { color: var(--muted); font-weight: 500; }
+.card { background: var(--surface); border-radius: 20px; padding: 14px 16px; }
+
+/* tab bar, 4 tabs */
+.tabs { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px 22px; border-top: 1px solid var(--line); background: var(--bg); }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10.5px; color: var(--dim); padding: 6px 0; }
+.tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tab.on { color: var(--text); } .tab.on svg { stroke: var(--ok); }
+
+/* identity */
+.me { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; background: var(--surface); border-radius: 22px; padding: 16px; }
+.av { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--ok); position: relative; }
+.av::after { content: "✎"; position: absolute; right: -2px; bottom: -2px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; background: var(--text); color: var(--bg); }
+.me .nm { font-family: var(--font-display); font-size: 26px; font-weight: 400; letter-spacing: -.02em; }
+.me .git { font-family: var(--font-mono); font-size: 11px; color: var(--dim); }
+.me .git b { color: var(--ok); font-weight: 500; }
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.kpi { background: var(--surface); border-radius: 16px; padding: 10px 12px; }
+.kpi .v { font-family: var(--font-display); font-size: 24px; font-weight: 400; letter-spacing: -.02em; }
+.kpi .k { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+
+/* range chips */
+.range { display: inline-flex; background: var(--surface); border-radius: 12px; padding: 3px; gap: 2px; }
+.range button { font-family: var(--font-mono); font-size: 11px; padding: 6px 10px; border-radius: 9px; color: var(--muted); transition: background .2s, color .2s; }
+.range button.on { background: var(--text); color: var(--bg); }
+
+/* contribution graph */
+.heat { overflow-x: auto; scrollbar-width: none; direction: rtl; }
+.heat::-webkit-scrollbar { display: none; }
+.heat .g { direction: ltr; display: grid; grid-template-rows: repeat(7, var(--cs)); grid-auto-flow: column; grid-auto-columns: var(--cs); gap: 3px; width: max-content; }
+.heat i { border-radius: 3px; background: var(--surface-2); }
+.heat i.l1 { background: color-mix(in srgb, var(--ok) 28%, var(--surface-2)); }
+.heat i.l2 { background: color-mix(in srgb, var(--ok) 52%, var(--surface-2)); }
+.heat i.l3 { background: color-mix(in srgb, var(--ok) 76%, var(--surface-2)); }
+.heat i.l4 { background: var(--ok); }
+.heat i.f { background: none; }
+.heat i.t { box-shadow: 0 0 0 1.5px var(--text); }
+.heat-wrap { display: grid; grid-template-columns: 18px 1fr; gap: 6px; }
+.wd { display: grid; grid-template-rows: repeat(7, var(--cs)); gap: 3px; font-family: var(--font-mono); font-size: 9px; color: var(--dim); line-height: var(--cs); }
+.foot { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin-top: 10px; }
+.scale { display: inline-flex; gap: 3px; align-items: center; }
+.scale i { width: 10px; height: 10px; border-radius: 2px; }
+
+/* trend */
+.trend svg { display: block; width: 100%; height: auto; overflow: visible; }
+.trend .ax { font-family: var(--font-mono); font-size: 9px; fill: var(--dim); }
+.trend-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.trend-top .v { font-family: var(--font-display); font-size: 30px; font-weight: 300; }
+.trend-top .d { font-family: var(--font-mono); font-size: 11px; color: var(--ok); }
+
+/* branch table */
+.bt { display: flex; flex-direction: column; }
+.br { display: grid; grid-template-columns: 1fr 70px 38px; gap: 10px; align-items: center; padding: 10px 2px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; }
+.br:last-child { border-bottom: 0; }
+.br .n { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.br .n i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex: none; }
+.br .n small { color: var(--dim); font-size: 10px; margin-left: auto; }
+.br .bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.br .bar i { display: block; height: 100%; background: var(--c); border-radius: 3px; }
+.br .p { text-align: right; color: var(--muted); }
+.bh { display: grid; grid-template-columns: 1fr 70px 38px; gap: 10px; font-family: var(--font-mono); font-size: 10px; color: var(--dim); padding: 0 2px 4px; }
+.bh span:last-child { text-align: right; }
+
+/* weekday + hours */
+.wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 96px; }
+.wk .c { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.wk .b { width: 100%; max-width: 26px; border-radius: 7px 7px 4px 4px; background: color-mix(in srgb, var(--ok) 70%, var(--surface-2)); }
+.wk .c.low .b { background: var(--miss); opacity: .7; }
+.wk .c span { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+.wk .c.low span { color: var(--text); }
+.hrs { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; align-items: end; height: 56px; }
+.hrs i { border-radius: 2px 2px 1px 1px; background: color-mix(in srgb, var(--ok) 60%, var(--surface-2)); min-height: 2px; }
+.hrs i.pk { background: var(--ok); }
+.hlbl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: var(--dim); margin-top: 4px; }
+.insight { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 10px; }
+.insight b { color: var(--text); font-weight: 500; }
+
+/* records / rows list */
+.rows { background: var(--surface); border-radius: 20px; overflow: hidden; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; min-height: 50px; width: 100%; }
+.row:last-child { border-bottom: 0; }
+.row .v { color: var(--muted); font-size: 12px; text-align: right; }
+.row .v b { color: var(--text); font-weight: 500; }
+.row small { color: var(--dim); font-size: 10px; }
+.chips { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.chip { font-family: var(--font-mono); font-size: 11px; padding: 6px 9px; border-radius: 9px; background: var(--surface-2); color: var(--muted); }
+.chip.on { background: var(--text); color: var(--bg); }
+.sw { width: 44px; height: 26px; border-radius: 13px; background: var(--line); position: relative; flex: none; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .2s; }
+.sw.on { background: var(--ok); } .sw.on::after { left: 21px; }
+.dev { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; }
+.dev .ic { width: 30px; height: 30px; border-radius: 9px; background: var(--surface-2); display: grid; place-items: center; font-size: 14px; }
+.dev .t { font-size: 13px; } .dev .t small { display: block; }
+.tagme { font-size: 10px; color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); padding: 1px 6px; border-radius: 6px; }
+.x { color: var(--dim); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+
+/* sheets */
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 5; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-radius: 30px 30px 36px 36px; padding: 10px 18px 26px; max-height: 88%; overflow: auto; scrollbar-width: none; }
+.grab { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 16px; }
+.sheet h2 { font-family: var(--font-display); font-weight: 300; font-size: 30px; letter-spacing: -.03em; margin: 2px 0 14px; }
+.bk { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; }
+.bk:last-child { border-bottom: 0; }
+.bk small { color: var(--dim); font-size: 10px; }
+.bk .acts { grid-row: 1 / 3; grid-column: 2; display: flex; gap: 10px; align-self: center; font-size: 11px; }
+.bk .acts span { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.kind { font-size: 9px; padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); margin-left: 6px; }
+.btn { width: 100%; height: 52px; border-radius: 16px; font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-align: center; }
+.btn.ok { background: var(--ok); color: var(--on-ok); }
+.btn.ghost { box-shadow: inset 0 0 0 1.5px var(--line); color: var(--muted); font-weight: 400; }
+.remote { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; }
+.remote:last-child { border-bottom: 0; }
+.remote .ic { width: 30px; height: 30px; border-radius: 9px; background: var(--surface-2); display: grid; place-items: center; font-size: 13px; }
+.remote .soon { font-size: 10px; color: var(--dim); }
+.note { font-family: var(--font-mono); font-size: 11px; color: var(--dim); line-height: 1.5; margin: 10px 2px 14px; }
+.avs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 10px 0 16px; }
+.avs span { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--surface-2); }
+.avs span.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ok); }
+.inp { background: var(--bg); border-radius: 14px; padding: 14px; font-family: var(--font-mono); font-size: 16px; box-shadow: inset 0 0 0 1px var(--line); display: flex; justify-content: space-between; }
+.inp small { color: var(--dim); font-size: 11px; align-self: center; }
+</style>
+</head>
+<body>
+<header class="page-head">
+  <h1><b>profile</b> tab — mockups</h1>
+  <p>Plan: <code>docs/10-profile.md</code>. Four tabs now: <code>status · log · branches · profile</code>. Phone 01–02 are one long scroll, split in two. The range chips are live (30d / 90d / 1y / all). Stats use neutral colors; only the branch table uses lane colors.</p>
+</header>
+<nav class="tbar" id="tbar">
+  <button class="tbtn on" data-t="">terminal</button><button class="tbtn" data-t="bathory">bathory</button><button class="tbtn" data-t="gruvbox">gruvbox</button><button class="tbtn" data-t="paper">paper</button>
+</nav>
+
+<main class="grid">
+  <figure><div class="phone"><div class="screen"><div class="body" id="p1"></div><nav class="tabs"></nav></div></div>
+    <figcaption><b>01 · profile (top)</b>. Identity card (tap to edit), three totals, the range chips, the GitHub-style contribution graph and the 7-day trend line.</figcaption></figure>
+  <figure><div class="phone"><div class="screen"><div class="body" id="p2"></div><nav class="tabs"></nav></div></div>
+    <figcaption><b>02 · profile (stats, scrolled)</b>. Branch table (done % in range), weekday bars with "your hard day", time of day, records.</figcaption></figure>
+  <figure><div class="phone"><div class="screen"><div class="body" id="p3"></div><nav class="tabs"></nav></div></div>
+    <figcaption><b>03 · profile (bottom)</b>. Settings moved here from branches (<code>git config --list</code>), data, devices (<code>git remote -v</code>), about.</figcaption></figure>
+  <figure><div class="phone"><div class="screen"><div class="body" id="p4"></div><nav class="tabs"></nav>
+      <div class="scrim"></div><div class="sheet" id="s4"></div></div></div>
+    <figcaption><b>04 · backups sheet</b>. Phase A: local backups with backup now, download, restore. Phase B (later): remotes, encrypted. Folder first — iCloud / Syncthing folders give cloud with no keys.</figcaption></figure>
+  <figure><div class="phone"><div class="screen"><div class="body" id="p5"></div><nav class="tabs"></nav>
+      <div class="scrim"></div><div class="sheet" id="s5"></div></div></div>
+    <figcaption><b>05 · edit identity</b>. Name and avatar only. Emoji or initials, no photo upload (nothing to store, nothing to leak).</figcaption></figure>
+</main>
+
+<script>
+const TABS = [
+  ['status', '<circle cx="12" cy="12" r="4"/><path d="M12 2v6M12 16v6"/>'],
+  ['log', '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-12 2-12 6"/>'],
+  ['branches', '<path d="M4 6h16M4 12h16M4 18h10"/>'],
+  ['profile', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'],
+];
+document.querySelectorAll('.tabs').forEach(n => n.innerHTML = TABS.map(([t, p]) => `<span class="tab ${t === 'profile' ? 'on' : ''}"><svg viewBox="0 0 24 24">${p}</svg>${t}</span>`).join(''));
+
+// ---- fake history: 365 days, done fraction per day (today = last) ----
+let seed = 9; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const N = 365;
+const hist = Array.from({ length: N }, (_, i) => {
+  const ramp = Math.min(1, .45 + i / 260); // getting better over time
+  const sat = ((i + 1) % 7) === 5; // weekday pattern: saturdays are hard
+  let p = Math.min(1, Math.max(0, ramp + (rnd() - .5) * .5 - (sat ? .25 : 0)));
+  if (i < 18) p = 0; // before the first commit
+  return Math.round(p * 9) / 9;
+});
+hist[N - 1] = 6 / 9;
+const lvl = p => p >= 1 ? 4 : p >= .75 ? 3 : p >= .5 ? 2 : p > 0 ? 1 : 0;
+const RANGES = { '30d': 30, '90d': 91, '1y': 364, all: 347 };
+let range = '90d';
+
+const BR = [['walk', 1, 25, 214], ['read', 2, 29, 201], ['water', 6, 28, 230], ['meditate', 8, 27, 188], ['journal', 5, 25, 170], ['no-sugar', 7, 24, 160], ['stretch', 3, 20, 151], ['sleep-11', 10, 29, 142], ['gym', 4, 12, 88], ['guitar', 9, 8, 61]];
+
+function rangeChips(id) {
+  return `<span class="range">${Object.keys(RANGES).map(r => `<button data-r="${r}" class="${r === range ? 'on' : ''}">${r}</button>`).join('')}</span>`;
+}
+
+function heatHTML() {
+  const days = RANGES[range];
+  const slice = hist.slice(-days);
+  // Align to weeks: today is a Monday in this mock, so it sits in row 0 of the last column.
+  const pad = ((1 - slice.length) % 7 + 7) % 7; // today (a Monday) lands in row 0 of the last week
+  const cells = [...Array(pad).fill(null), ...slice];
+  while (cells.length % 7) cells.push(undefined);
+  const html = cells.map((p, i) => p === null ? '<i class="f"></i>' : p === undefined ? '<i class="f"></i>' : `<i class="l${lvl(p)} ${i === pad + slice.length - 1 ? 't' : ''}" title="${Math.round(p * 100)}%"></i>`).join('');
+  const clean = slice.filter(p => p >= 1).length;
+  // Short ranges grow the squares to fill the card; long ranges scroll sideways from today.
+  const cols = cells.length / 7, room = 244;
+  const cs = Math.max(13, Math.min(22, Math.floor((room - (cols - 1) * 3) / cols)));
+  return `<div class="card" style="--cs:${cs}px"><div class="heat-wrap"><div class="wd"><span>m</span><span></span><span>w</span><span></span><span>f</span><span></span><span>s</span></div>
+    <div class="heat"><div class="g">${html}</div></div></div>
+    <div class="foot"><span>${clean} clean days in ${range}</span><span class="scale">less ${[0, 1, 2, 3, 4].map(l => `<i style="background:${['var(--surface-2)', 'color-mix(in srgb, var(--ok) 28%, var(--surface-2))', 'color-mix(in srgb, var(--ok) 52%, var(--surface-2))', 'color-mix(in srgb, var(--ok) 76%, var(--surface-2))', 'var(--ok)'][l]}"></i>`).join('')} more</span></div></div>`;
+}
+
+function trendHTML() {
+  const days = RANGES[range];
+  const slice = hist.slice(-days - 6);
+  const roll = slice.slice(6).map((_, i) => slice.slice(i, i + 7).reduce((a, b) => a + b, 0) / 7);
+  const W = 300, H = 90, n = roll.length;
+  const pts = roll.map((p, i) => [i / (n - 1) * W, H - p * H]);
+  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+  const now = roll[n - 1], then = roll[0];
+  return `<div class="card trend"><div class="trend-top"><span class="v">${Math.round(now * 100)}%</span><span class="d">${now >= then ? '▲' : '▼'} ${Math.abs(Math.round((now - then) * 100))} pts vs ${range} ago</span></div>
+    <svg viewBox="0 0 ${W} ${H + 14}">
+      <defs><linearGradient id="tg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--ok)" stop-opacity=".28"/><stop offset="1" stop-color="var(--ok)" stop-opacity="0"/></linearGradient></defs>
+      ${[0, .5, 1].map(y => `<line x1="0" x2="${W}" y1="${H - y * H}" y2="${H - y * H}" stroke="var(--line)" stroke-dasharray="3 4"/>`).join('')}
+      <path d="${d} L${W} ${H} L0 ${H} Z" fill="url(#tg)"/>
+      <path d="${d}" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle cx="${pts[n - 1][0]}" cy="${pts[n - 1][1]}" r="4" fill="var(--ok)"/>
+      <text class="ax" x="0" y="${H + 12}">${range} ago</text><text class="ax" x="${W}" y="${H + 12}" text-anchor="end">today</text>
+    </svg></div>`;
+}
+
+function p1() {
+  const el = document.getElementById('p1');
+  el.innerHTML = `
+    <div class="cmd">$ git config user.name</div>
+    <div class="h1">profile</div>
+    <button class="me" style="width:100%"><span class="av">🦉</span><span><div class="nm">noor</div><div class="git">committing since <b>06 nov 2025</b><br>347 days · 10 branches</div></span></button>
+    <div class="kpis">
+      <div class="kpi"><div class="v">1,605</div><div class="k">commits</div></div>
+      <div class="kpi"><div class="v">29d</div><div class="k">best now</div></div>
+      <div class="kpi"><div class="v">4</div><div class="k">tags</div></div>
+    </div>
+    <div class="sect"><b>activity</b>${rangeChips()}</div>
+    ${heatHTML()}
+    <div class="sect"><b>7-day trend</b><span>done %</span></div>
+    ${trendHTML()}`;
+  el.querySelectorAll('.range button').forEach(b => b.onclick = () => { range = b.dataset.r; p1(); });
+}
+
+function p2() {
+  const wk = [.86, .9, .88, .84, .8, .58, .72];
+  const hours = [0, 0, 0, 0, 0, 1, 6, 14, 18, 9, 4, 3, 5, 3, 2, 3, 4, 6, 8, 5, 4, 7, 10, 3];
+  const mx = Math.max(...hours);
+  const low = wk.indexOf(Math.min(...wk));
+  document.getElementById('p2').innerHTML = `
+    <div class="sect" style="margin-top:4px"><b>branches</b>${rangeChips()}</div>
+    <div class="card"><div class="bh"><span>branch · streak</span><span>done %</span><span></span></div><div class="bt">
+      ${BR.map(([s, l, st, t], i) => { const p = [.97, .95, .96, .9, .88, .86, .83, .8, .71, .62][i]; return `<div class="br" style="--c:var(--l${l})"><span class="n"><i></i>${s}<small>${st}d</small></span><span class="bar"><i style="width:${p * 100}%"></i></span><span class="p">${Math.round(p * 100)}%</span></div>`; }).join('')}
+    </div></div>
+    <div class="sect"><b>weekdays</b><span>done %</span></div>
+    <div class="card"><div class="wk">${wk.map((p, i) => `<div class="c ${i === low ? 'low' : ''}"><span class="b" style="height:${p * 100}%"></span><span>${['m', 't', 'w', 't', 'f', 's', 's'][i]}</span></div>`).join('')}</div>
+      <div class="insight">your hard day: <b>saturday</b> (58%)</div></div>
+    <div class="sect"><b>time of day</b><span>commits</span></div>
+    <div class="card"><div class="hrs">${hours.map((h, i) => `<i class="${h === mx ? 'pk' : ''}" style="height:${h / mx * 100}%"></i>`).join('')}</div>
+      <div class="hlbl"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+      <div class="insight">you commit most at <b>07–09</b></div></div>
+    <div class="sect"><b>records</b></div>
+    <div class="rows">
+      <div class="row"><span>longest streak</span><span class="v"><b>41d</b> · read<br><small>may → jun 2026</small></span></div>
+      <div class="row"><span>longest clean run</span><span class="v"><b>12 days</b></span></div>
+      <div class="row"><span>first commit</span><span class="v"><b>06 nov 2025</b> · walk</span></div>
+      <div class="row"><span>rest days used</span><span class="v"><b>38</b></span></div>
+      <div class="row"><span>misses · rebases</span><span class="v"><b>112</b> · 9</span></div>
+      <div class="row"><span>tags earned</span><span class="v"><b>v0.1.0 ×10 · v1.0.0 ×6 · v2.0.0 ×1</b></span></div>
+    </div>`;
+}
+
+function p3() {
+  document.getElementById('p3').innerHTML = `
+    <div class="sect" style="margin-top:4px"><b>settings</b><span>git config --list</span></div>
+    <div class="rows">
+      <div class="row"><span>theme</span><span class="chips"><span class="chip on">terminal</span><span class="chip">bathory</span><span class="chip">gruvbox</span><span class="chip">paper</span></span></div>
+      <div class="row"><span>log view <small>· this device</small></span><span class="chips"><span class="chip on">normal</span><span class="chip">compact</span></span></div>
+      <div class="row"><span>day starts</span><span class="v">04:00</span></div>
+      <div class="row"><span>time zone</span><span class="v">Asia/Kolkata</span></div>
+      <div class="row"><span>reminders <small>· all devices</small></span><i class="sw on"></i></div>
+      <div class="row"><span>evening summary</span><span class="v">21:30</span></div>
+      <div class="row"><span>notifications <small>· this device</small></span><span class="v" style="color:var(--ok)">on ✓</span></div>
+    </div>
+    <div class="sect"><b>data</b></div>
+    <div class="rows">
+      <div class="row"><span>export json</span><span class="v">↓</span></div>
+      <div class="row"><span>import json <small>· replaces data</small></span><span class="v">↑</span></div>
+      <div class="row"><span>backups</span><span class="v">14 local · last 03:00 ›</span></div>
+    </div>
+    <div class="sect"><b>devices</b><span>git remote -v</span></div>
+    <div class="rows">
+      <div class="row dev"><span class="ic">📱</span><span class="t">iphone <span class="tagme">this device</span><small>last seen now</small></span><span></span></div>
+      <div class="row dev"><span class="ic">💻</span><span class="t">browser<small>last seen 2 days ago</small></span><span class="x">remove</span></div>
+      <div class="row"><span>pair device</span><span class="v">code ›</span></div>
+    </div>
+    <div class="sect"><b>about</b></div>
+    <div class="rows">
+      <div class="row"><span>version</span><span class="v">v0.5.0 · 3f9c1e2</span></div>
+      <div class="row"><span>source</span><span class="v">github.com/…/reflog.day</span></div>
+      <div class="row"><span>licence · credits</span><span class="v">MIT ›</span></div>
+    </div>`;
+}
+
+function sheets() {
+  document.getElementById('p4').innerHTML = document.getElementById('p3').innerHTML;
+  document.getElementById('s4').innerHTML = `
+    <div class="grab"></div><div class="cmd">$ git stash list</div><h2>backups</h2>
+    <div class="card" style="padding:4px 14px">
+      <div class="bk"><span>19 oct · 03:00<span class="kind">daily</span></span><span class="acts"><span>↓</span><span>restore</span></span><small>412 KB</small></div>
+      <div class="bk"><span>18 oct · 21:14<span class="kind">pre-import</span></span><span class="acts"><span>↓</span><span>restore</span></span><small>409 KB</small></div>
+      <div class="bk"><span>18 oct · 03:00<span class="kind">daily</span></span><span class="acts"><span>↓</span><span>restore</span></span><small>407 KB</small></div>
+      <div class="bk"><span>+11 older</span><span class="acts"><span>keep 14 ▾</span></span><small>daily, kept 14</small></div>
+    </div>
+    <div style="height:10px"></div>
+    <button class="btn ok">backup now</button>
+    <div class="sect"><b>remotes</b><span>git remote add backup …</span></div>
+    <div class="card" style="padding:4px 14px">
+      <div class="remote"><span class="ic">📁</span><span>folder<br><small style="color:var(--dim);font-size:10px">iCloud / Syncthing / disk</small></span><span class="soon">phase B</span></div>
+      <div class="remote"><span class="ic">🪣</span><span>s3 · r2 · b2</span><span class="soon">phase B</span></div>
+      <div class="remote"><span class="ic">☁</span><span>webdav</span><span class="soon">phase B</span></div>
+      <div class="remote"><span class="ic">⑂</span><span>git remote</span><span class="soon">phase B</span></div>
+    </div>
+    <div class="note">Remote backups are encrypted (AES-256-GCM) before they leave this machine. Keys never go in exports or git.</div>`;
+  document.getElementById('p5').innerHTML = document.getElementById('p1').innerHTML;
+  document.getElementById('s5').innerHTML = `
+    <div class="grab"></div><div class="cmd">$ git config --global user.name</div><h2>edit profile</h2>
+    <div class="inp"><span>noor</span><small>4/24</small></div>
+    <div class="sect" style="margin:16px 2px 4px"><b>avatar</b><span>emoji or initials</span></div>
+    <div class="avs">${['🦉', '🐙', '🦊', '🌱', '⚡', 'NS'].map((a, i) => `<span class="${i === 0 ? 'on' : ''}" style="${a === 'NS' ? 'font-family:var(--font-mono);font-size:15px;font-weight:600' : ''}">${a}</span>`).join('')}</div>
+    <button class="btn ok">save</button>`;
+}
+
+p1(); p2(); p3(); sheets();
+document.getElementById('tbar').addEventListener('click', e => {
+  const b = e.target.closest('.tbtn'); if (!b) return;
+  document.querySelectorAll('.tbtn').forEach(x => x.classList.toggle('on', x === b));
+  document.body.className = b.dataset.t;
+});
+</script>
+</body>
+</html>
