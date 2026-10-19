@@ -3,9 +3,10 @@
   import { untrack } from 'svelte';
   import { clock, daysText } from '../lib/format.ts';
 
-  let { habit, pending = false, ontap, onlong }: {
+  let { habit, pending = false, lit = false, ontap, onlong }: {
     habit: HabitView;
     pending?: boolean;
+    lit?: boolean;
     ontap: (h: HabitView) => void;
     onlong: (h: HabitView) => void;
   } = $props();
@@ -60,7 +61,7 @@
 </script>
 
 <button
-  class="row" class:pressed data-state={state} style:--c="var(--l{habit.lane})" aria-label="{habit.slug}, {state}"
+  class="row" class:pressed class:lit data-state={state} style:--c="var(--l{habit.lane})" aria-label="{habit.slug}, {state}"
   onclick={tap} onpointerdown={down} onpointerup={() => clearTimeout(pressTimer)} onpointerleave={cancel} onpointercancel={cancel} onpointermove={move}
   oncontextmenu={e => e.preventDefault()}
 >
@@ -89,6 +90,8 @@
     box-shadow: inset 0 0 0 1px var(--edge); text-align: left; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
     transition: transform .12s var(--ease), background .2s;
   }
+  .row.lit { animation: lit 1.2s var(--ease) 2; }
+  @keyframes lit { 50% { box-shadow: inset 0 0 0 2px var(--c), 0 0 24px -6px var(--c); } }
   .row.pressed { transform: scale(.97); background: var(--surface-2); transition: transform .45s var(--ease), background .2s; }
   .row:active { transform: scale(.98); background: var(--surface-2); }
   .row:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }

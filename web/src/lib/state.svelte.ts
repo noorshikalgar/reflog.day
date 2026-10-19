@@ -13,6 +13,8 @@ export const app = $state({
   show: null as string | null,
   /** Branch id to open in the editor on the branches tab. */
   editId: null as string | null,
+  /** Branch slug to light up on `status` (from a notification tap). */
+  focus: null as string | null,
   today: null as TodayView | null,
 });
 

@@ -10,6 +10,14 @@
 
   refresh();
 
+  // A notification tap opens /?focus=<slug>. Light that row once, then clean the URL.
+  const focus = new URL(location.href).searchParams.get('focus');
+  if (focus) {
+    app.focus = focus;
+    history.replaceState(null, '', '/');
+    setTimeout(() => (app.focus = null), 2600);
+  }
+
   $effect(() => {
     const onVis = () => document.visibilityState === 'visible' && refresh();
     const onOnline = () => refresh();

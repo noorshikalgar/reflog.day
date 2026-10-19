@@ -33,5 +33,9 @@ export const api = {
     call<{ entry: Entry; habit: HabitView }>('PUT', `/api/entries/${id}`, body),
   deleteEntry: (id: string) => call<{ habit: HabitView }>('DELETE', `/api/entries/${id}`),
   missesSeen: (ids: string[]) => call<{ ok: true }>('POST', '/api/misses/seen', { ids }),
+  pushKey: () => call<{ key: string; subscriptions: number }>('GET', '/api/push/key'),
+  pushSubscribe: (subscription: PushSubscriptionJSON, device: string) => call<{ ok: true; subscriptions: number }>('POST', '/api/push/subscribe', { subscription, device }),
+  pushUnsubscribe: (endpoint: string) => call<{ ok: true; subscriptions: number }>('DELETE', '/api/push/subscribe', { endpoint }),
+  pushTest: () => call<{ sent: number }>('POST', '/api/push/test'),
   patchSettings: (s: Partial<Settings>) => call<Settings>('PATCH', '/api/settings', s),
 };
