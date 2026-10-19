@@ -3,6 +3,7 @@
   import Sheet from '../components/Sheet.svelte';
   import { api } from '../lib/api.ts';
   import { daysText } from '../lib/format.ts';
+  import { disablePush, enablePush, pushState, type PushState } from '../lib/push.ts';
   import { app, applyTheme, refresh, showToast } from '../lib/state.svelte.ts';
 
   const MAX = 12;
@@ -27,6 +28,36 @@
   let busy = $state(false);
 
   let pairCode = $state<{ code: string; expires_at: string } | null>(null);
+
+  let push = $state<PushState | null>(null);
+  let pushBusy = $state(false);
+  const PUSH_TEXT: Record<PushState, string> = {
+    on: 'on ✓', off: 'enable', denied: 'blocked', unsupported: 'not supported', install: 'add to home screen first', 'no-sw': 'built app only',
+  };
+  pushState().then(s => (push = s));
+
+  async function togglePush() {
+    if (pushBusy || (push !== 'on' && push !== 'off')) return;
+    pushBusy = true;
+    try {
+      if (push === 'on') { await disablePush(); showToast('notifications off on this device.', null, 3000); }
+      else { await enablePush(); showToast('notifications on. git push incoming.', null, 3000); }
+    } catch (err) {
+      showToast((err as Error).message, null, 4000);
+    } finally {
+      push = await pushState();
+      pushBusy = false;
+    }
+  }
+
+  async function testPush() {
+    try {
+      const { sent } = await api.pushTest();
+      showToast(sent ? `sent to ${sent} device${sent > 1 ? 's' : ''}.` : 'no device subscribed.', null, 3000);
+    } catch (err) {
+      showToast((err as Error).message, null, 4000);
+    }
+  }
 
   async function load() {
     habits = await api.habits();
@@ -158,6 +189,18 @@
           {#each [0, 1, 2, 3, 4, 5, 6] as hr (hr)}<option value={hr}>0{hr}:00</option>{/each}
         </select>
       </label>
+      <button class="set" onclick={togglePush} disabled={pushBusy}>
+        <span>notifications <span class="dim">· this device</span></span>
+        <span class="val" class:on={push === 'on'}>{push ? PUSH_TEXT[push] : '…'}</span>
+      </button>
+      {#if push === 'on'}
+        <button class="set" onclick={testPush}><span>send test push</span><span class="val">›</span></button>
+      {/if}
+      <label class="set">
+        <span>reminders <span class="dim">· all devices</span></span>
+        <input type="checkbox" class="sr" checked={settings.push_enabled} onchange={e => setSetting({ push_enabled: e.currentTarget.checked })} />
+        <i class="sw" class:on={settings.push_enabled} aria-hidden="true"></i>
+      </label>
       <label class="set">
         <span>evening summary</span>
         <input type="time" value={settings.evening_at} onchange={e => setSetting({ evening_at: e.currentTarget.value })} />
@@ -231,6 +274,14 @@
   .n { font-size: 16px; }
   .days { display: block; font-size: 10px; color: var(--dim); margin-top: 3px; letter-spacing: 2px; }
   .r, .val { font-size: 12px; color: var(--muted); }
+  .val.on { color: var(--ok); }
+  .dim { color: var(--dim); font-size: 11px; }
+  .set { position: relative; }
+  .sr { position: absolute; right: 18px; width: 46px; height: 28px; opacity: 0; margin: 0; cursor: pointer; }
+  .sw { width: 46px; height: 28px; border-radius: 14px; background: var(--line); position: relative; pointer-events: none; transition: background .2s; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: left .2s var(--ease); }
+  .sw.on { background: var(--ok); }
+  .sw.on::after { left: 21px; }
   .code { font-size: 18px; color: var(--ok); letter-spacing: .2em; }
   .link { font-family: var(--font-mono); font-size: 12px; color: var(--ok); }
   .add { margin: 12px 0 8px; width: 100%; height: 56px; border-radius: 18px; border: 1.5px dashed var(--line); font-family: var(--font-mono); color: var(--muted); font-size: 14px; }

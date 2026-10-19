@@ -3,6 +3,7 @@ import { Pairing } from '../src/auth.ts';
 import { createApp } from '../src/app.ts';
 import { openDb } from '../src/db.ts';
 import { Store } from '../src/store.ts';
+import { Push, type PushPayload, type Sender } from '../src/push.ts';
 import { uuidv7 } from '../../shared/src/ids.ts';
 import type { HabitView, TodayView } from '../../shared/src/api.ts';
 
@@ -13,6 +14,10 @@ const at = (iso: string) => { now = new Date(iso); };
 let store: Store;
 let pairing: Pairing;
 let app: ReturnType<typeof createApp>;
+let push: Push;
+let sent: { endpoint: string; payload: PushPayload }[] = [];
+let gone = new Set<string>();
+const fakeSender: Sender = async (sub, payload) => { if (gone.has(sub.endpoint)) return false; sent.push({ endpoint: sub.endpoint, payload }); return true; };
 let cookie = '';
 
 async function req<T = any>(method: string, path: string, body?: unknown): Promise<{ status: number; json: T }> {
@@ -43,7 +48,10 @@ beforeEach(async () => {
   store = new Store(db, () => now);
   store.patchSettings({ tz: 'Asia/Kolkata', day_start_hour: 4 });
   pairing = new Pairing(db, () => now.getTime());
-  app = createApp(store, pairing);
+  push = new Push(store, fakeSender, 'https://reflog.day');
+  sent = [];
+  gone = new Set();
+  app = createApp(store, pairing, push);
   cookie = '';
 });
 
@@ -283,5 +291,67 @@ describe('branch detail', () => {
     expect(json.grid[0].state).toBe('none');
     expect(json).toMatchObject({ total: 2, streak: 2, week: { complete: 2, scheduled: 7 }, next_tag: { name: 'v0.1.0', to_go: 5 } });
     expect((await req('GET', '/api/habits/nope')).status).toBe(404);
+  });
+});
+
+describe('push', () => {
+  const sub = (n: number) => ({ subscription: { endpoint: `https://push.example/${n}`, keys: { p256dh: 'p', auth: 'a' } }, device: 'test' });
+  let water: string;
+  beforeEach(async () => {
+    await pairDevice();
+    water = (await req('POST', '/api/habits', { slug: 'water', remind_at: '10:00' })).json.id;
+    await req('POST', '/api/habits', { slug: 'read' });
+    store.patchSettings({ evening_at: '21:30' });
+  });
+
+  it('makes a VAPID key once and keeps it', async () => {
+    const a = (await req('GET', '/api/push/key')).json.key;
+    expect(a).toMatch(/^[A-Za-z0-9_-]{80,}$/);
+    expect((await req('GET', '/api/push/key')).json.key).toBe(a);
+  });
+  it('stores and removes subscriptions', async () => {
+    expect((await req('POST', '/api/push/subscribe', sub(1))).json.subscriptions).toBe(1);
+    expect((await req('POST', '/api/push/subscribe', sub(1))).json.subscriptions).toBe(1);
+    expect((await req('POST', '/api/push/subscribe', { subscription: { endpoint: 'http://x' } })).status).toBe(400);
+    expect((await req('DELETE', '/api/push/subscribe', { endpoint: 'https://push.example/1' })).json.subscriptions).toBe(0);
+  });
+  it('sends a reminder once, inside the window, only for open branches', async () => {
+    await req('POST', '/api/push/subscribe', sub(1));
+    at('2026-10-19T04:00:00Z'); // 09:30 IST
+    await push.tick();
+    expect(sent).toHaveLength(0);
+    at('2026-10-19T04:35:00Z'); // 10:05 IST
+    await push.tick();
+    await push.tick();
+    expect(sent.map(s => s.payload.body)).toEqual(['water has uncommitted changes.']);
+    expect(sent[0].payload).toMatchObject({ tag: 'remind-water', slug: 'water' });
+  });
+  it('does not remind a committed branch', async () => {
+    await req('POST', '/api/push/subscribe', sub(1));
+    await commit(water);
+    at('2026-10-19T04:31:00Z');
+    await push.tick();
+    expect(sent).toHaveLength(0);
+  });
+  it('sends one evening summary with the open count', async () => {
+    await req('POST', '/api/push/subscribe', sub(1));
+    at('2026-10-19T16:00:00Z'); // 21:30 IST
+    await push.tick();
+    await push.tick();
+    expect(sent.map(s => s.payload.body)).toEqual(['2 branches behind. 1 tap each.']);
+  });
+  it('respects the global switch', async () => {
+    await req('POST', '/api/push/subscribe', sub(1));
+    await req('PATCH', '/api/settings', { push_enabled: false });
+    at('2026-10-19T04:31:00Z');
+    await push.tick();
+    expect(sent).toHaveLength(0);
+  });
+  it('drops subscriptions that are gone', async () => {
+    await req('POST', '/api/push/subscribe', sub(1));
+    await req('POST', '/api/push/subscribe', sub(2));
+    gone.add('https://push.example/1');
+    expect((await req('POST', '/api/push/test')).json.sent).toBe(1);
+    expect(push.count()).toBe(1);
   });
 });

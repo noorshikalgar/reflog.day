@@ -53,6 +53,13 @@ export function localClock(at: Date, tz: string): { date: string; hm: string; ho
   return { date: `${parts.year}-${parts.month}-${parts.day}`, hm: `${parts.hour}:${parts.minute}`, hour: Number(parts.hour) };
 }
 
+/** 'HH:MM' plus minutes. Does not wrap at midnight, so '23:50' + 30 = '24:20' (still compares above '23:59'). */
+export function addMinutes(hm: string, n: number): string {
+  const [h, m] = hm.split(':').map(Number);
+  const t = h * 60 + m + n;
+  return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
+
 /** The logical day of an instant. The day starts at `startHour` local time, not at midnight. */
 export function logicalDay(at: Date, tz: string, startHour: number): string {
   return localClock(new Date(at.getTime() - startHour * 36e5), tz).date;

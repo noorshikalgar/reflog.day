@@ -103,7 +103,7 @@
     <Strip days={strip} />
     <div class="rows">
       {#each rows as h (h.id)}
-        <BranchRow habit={h} pending={pending.has(h.id)} ontap={x => commit(x)} onlong={x => (sheetFor = x)} />
+        <BranchRow habit={h} pending={pending.has(h.id)} lit={app.focus === h.slug} ontap={x => commit(x)} onlong={x => (sheetFor = x)} />
       {/each}
     </div>
   {:else}

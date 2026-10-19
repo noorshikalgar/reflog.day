@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, bestStreak, dayStats, nextTag, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
+  addDays, addMinutes, bestStreak, dayStats, nextTag, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
   patina, restLeftThisWeek, streak, tagFor, weekday, EVERY_DAY, type Kind,
 } from '../src/rules.ts';
 
@@ -24,6 +24,14 @@ describe('calendar helpers', () => {
   it('labels ISO weeks', () => {
     expect(isoWeekLabel('2026-10-19')).toBe('v2026.43');
     expect(isoWeekLabel('2027-01-01')).toBe('v2026.53');
+  });
+});
+
+describe('addMinutes', () => {
+  it('adds without wrapping at midnight', () => {
+    expect(addMinutes('10:00', 30)).toBe('10:30');
+    expect(addMinutes('09:45', 30)).toBe('10:15');
+    expect(addMinutes('23:50', 30)).toBe('24:20');
   });
 });
 

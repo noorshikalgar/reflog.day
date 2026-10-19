@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { Pairing } from './auth.ts';
 import { createApp } from './app.ts';
 import { openDb } from './db.ts';
+import { Push } from './push.ts';
 import { startScheduler } from './scheduler.ts';
 import { Store } from './store.ts';
 
@@ -17,14 +18,15 @@ mkdirSync(DATA, { recursive: true });
 const db = openDb(join(DATA, 'reflog.db'));
 const store = new Store(db);
 const pairing = new Pairing(db);
-const app = createApp(store, pairing);
+const push = new Push(store);
+const app = createApp(store, pairing, push);
 
 // Built web app. The service worker must not be cached by the browser.
 app.use('/sw.js', async (c, next) => { await next(); c.header('Cache-Control', 'no-cache'); });
 app.use('/*', serveStatic({ root: WEB }));
 app.get('*', serveStatic({ root: WEB, path: 'index.html' }));
 
-startScheduler(store, DATA);
+startScheduler(store, push, DATA);
 
 serve({ fetch: app.fetch, port: PORT, hostname: HOST }, info => {
   console.log(`reflog on http://${HOST}:${info.port}  (data: ${DATA})`);

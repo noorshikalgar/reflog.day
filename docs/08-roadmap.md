@@ -30,7 +30,7 @@ Goal: log habits on the phone every day. Status: steps 1–8 done. Step 9 needs 
 4. Add milestone tags and the "working tree clean" effect.
 5. Add the `show <branch>` screen with the 12-week grid.
 
-## Phase 3 — Notifications (v0.3)
+## Phase 3 — Notifications (v0.3) — done (real-device test pending)
 
 1. Generate VAPID keys at first start. Store them in `setting`.
 2. Add subscribe and unsubscribe routes.

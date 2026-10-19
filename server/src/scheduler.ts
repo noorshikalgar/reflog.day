@@ -1,12 +1,13 @@
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { localClock } from '../../shared/src/rules.ts';
+import type { Push } from './push.ts';
 import type { Store } from './store.ts';
 
 const KEEP_BACKUPS = 14;
 
-/** One tick each minute: rollover misses, daily backup. Push reminders come in phase 3. */
-export function startScheduler(store: Store, dataDir: string) {
+/** One tick each minute: rollover misses, push reminders, daily backup. */
+export function startScheduler(store: Store, push: Push, dataDir: string) {
   const backups = join(dataDir, 'backups');
   mkdirSync(backups, { recursive: true });
 
@@ -14,6 +15,7 @@ export function startScheduler(store: Store, dataDir: string) {
     try {
       const n = store.rollover();
       if (n) console.log(`rollover: ${n} miss rows`);
+      push.tick().catch(e => console.error('push', e));
       const { date, hour } = localClock(store.now(), store.settings().tz);
       if (hour >= 3 && store.get('last_backup') !== date) {
         store.db.exec(`VACUUM INTO '${join(backups, `reflog-${date}.db`).replaceAll("'", "''")}'`);

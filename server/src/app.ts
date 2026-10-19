@@ -1,11 +1,12 @@
 import { Hono } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
 import type { Pairing } from './auth.ts';
+import type { Push } from './push.ts';
 import { HttpError, type Store } from './store.ts';
 
 const COOKIE = 'rl_dev';
 
-export function createApp(store: Store, pairing: Pairing) {
+export function createApp(store: Store, pairing: Pairing, push: Push) {
   const app = new Hono();
 
   app.onError((err, c) => {
@@ -52,6 +53,22 @@ export function createApp(store: Store, pairing: Pairing) {
     const { ids } = await c.req.json<{ ids?: string[] }>();
     store.markMissesSeen(Array.isArray(ids) ? ids.map(String) : []);
     return c.json({ ok: true });
+  });
+
+  app.get('/api/push/key', c => c.json({ key: push.vapid().publicKey, subscriptions: push.count() }));
+  app.post('/api/push/subscribe', async c => {
+    const body = await c.req.json<{ subscription: Parameters<Push['subscribe']>[0]; device?: string }>();
+    push.subscribe(body.subscription, body.device ?? null);
+    return c.json({ ok: true, subscriptions: push.count() });
+  });
+  app.delete('/api/push/subscribe', async c => {
+    const { endpoint } = await c.req.json<{ endpoint?: string }>();
+    push.unsubscribe(String(endpoint ?? ''));
+    return c.json({ ok: true, subscriptions: push.count() });
+  });
+  app.post('/api/push/test', async c => {
+    const sent = await push.broadcast({ title: 'reflog', body: 'test push. working tree clean.', tag: 'test' });
+    return c.json({ sent });
   });
 
   app.get('/api/settings', c => c.json(store.settings()));
