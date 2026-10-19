@@ -37,8 +37,8 @@ Open [mockups/index.html](mockups/index.html) in a browser. The "Today" phone is
 
 ## Credits
 
-- The `bathory` theme uses colors from [black-metal-theme-neovim](https://github.com/metalelf0/black-metal-theme-neovim) by metalelf0 (MIT).
-- The `gruvbox` theme uses colors from [gruvbox](https://github.com/morhetz/gruvbox) by morhetz (MIT).
+- The `bathory` theme uses colors from [black-metal-theme-neovim](https://github.com/metalelf0/black-metal-theme-neovim) by metalelf0 (Apache-2.0).
+- The `gruvbox` theme uses colors from [gruvbox](https://github.com/morhetz/gruvbox) by morhetz. Only the color values are used.
 
 ## License
 
