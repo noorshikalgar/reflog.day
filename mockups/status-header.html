@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Status header options</title>
+<style>
+:root {
+  --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #06070a; color: #e7e9ee; font-family: system-ui, sans-serif; }
+body { padding: 32px 16px 80px; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+.page-head { max-width: 1240px; margin: 0 auto 20px; font-family: var(--font-mono); }
+.page-head h1 { font-family: var(--font-display); font-weight: 300; font-size: 40px; letter-spacing: -.03em; }
+.page-head h1 b { color: #3ddc97; font-weight: 500; }
+.page-head p { color: #8b92a1; font-size: 13px; margin-top: 8px; line-height: 1.6; max-width: 820px; }
+.page-head code { color: #c3e88d; }
+.tbar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0 auto 32px; position: sticky; top: 0; z-index: 9; padding: 10px 0; background: color-mix(in srgb, #06070a 85%, transparent); backdrop-filter: blur(10px); }
+.tbtn { font-family: var(--font-mono); font-size: 13px; padding: 10px 16px; border-radius: 14px; background: #12151c; color: #8b92a1; }
+.tbtn.on { background: #e7e9ee; color: #0b0d12; }
+.grid { display: flex; flex-wrap: wrap; gap: 48px 36px; justify-content: center; max-width: 1240px; margin: 0 auto; }
+figure { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+figcaption { font-family: var(--font-mono); font-size: 12px; color: #8b92a1; max-width: 340px; line-height: 1.55; }
+figcaption b { color: #e7e9ee; font-weight: 500; }
+figcaption .pro { color: #3ddc97; } figcaption .con { color: #ff8a80; }
+
+/* tokens (copied from web/src/lib/theme.css) */
+.phone {
+  --bg:#0b0d12; --surface:#12151c; --surface-2:#1a1e28; --line:#252a36; --text:#e7e9ee; --muted:#8b92a1; --dim:#788092;
+  --ok:#3ddc97; --on-ok:#05130c; --rest:#f2b84b; --miss:#798194;
+  --l1:#3ddc97; --l2:#4cc9f0; --l3:#a78bfa; --l4:#ff9f5a; --l5:#f472b6; --l6:#6ea8ff; --l7:#c3e88d; --l8:#2dd4bf; --l9:#ff8a80; --l10:#b8c4d8;
+  width: min(360px, calc(100vw - 32px)); height: 720px; border-radius: 46px; padding: 10px; background: #1b1d22; box-shadow: 0 0 0 1px #2c2f36, 0 30px 80px -20px rgba(0,0,0,.8);
+}
+body.bathory .phone { --bg:#000; --surface:#0e0e0e; --surface-2:#222; --line:#222; --text:#f1f1f1; --muted:#999; --dim:#7c7c7c; --ok:#fbcb97; --on-ok:#000; --rest:#e78a43; --miss:#7d7d7d;
+  --l1:#fbcb97; --l2:#e78a43; --l3:#5f8787; --l4:#c1c1c1; --l5:#9b99a3; --l6:#d9a679; --l7:#8fb3b3; --l8:#aaa; --l9:#b5776a; --l10:#888; background:#141414; }
+body.gruvbox .phone { --bg:#282828; --surface:#32302f; --surface-2:#3c3836; --line:#504945; --text:#ebdbb2; --muted:#bdae93; --dim:#a3978c; --ok:#b8bb26; --on-ok:#1d2021; --rest:#fabd2f; --miss:#a4978b;
+  --l1:#b8bb26; --l2:#83a598; --l3:#d3869b; --l4:#fe8019; --l5:#8ec07c; --l6:#56a6aa; --l7:#a1a01b; --l8:#74a576; --l9:#c489a4; --l10:#f17626; background:#1d2021; }
+body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#dcdad2; --text:#1a1d24; --muted:#4f5562; --dim:#686f7a; --ok:#117d4e; --on-ok:#fff; --rest:#966319; --miss:#666d7e;
+  --l1:#107d4e; --l2:#0a769c; --l3:#6d4fd8; --l4:#b25210; --l5:#c0307a; --l6:#2a5fd0; --l7:#517813; --l8:#0d7a6d; --l9:#c2463c; --l10:#56657e; background:#d9d7d0; }
+.screen { height: 100%; border-radius: 36px; overflow: hidden auto; background: var(--bg); color: var(--text); padding: 46px 20px 20px; position: relative; scrollbar-width: none; }
+.screen::-webkit-scrollbar { display: none; }
+.mono { font-family: var(--font-mono); }
+.top { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.top .sync::before { content: "● "; color: var(--ok); }
+.big { font-family: var(--font-display); font-weight: 200; font-size: 96px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; margin-top: 6px; transition: color .3s; }
+.big .of { color: var(--dim); }
+.state { font-family: var(--font-mono); font-size: 13px; color: var(--muted); line-height: 1.55; margin-top: 6px; min-height: 40px; }
+.state .br { color: var(--ok); }
+.rows { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.row { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: center; height: 60px; padding: 0 16px; border-radius: 18px; background: var(--surface); font-family: var(--font-mono); transition: opacity .3s; }
+.row .n { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 2.5px var(--c); transition: background .3s; }
+.row.done .n { background: var(--c); }
+.row.rest .n { width: 16px; height: 16px; margin-left: 2px; border-radius: 5px; background: var(--rest); box-shadow: none; }
+.row.miss .n { box-shadow: none; border: 1.5px dashed var(--miss); }
+.row .nm { font-size: 15px; }
+.row .r { font-size: 11px; color: var(--dim); text-align: right; }
+.row.done .r { color: var(--c); }
+.row.miss .r { color: var(--miss); font-style: italic; }
+.ro .row { opacity: .92; }
+
+/* peek card (A, B) */
+.peek { overflow: hidden; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s var(--ease); }
+.peek.open { grid-template-rows: 1fr; }
+.peek > div { min-height: 0; }
+.peek .card { margin-top: 12px; background: var(--surface); border-radius: 18px; padding: 12px 14px; font-family: var(--font-mono); font-size: 12px; }
+.peek .card h4 { font-size: 12px; color: var(--muted); font-weight: 500; display: flex; justify-content: space-between; margin-bottom: 6px; }
+.peek .card h4 b { color: var(--text); font-weight: 500; }
+.peek .ln { display: flex; gap: 8px; align-items: center; line-height: 1.9; white-space: nowrap; overflow: hidden; }
+.peek .ln i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex: none; }
+.peek .ln.miss { color: var(--miss); font-style: italic; } .peek .ln.miss i { background: none; box-shadow: inset 0 0 0 1.5px var(--miss); }
+.peek .ln.rest { color: var(--rest); } .peek .ln.rest i { border-radius: 2px; background: var(--rest); }
+.peek .ln .h { color: var(--dim); }
+.peek .act { margin-top: 8px; display: flex; gap: 8px; }
+.chip { font-family: var(--font-mono); font-size: 12px; padding: 8px 12px; border-radius: 10px; background: var(--surface-2); }
+.chip.ok { background: var(--ok); color: var(--on-ok); }
+
+/* A: tappable dots */
+.strip { display: flex; align-items: center; margin-top: 16px; }
+.strip button { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; flex: none; margin: -10px; transition: background .2s; }
+.strip button i { width: 11px; height: 11px; border-radius: 50%; background: var(--ok); transition: transform .25s var(--ease), box-shadow .25s; }
+.strip button i.half { background: none; box-shadow: inset 0 0 0 2px var(--ok); }
+.strip button i.miss { background: none; box-shadow: inset 0 0 0 1.5px var(--miss); }
+.strip button i.open { background: none; box-shadow: inset 0 0 0 2px var(--dim); }
+.strip button.sel i { transform: scale(1.4); outline: 2px solid var(--text); outline-offset: 3px; }
+.strip u { flex: 1; height: 2px; background: var(--line); }
+.lbl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin-top: 8px; }
+.lbl span.sel { color: var(--text); }
+
+/* B: week bars */
+.bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; height: 96px; align-items: end; }
+.bar { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.bar .tube { width: 100%; max-width: 30px; flex: 1; border-radius: 10px; background: var(--surface); position: relative; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .2s; }
+.bar .fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--ok); border-radius: 10px; transition: height .5s var(--ease); }
+.bar .fill.weak { opacity: .55; }
+.bar.today .tube { box-shadow: inset 0 0 0 2px var(--ok); }
+.bar.sel .tube { box-shadow: inset 0 0 0 2px var(--text); }
+.bar .d { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+.bar.sel .d { color: var(--text); }
+.bar .pct { font-family: var(--font-mono); font-size: 9px; color: var(--dim); position: absolute; top: 4px; left: 0; right: 0; text-align: center; z-index: 1; }
+
+/* C: rings */
+.ringwrap { display: flex; align-items: center; gap: 18px; margin-top: 8px; }
+.ring { position: relative; width: 150px; height: 150px; flex: none; }
+.ring svg { transform: rotate(-90deg); }
+.ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-weight: 200; font-size: 56px; letter-spacing: -.04em; }
+.ring .num small { font-size: 22px; color: var(--dim); }
+.ring circle { transition: stroke-dashoffset .6s var(--ease); }
+.minis { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 18px; }
+.mini { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; border-radius: 12px; transition: background .2s; }
+.mini.sel { background: var(--surface); }
+.mini svg { transform: rotate(-90deg); }
+.mini span { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+.mini.sel span { color: var(--text); }
+
+/* D: checkout chips */
+.chips { display: flex; gap: 8px; overflow-x: auto; margin: 14px -20px 0; padding: 2px 20px 6px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+.chips::-webkit-scrollbar { display: none; }
+.dchip { flex: none; scroll-snap-align: end; width: 58px; padding: 9px 0 8px; border-radius: 16px; background: var(--surface); display: flex; flex-direction: column; align-items: center; gap: 5px; font-family: var(--font-mono); transition: background .2s, color .2s, transform .15s var(--ease); }
+.dchip:active { transform: scale(.95); }
+.dchip .w { font-size: 10px; color: var(--dim); }
+.dchip .dd { font-family: var(--font-display); font-size: 20px; line-height: 1; }
+.dchip .mb { width: 32px; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.dchip .mb i { display: block; height: 100%; background: var(--ok); }
+.dchip.sel { background: var(--text); color: var(--bg); }
+.dchip.sel .w { color: var(--bg); opacity: .7; }
+.dchip.sel .mb { background: color-mix(in srgb, var(--bg) 30%, transparent); }
+.detached { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--rest); background: color-mix(in srgb, var(--rest) 12%, transparent); border-radius: 14px; padding: 10px 12px; animation: drop .35s var(--ease); }
+.detached button { color: var(--text); text-decoration: underline; text-underline-offset: 3px; flex: none; }
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1><b>status</b> header — 4 options</h1>
+  <p>Today the 7-day strip is read-only. Each option below makes past days tappable. All four are live: tap a day.<br>
+  A and B open a small <code>git show &lt;day&gt;</code> card. C and D switch the whole screen to that day (<code>git checkout HEAD~n</code>), read-only, and yesterday can be amended before 12:00.</p>
+</header>
+
+<nav class="tbar" id="tbar">
+  <button class="tbtn on" data-t="">terminal</button>
+  <button class="tbtn" data-t="bathory">bathory</button>
+  <button class="tbtn" data-t="gruvbox">gruvbox</button>
+  <button class="tbtn" data-t="paper">paper</button>
+</nav>
+
+<main class="grid">
+  <figure><div class="phone"><div class="screen" id="A"></div></div>
+    <figcaption><b>A · dots + peek</b> (smallest change). Same strip, bigger tap targets. Tap a dot: a card slides open under it with that day's commits.<br><span class="pro">+ looks like today, no new idea to learn</span><br><span class="con">− dots say little: "half" hides 3/9 vs 8/9</span></figcaption></figure>
+
+  <figure><div class="phone"><div class="screen" id="B"></div></div>
+    <figcaption><b>B · week bars</b>. Each day is a small tube filled to its done %. You see a good or bad week at a glance. Tap a bar to peek.<br><span class="pro">+ shows how much, not only yes/no</span><br><span class="con">− a bit more "dashboard"</span></figcaption></figure>
+
+  <figure><div class="phone"><div class="screen" id="C"></div></div>
+    <figcaption><b>C · rings</b>. Today is a big ring around the alarm-style number. Under it, 7 small rings. Tap one: the screen shows that day.<br><span class="pro">+ calm, very visual, nice with the rounded font</span><br><span class="con">− rings are less "git"</span></figcaption></figure>
+
+  <figure><div class="phone"><div class="screen" id="D"></div></div>
+    <figcaption><b>D · checkout</b> (most git). A row of day chips (scroll for 14 days). Pick a past day: <code>HEAD~2 · detached</code>, the numbers and rows show that day. <code>git switch -</code> goes back.<br><span class="pro">+ fun, time travel, natural home for amend</span><br><span class="con">− one more idea to learn</span></figcaption></figure>
+</main>
+
+<script>
+const B = [['walk', 1], ['read', 2], ['water', 6], ['stretch', 3], ['gym', 4], ['meditate', 8], ['journal', 5], ['no-sugar', 7], ['sleep-11', 10]];
+const MSG = { walk: 'park, 4.2k', read: '20 pages', water: '2L', stretch: 'yoga', gym: 'pull day', meditate: '10 min', journal: '3 lines', 'no-sugar': 'clean', 'sleep-11': '22:52' };
+const MISS = ['fix: life happened', 'revert: yesterday', 'chore: touched grass instead'];
+const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+let seed = 5; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const hex = () => Array.from({ length: 7 }, () => '0123456789abcdef'[rnd() * 16 | 0]).join('');
+
+// 14 days, newest last. Day 13 = today (Mon 19 Oct).
+const days = Array.from({ length: 14 }, (_, i) => {
+  const date = 6 + i; // 6..19 Oct
+  const wd = DAYS[(i + 0) % 7]; // 6 Oct is a Tue → shift below
+  const today = i === 13;
+  const cells = B.map(([slug, lane], bi) => {
+    let k;
+    if (today) k = bi < 6 ? (bi === 4 ? 'rest' : 'done') : 'open';
+    else { const r = rnd(); k = r < .1 ? 'miss' : r < .15 ? 'rest' : 'done'; }
+    if (!today && i === 12 && slug === 'water') k = 'miss';
+    if (!today && (i === 9 || i === 10) && bi > 3) k = rnd() < .5 ? 'miss' : k;
+    return { slug, lane, k, hash: k === 'done' || k === 'rest' ? hex() : '', at: `${String(7 + (rnd() * 14 | 0)).padStart(2, '0')}:${String(rnd() * 60 | 0).padStart(2, '0')}`, miss: MISS[rnd() * 3 | 0] };
+  });
+  const complete = cells.filter(c => c.k === 'done' || c.k === 'rest').length;
+  return { date, wd: DAYS[(i + 1) % 7], today, cells, complete, total: cells.length };
+});
+const week = days.slice(-7);
+const state = d => (d.today ? (d.complete === d.total ? 'full' : 'open') : d.complete === d.total ? 'full' : d.complete === 0 ? 'miss' : 'half');
+const label = d => `${d.wd} ${d.date} oct`;
+
+const rowsHTML = (d, ro) => `<div class="rows ${ro ? 'ro' : ''}">${d.cells.slice(0, 5).map(c => `
+  <div class="row ${c.k}" style="--c:var(--l${c.lane})"><span class="n"></span><span class="nm">${c.slug}</span>
+  <span class="r">${c.k === 'done' ? `${c.hash} · ${c.at}` : c.k === 'rest' ? '--allow-empty' : c.k === 'miss' ? 'no commit' : 'tap →'}</span></div>`).join('')}</div>`;
+
+const peekHTML = d => !d ? '' : `<div class="card"><h4><span>$ git show <b>${label(d)}</b></span><span>${d.complete}/${d.total}</span></h4>
+  ${d.cells.filter(c => c.k !== 'open').sort((a, b) => (a.k === 'miss') - (b.k === 'miss')).slice(0, 6).map(c => c.k === 'miss'
+    ? `<div class="ln miss" style="--c:var(--l${c.lane})"><i></i>${c.slug} — ${c.miss}</div>`
+    : `<div class="ln ${c.k}" style="--c:var(--l${c.lane})"><i></i><span class="h">${c.hash}</span>${c.slug}${c.k === 'rest' ? ' --allow-empty' : `: ${MSG[c.slug]}`}</div>`).join('')}
+  ${d.cells.filter(c => c.k !== 'open').length > 6 ? `<div class="ln" style="color:var(--dim)">+${d.cells.filter(c => c.k !== 'open').length - 6} more · open log ›</div>` : ''}
+  ${d === week[5] ? `<div class="act"><button class="chip ok">amend yesterday</button><span class="chip" style="color:var(--dim)">until 12:00</span></div>` : ''}</div>`;
+
+const head = (d, sel) => `
+  <div class="top"><span>${label(days[13])}</span><span class="sync">synced</span></div>`;
+
+const stateText = d => d.today
+  ? (d.complete === d.total ? 'working tree clean.<br><span class="br">all pushed.</span>' : `on branch <span class="br">today</span><br>${d.total - d.complete} changes not committed`)
+  : `${d.complete === d.total ? 'clean day.' : `${d.total - d.complete} not committed`}<br><span style="color:var(--dim)">read-only · ${d === week[5] ? 'amend until 12:00' : 'history'}</span>`;
+
+/* A — dots + peek */
+function A(root, sel = null) {
+  root.innerHTML = head() + `
+    <div class="big">${days[13].complete}<span class="of">/${days[13].total}</span></div>
+    <div class="state">${stateText(days[13])}</div>
+    <div class="strip">${week.map((d, i) => `${i ? '<u></u>' : ''}<button data-i="${i}" class="${sel === i ? 'sel' : ''}" aria-label="${label(d)}"><i class="${state(d)}"></i></button>`).join('')}</div>
+    <div class="lbl">${week.map((d, i) => `<span class="${sel === i ? 'sel' : ''}">${d.today ? 'today' : d.wd}</span>`).join('')}</div>
+    <div class="peek ${sel !== null && !week[sel].today ? 'open' : ''}"><div>${sel !== null && !week[sel].today ? peekHTML(week[sel]) : ''}</div></div>
+    ${rowsHTML(days[13])}`;
+  root.querySelectorAll('.strip button').forEach(b => b.onclick = () => { const i = +b.dataset.i; A(root, sel === i ? null : i); });
+}
+
+/* B — week bars */
+function B_(root, sel = null) {
+  root.innerHTML = head() + `
+    <div class="big">${days[13].complete}<span class="of">/${days[13].total}</span></div>
+    <div class="state">${stateText(days[13])}</div>
+    <div class="bars">${week.map((d, i) => { const p = d.complete / d.total; return `
+      <button class="bar ${d.today ? 'today' : ''} ${sel === i ? 'sel' : ''}" data-i="${i}" aria-label="${label(d)} ${d.complete} of ${d.total}">
+        <span class="tube"><span class="pct">${d.complete}</span><span class="fill ${p < .6 ? 'weak' : ''}" style="height:${Math.max(6, p * 100)}%"></span></span>
+        <span class="d">${d.today ? 'today' : d.wd}</span></button>`; }).join('')}</div>
+    <div class="peek ${sel !== null && !week[sel].today ? 'open' : ''}"><div>${sel !== null && !week[sel].today ? peekHTML(week[sel]) : ''}</div></div>
+    ${rowsHTML(days[13])}`;
+  root.querySelectorAll('.bar').forEach(b => b.onclick = () => { const i = +b.dataset.i; B_(root, sel === i ? null : i); });
+}
+
+/* C — rings */
+const ringSVG = (size, sw, p, color) => { const r = (size - sw) / 2, c = 2 * Math.PI * r;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="${sw}"/>
+  <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - p)}"/></svg>`; };
+function C(root, sel = 6) {
+  const d = week[sel];
+  root.innerHTML = head() + `
+    <div class="ringwrap">
+      <div class="ring">${ringSVG(150, 12, d.complete / d.total, 'var(--ok)')}<div class="num"><span>${d.complete}<small>/${d.total}</small></span></div></div>
+      <div class="state">${d.today ? '' : `<b style="color:var(--text);font-weight:500">${label(d)}</b><br>`}${stateText(d)}</div>
+    </div>
+    <div class="minis">${week.map((x, i) => `<button class="mini ${sel === i ? 'sel' : ''}" data-i="${i}" aria-label="${label(x)}">${ringSVG(30, 4, x.complete / x.total, x.complete === x.total ? 'var(--ok)' : x.complete / x.total < .6 ? 'var(--miss)' : 'var(--ok)')}<span>${x.today ? 'today' : x.wd}</span></button>`).join('')}</div>
+    ${rowsHTML(d, !d.today)}`;
+  root.querySelectorAll('.mini').forEach(b => b.onclick = () => C(root, +b.dataset.i));
+}
+
+/* D — checkout */
+function D(root, sel = 13) {
+  const d = days[sel], back = 13 - sel;
+  root.innerHTML = `
+    <div class="top"><span>${back ? `HEAD~${back}` : label(d)}</span><span class="sync">synced</span></div>
+    <div class="chips" id="chips">${days.map((x, i) => `
+      <button class="dchip ${sel === i ? 'sel' : ''}" data-i="${i}" aria-label="${label(x)}">
+        <span class="w">${x.today ? 'today' : x.wd}</span><span class="dd">${x.date}</span>
+        <span class="mb"><i style="width:${x.complete / x.total * 100}%"></i></span></button>`).join('')}</div>
+    ${back ? `<div class="detached"><span>HEAD~${back} · detached · ${label(d)}</span><button data-back>git switch -</button></div>` : ''}
+    <div class="big" style="${back ? 'color:var(--muted)' : ''}">${d.complete}<span class="of">/${d.total}</span></div>
+    <div class="state">${stateText(d)}</div>
+    ${rowsHTML(d, !!back)}
+    ${back === 1 ? `<div class="act" style="margin-top:12px"><button class="chip ok" style="width:100%;height:48px">amend yesterday</button></div>` : ''}`;
+  const chips = root.querySelector('#chips');
+  chips.scrollLeft = chips.scrollWidth;
+  const selEl = chips.querySelector('.sel'); if (selEl && sel < 9) selEl.scrollIntoView({ inline: 'center', block: 'nearest' });
+  root.querySelectorAll('.dchip').forEach(b => b.onclick = () => D(root, +b.dataset.i));
+  root.querySelector('[data-back]')?.addEventListener('click', () => D(root, 13));
+}
+
+A(document.getElementById('A'), 5);
+B_(document.getElementById('B'), 3);
+C(document.getElementById('C'));
+D(document.getElementById('D'), 11);
+
+document.getElementById('tbar').addEventListener('click', e => {
+  const b = e.target.closest('.tbtn'); if (!b) return;
+  document.querySelectorAll('.tbtn').forEach(x => x.classList.toggle('on', x === b));
+  document.body.className = b.dataset.t;
+});
+</script>
+</body>
+</html>
