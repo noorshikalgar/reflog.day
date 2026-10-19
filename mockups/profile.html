@@ -98,7 +98,7 @@ input, select { font: inherit; color: inherit; }
 .kpi .k { font-size: 11.5px; color: var(--dim); }
 
 .themes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px; }
-.th { border-radius: 14px; padding: 8px; box-shadow: inset 0 0 0 1.5px var(--line); text-align: center; transition: box-shadow .2s, transform .15s var(--ease); }
+.th { border-radius: 14px; padding: 8px; box-shadow: inset 0 0 0 1.5px var(--line); text-align: left; transition: box-shadow .2s, transform .15s var(--ease); }
 .th:active { transform: scale(.97); }
 .th.on { box-shadow: inset 0 0 0 2.5px var(--ok); }
 .th .pv { height: 96px; border-radius: 9px; padding: 10px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
@@ -106,12 +106,12 @@ input, select { font: inherit; color: inherit; }
 .th .pv .bars { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
 .th .pv .bars i { display: flex; align-items: center; gap: 5px; height: 12px; border-radius: 4px; padding-left: 4px; }
 .th .pv .bars i b { width: 6px; height: 6px; border-radius: 50%; }
-.th .nm2 { font-size: 14px; margin-top: 8px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 6px; }
+.th .nm2 { font-size: 14px; margin-top: 9px; padding: 0 4px; font-weight: 500; display: flex; justify-content: flex-start; align-items: center; gap: 7px; }
 .th .nm2 .ck { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1.5px var(--line); }
 .th.on .nm2 .ck { background: var(--ok); box-shadow: none; }
 .th .nm2 .ck svg { width: 10px; height: 10px; stroke: var(--on-ok); fill: none; stroke-width: 3; opacity: 0; }
 .th.on .nm2 .ck svg { opacity: 1; }
-.th .ds { font-size: 11.5px; color: var(--dim); margin-top: 2px; }
+.th .ds { font-size: 11.5px; color: var(--dim); margin-top: 2px; padding: 0 4px 2px 29px; }
 
 .radio { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line); flex: none; transition: box-shadow .2s; }
 .radio.on { box-shadow: inset 0 0 0 7px var(--ok); }
@@ -252,7 +252,7 @@ const S = {
 };
 const THEMES = {
   terminal: { d: 'cool slate, green', bg: '#0b0d12', s: '#1a1e28', t: '#e7e9ee', a: ['#3ddc97', '#4cc9f0', '#a78bfa'] },
-  bathory: { d: 'black metal, warm', bg: '#000', s: '#1c1c1c', t: '#f1f1f1', a: ['#fbcb97', '#e78a43', '#5f8787'] },
+  bathory: { d: 'black metal', bg: '#000', s: '#1c1c1c', t: '#f1f1f1', a: ['#fbcb97', '#e78a43', '#5f8787'] },
   gruvbox: { d: 'retro, cream', bg: '#282828', s: '#3c3836', t: '#ebdbb2', a: ['#b8bb26', '#83a598', '#fe8019'] },
   paper: { d: 'light, calm', bg: '#f2f1ec', s: '#e6e4dc', t: '#1a1d24', a: ['#107d4e', '#0a769c', '#6d4fd8'] },
 };
