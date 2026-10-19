@@ -38,6 +38,8 @@ export const api = {
   pushSubscribe: (subscription: PushSubscriptionJSON, device: string) => call<{ ok: true; subscriptions: number }>('POST', '/api/push/subscribe', { subscription, device }),
   pushUnsubscribe: (endpoint: string) => call<{ ok: true; subscriptions: number }>('DELETE', '/api/push/subscribe', { endpoint }),
   pushTest: () => call<{ sent: number }>('POST', '/api/push/test'),
+  notesSeen: (version: string) => call<{ ok: true }>('POST', '/api/notes/seen', { version }),
+  importAll: (data: unknown) => call<{ habits: number; entries: number }>('POST', '/api/import', data),
   patchSettings: (s: Partial<Settings>) => call<Settings>('PATCH', '/api/settings', s),
 };
 

@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import { Hono } from 'hono';
 import { getCookie, setCookie } from 'hono/cookie';
 import type { Pairing } from './auth.ts';
@@ -6,7 +7,7 @@ import { HttpError, type Store } from './store.ts';
 
 const COOKIE = 'rl_dev';
 
-export function createApp(store: Store, pairing: Pairing, push: Push) {
+export function createApp(store: Store, pairing: Pairing, push: Push, opts: { backupDir?: string } = {}) {
   const app = new Hono();
 
   app.onError((err, c) => {
@@ -77,6 +78,18 @@ export function createApp(store: Store, pairing: Pairing, push: Push) {
   app.get('/api/export', c => {
     c.header('Content-Disposition', `attachment; filename="reflog-${store.today()}.json"`);
     return c.json(store.exportAll());
+  });
+
+  app.post('/api/import', async c => {
+    const data = await c.req.json();
+    if (opts.backupDir) store.backupTo(join(opts.backupDir, `reflog-preimport-${Date.now()}.db`));
+    return c.json(store.importAll(data));
+  });
+
+  app.post('/api/notes/seen', async c => {
+    const { version } = await c.req.json<{ version?: string }>();
+    store.notesSeen(String(version ?? ''));
+    return c.json({ ok: true });
   });
 
   app.all('/api/*', c => c.json({ error: 'not found' }, 404));

@@ -131,6 +131,27 @@
     }
   }
 
+  let importing = $state(false);
+  async function importFile(e: Event & { currentTarget: HTMLInputElement }) {
+    const file = e.currentTarget.files?.[0];
+    e.currentTarget.value = '';
+    if (!file) return;
+    let data: unknown;
+    try { data = JSON.parse(await file.text()); }
+    catch { showToast('that file is not JSON.', null, 4000); return; }
+    if (!confirm('Replace all branches and history with this file? The server makes a backup first.')) return;
+    importing = true;
+    try {
+      const r = await api.importAll(data);
+      showToast(`imported ${r.habits} branches, ${r.entries} entries.`, null, 4000);
+      await Promise.all([load(), refresh()]);
+    } catch (err) {
+      showToast(`import failed: ${(err as Error).message}`, null, 5000);
+    } finally {
+      importing = false;
+    }
+  }
+
   async function newCode() {
     try { pairCode = await api.newPairCode(); }
     catch (err) { showToast((err as Error).message, null, 4000); }
@@ -210,6 +231,11 @@
         <span class="val">{settings.tz}</span>
       </div>
       <a class="set" href="/api/export" download><span>export json</span><span class="val">↓</span></a>
+      <label class="set">
+        <span>import json <span class="dim">· replaces data</span></span>
+        <span class="val">{importing ? '…' : '↑'}</span>
+        <input type="file" accept="application/json,.json" class="file" onchange={importFile} disabled={importing} />
+      </label>
       <button class="set" onclick={newCode}>
         <span>pair device</span>
         <span class="val">{#if pairCode}<b class="code">{pairCode.code}</b>{:else}code ›{/if}</span>
@@ -275,6 +301,7 @@
   .days { display: block; font-size: 10px; color: var(--dim); margin-top: 3px; letter-spacing: 2px; }
   .r, .val { font-size: 12px; color: var(--muted); }
   .val.on { color: var(--ok); }
+  .file { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .dim { color: var(--dim); font-size: 11px; }
   .set { position: relative; }
   .sr { position: absolute; right: 18px; width: 46px; height: 28px; opacity: 0; margin: 0; cursor: pointer; }
