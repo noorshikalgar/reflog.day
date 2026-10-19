@@ -6,11 +6,11 @@ Do the phases in sequence. Each phase ends with a version that you can use on th
 
 - [x] Planning documents 00–08.
 - [x] Static mockups in `mockups/index.html`.
-- [ ] User reviews mockups and approves the look.
+- [x] User reviews mockups and approves the look (log v2, 3 dark themes).
 
 ## Phase 1 — Core loop (v0.1)
 
-Goal: log habits on the phone every day.
+Goal: log habits on the phone every day. Status: steps 1–8 done. Step 9 needs the host.
 
 1. Set up the repository: `server/` and `web/` with TypeScript, Vite, Vitest.
 2. Write `rules.ts` (logical day, streak, patina, miss rule). Write tests first.

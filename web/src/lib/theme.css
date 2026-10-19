@@ -1,0 +1,60 @@
+/* Tokens. Refer to docs/03-ux-ui.md §3. Components use tokens only. */
+:root {
+  --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-ui: system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+
+  /* terminal (default) */
+  --bg: #0b0d12; --surface: #12151c; --surface-2: #1a1e28; --line: #252a36;
+  --text: #e7e9ee; --muted: #8b92a1; --dim: #5a6170;
+  --ok: #3ddc97; --on-ok: #05130c; --rest: #f2b84b; --miss: #6c7487;
+  --l1: #3ddc97; --l2: #4cc9f0; --l3: #a78bfa; --l4: #ff9f5a; --l5: #f472b6;
+  --l6: #6ea8ff; --l7: #c3e88d; --l8: #2dd4bf; --l9: #ff8a80; --l10: #b8c4d8;
+  --edge: transparent;
+  color-scheme: dark;
+}
+
+/* bathory — colors from metalelf0/black-metal-theme-neovim (Apache-2.0) */
+:root[data-theme="bathory"] {
+  --bg: #000000; --surface: #0e0e0e; --surface-2: #222222; --line: #222222;
+  --text: #f1f1f1; --muted: #999999; --dim: #6e6e6e;
+  --ok: #fbcb97; --on-ok: #000000; --rest: #e78a43; --miss: #505050;
+  --l1: #fbcb97; --l2: #e78a43; --l3: #5f8787; --l4: #c1c1c1; --l5: #9b99a3;
+  --l6: #d9a679; --l7: #8fb3b3; --l8: #aaaaaa; --l9: #b5776a; --l10: #888888;
+  --edge: #1a1a1a;
+}
+
+/* gruvbox dark */
+:root[data-theme="gruvbox"] {
+  --bg: #282828; --surface: #32302f; --surface-2: #3c3836; --line: #504945;
+  --text: #ebdbb2; --muted: #a89984; --dim: #7c6f64;
+  --ok: #b8bb26; --on-ok: #1d2021; --rest: #fabd2f; --miss: #928374;
+  --l1: #b8bb26; --l2: #83a598; --l3: #d3869b; --l4: #fe8019; --l5: #8ec07c;
+  --l6: #458588; --l7: #98971a; --l8: #689d6a; --l9: #b16286; --l10: #d65d0e;
+  --edge: #3c3836;
+}
+
+/* paper (light) */
+:root[data-theme="paper"] {
+  --bg: #f5f4ef; --surface: #ffffff; --surface-2: #ecebe5; --line: #dcdad2;
+  --text: #1a1d24; --muted: #5f6573; --dim: #8a909b;
+  --ok: #14935c; --on-ok: #ffffff; --rest: #b7791f; --miss: #9aa0ad;
+  --l1: #13915b; --l2: #0b7fa8; --l3: #6d4fd8; --l4: #c25a12; --l5: #c0307a;
+  --l6: #2a5fd0; --l7: #5d8a16; --l8: #0f8f80; --l9: #c2463c; --l10: #56657e;
+  --edge: transparent;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+button, input, select { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+.mono { font-family: var(--font-mono); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .12s !important; }
+}
+
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; animation-timing-function: var(--ease); }

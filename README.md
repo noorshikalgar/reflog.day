@@ -7,7 +7,31 @@ You log a habit with one tap. The app writes the log as a "commit" and draws it 
 
 ## Status
 
-Planning phase. No application code yet.
+Phase 1 (v0.1): status screen, branches, pairing, themes, PWA shell. Refer to [08 — Roadmap](docs/08-roadmap.md).
+
+## Run it
+
+Needs Node.js 22.18 or later.
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+The server prints a 6-digit pairing code. Open http://127.0.0.1:8740 and type the code.
+
+Development, with hot reload:
+
+```bash
+npm run dev:server
+```
+
+```bash
+npm run dev:web
+```
+
+Open http://localhost:5173. Tests: `npm test`. Types: `npm run check`.
 
 ## Documents
 
