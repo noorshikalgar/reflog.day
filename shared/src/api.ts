@@ -40,6 +40,8 @@ export interface Entry {
 export interface HabitView extends Habit {
   scheduled: boolean;
   entry: Entry | null;
+  /** Kind of the entry on the previous logical day, for amend. */
+  yesterday: Kind | null;
   streak: number;
   best: number;
   patina: number;

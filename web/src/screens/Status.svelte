@@ -2,16 +2,17 @@
   import { SvelteSet } from 'svelte/reactivity';
   import type { HabitView } from '../../../shared/src/api.ts';
   import { uuidv7 } from '../../../shared/src/ids.ts';
-  import { CLEAN, COMMIT_TOASTS, pick } from '../../../shared/src/messages.ts';
-  import { tagFor } from '../../../shared/src/rules.ts';
+  import { CLEAN, COMMIT_TOASTS, REST_TOASTS, pick } from '../../../shared/src/messages.ts';
+  import { addDays, tagFor } from '../../../shared/src/rules.ts';
   import BranchRow from '../components/BranchRow.svelte';
+  import CommitSheet, { type CommitRequest } from '../components/CommitSheet.svelte';
   import Confetti from '../components/Confetti.svelte';
   import MissCard from '../components/MissCard.svelte';
   import Odometer from '../components/Odometer.svelte';
   import Strip from '../components/Strip.svelte';
   import { api } from '../lib/api.ts';
   import { dayLabel } from '../lib/format.ts';
-  import { app, go, hideToast, showToast } from '../lib/state.svelte.ts';
+  import { app, go, hideToast, refresh, showToast } from '../lib/state.svelte.ts';
 
   const t = $derived(app.today!);
   const pending = new SvelteSet<string>();
@@ -37,20 +38,39 @@
     setTimeout(() => (burst = null), 1300);
   }
 
-  async function commit(h: HabitView) {
-    pending.add(h.id);
+  let sheetFor = $state<HabitView | null>(null);
+
+  async function commit(h: HabitView, req: CommitRequest = { kind: 'done', message: null, yesterday: false }) {
+    sheetFor = null;
+    const editing = !req.yesterday && h.entry && h.entry.kind !== 'miss' ? h.entry : null;
+    if (!req.yesterday && !editing) pending.add(h.id);
     try {
-      const r = await api.putEntry(uuidv7(), { habit_id: h.id, kind: 'done' });
+      const r = await api.putEntry(editing?.id ?? uuidv7(), {
+        habit_id: h.id, kind: req.kind, message: req.message, day: req.yesterday ? addDays(t.day, -1) : undefined,
+      });
       replace(r.habit);
       pending.delete(h.id);
+      if (req.yesterday) {
+        showToast(`amended ${req.kind === 'rest' ? '--allow-empty' : r.entry.hash} into yesterday.`, null, 4000);
+        await refresh(); // strip and miss card change
+        return;
+      }
+      if (editing) { showToast(`commit --amend ${r.entry.hash}. message saved.`, null, 3000); return; }
       const tag = tagFor(r.habit.streak);
       if (rows.length && rows.every(isDone)) { showToast(CLEAN, () => undo(r.entry.id)); celebrate(); }
+      else if (req.kind === 'rest') showToast(pick(REST_TOASTS), () => undo(r.entry.id));
       else if (tag) showToast(`tag ${tag} — ${h.slug} ${r.habit.streak}d`, () => undo(r.entry.id));
       else showToast(`committed ${r.entry.hash} ${(lastToast = pick(COMMIT_TOASTS, lastToast))}`, () => undo(r.entry.id));
     } catch (e) {
       pending.delete(h.id);
       showToast(`commit failed: ${(e as Error).message}`, null, 4000);
     }
+  }
+
+  async function revert(h: HabitView) {
+    sheetFor = null;
+    if (h.entry) await undo(h.entry.id);
+    showToast(`reverted ${h.slug}.`, null, 3000);
   }
 
   async function undo(entryId: string) {
@@ -83,7 +103,7 @@
     <Strip days={strip} />
     <div class="rows">
       {#each rows as h (h.id)}
-        <BranchRow habit={h} pending={pending.has(h.id)} ontap={commit} />
+        <BranchRow habit={h} pending={pending.has(h.id)} ontap={x => commit(x)} onlong={x => (sheetFor = x)} />
       {/each}
     </div>
   {:else}
@@ -98,6 +118,8 @@
     </div>
   {/if}
 </main>
+
+<CommitSheet habit={sheetFor} canAmend={t.can_amend} onclose={() => (sheetFor = null)} oncommit={commit} onrevert={revert} />
 
 {#if burst}{#key burst.id}<Confetti x={burst.x} y={burst.y} />{/key}{/if}
 

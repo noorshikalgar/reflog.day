@@ -251,6 +251,7 @@ export class Store {
       ...h,
       scheduled: R.isScheduled(h.days_mask, today),
       entry: m.get(today) ?? null,
+      yesterday: m.get(R.addDays(today, -1))?.kind ?? null,
       streak: R.streak(log, h.days_mask, today, since),
       best: R.bestStreak(log, h.days_mask, today, since),
       patina: R.patina(log, h.days_mask, today, since),
