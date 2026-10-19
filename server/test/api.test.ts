@@ -415,3 +415,53 @@ describe('release notes', () => {
     expect((await today()).release_notes).toBeNull();
   });
 });
+
+describe('profile', () => {
+  beforeEach(pairDevice);
+
+  it('has defaults and totals', async () => {
+    const walk = (await req('POST', '/api/habits', { slug: 'walk' })).json.id;
+    store.rollover();
+    for (let i = 0; i < 7; i++) { at(`2026-10-${19 + i}T03:30:00Z`); store.rollover(); await commit(walk); }
+    const { json } = await req('GET', '/api/profile');
+    expect(json).toMatchObject({ name: 'you', avatar: '🌱', since: '2026-10-19', totals: { commits: 7, best_now: 7, tags: 1, days: 7 } });
+  });
+  it('validates name and avatar', async () => {
+    expect((await req('PATCH', '/api/profile', { name: '  noor ', avatar: 'NS' })).json).toMatchObject({ name: 'noor', avatar: 'NS' });
+    expect((await req('PATCH', '/api/profile', { avatar: '🦉' })).json.avatar).toBe('🦉');
+    expect((await req('PATCH', '/api/profile', { name: '' })).status).toBe(400);
+    expect((await req('PATCH', '/api/profile', { name: 'x'.repeat(25) })).status).toBe(400);
+    expect((await req('PATCH', '/api/profile', { avatar: '<b>' })).status).toBe(400);
+    expect((await req('PATCH', '/api/profile', { avatar: 'abc' })).status).toBe(400);
+  });
+});
+
+describe('devices', () => {
+  it('lists devices, marks the current one, removes others only', async () => {
+    await pairDevice();          // device 1
+    await pairDevice();          // device 2, now current
+    const list = (await req('GET', '/api/devices')).json;
+    expect(list).toHaveLength(2);
+    expect(list.map((d: any) => d.current)).toEqual([false, true]);
+    expect(list[0]).not.toHaveProperty('token_hash');
+    expect((await req('DELETE', `/api/devices/${list[1].id}`)).status).toBe(409);
+    expect((await req('DELETE', `/api/devices/${list[0].id}`)).json).toHaveLength(1);
+    expect((await req('DELETE', `/api/devices/${list[0].id}`)).status).toBe(404);
+  });
+  it('signs out a removed device at once', async () => {
+    await pairDevice();
+    const first = cookie;
+    await pairDevice();
+    const [d1] = (await req('GET', '/api/devices')).json;
+    await req('DELETE', `/api/devices/${d1.id}`);
+    cookie = first;
+    expect((await req('GET', '/api/today')).status).toBe(401);
+  });
+});
+
+describe('about', () => {
+  it('returns version info', async () => {
+    await pairDevice();
+    expect((await req('GET', '/api/about')).json).toEqual({ version: 'dev', build: null });
+  });
+});

@@ -138,6 +138,21 @@ export function nextTag(n: number): { name: string; at: number; to_go: number } 
   return at ? { name: TAGS[at], at, to_go: at - n } : null;
 }
 
+/** How many milestone tags a branch earned in its history (each time a run reaches 7, 30, 100, 365). */
+export function tagsEarned(log: DayLog, mask: number, today: string, since: string): number {
+  const at = new Set(Object.keys(TAGS).map(Number));
+  let run = 0, misses = 0, n = 0;
+  for (let d = since; d <= today; d = addDays(d, 1)) {
+    if (!isScheduled(mask, d)) continue;
+    const k = log.get(d);
+    if (d === today && k === undefined) continue;
+    if (k === 'done') { run++; misses = 0; if (at.has(run)) n++; }
+    else if (k === 'rest') misses = 0;
+    else if (++misses >= 2) run = 0;
+  }
+  return n;
+}
+
 /** Milestone tag for an exact streak value, or null. */
 export function tagFor(n: number): string | null {
   return TAGS[n] ?? null;

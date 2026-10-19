@@ -113,3 +113,24 @@ export interface HabitDetail extends HabitView {
   /** 12 weeks × 7 days, Monday first, oldest week first. The last week holds today. */
   grid: { day: string; state: GridState }[];
 }
+
+export interface Profile {
+  name: string;
+  avatar: string;
+  /** First logical day with a branch, 'YYYY-MM-DD'. */
+  since: string;
+  totals: { commits: number; best_now: number; tags: number; days: number };
+}
+
+export interface Device {
+  id: string;
+  name: string | null;
+  created_at: string;
+  last_seen_at: string | null;
+  current: boolean;
+}
+
+export interface About {
+  version: string;
+  build: string | null;
+}

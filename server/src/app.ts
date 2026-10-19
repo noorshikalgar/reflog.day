@@ -4,11 +4,12 @@ import { getCookie, setCookie } from 'hono/cookie';
 import type { Pairing } from './auth.ts';
 import type { Push } from './push.ts';
 import { HttpError, type Store } from './store.ts';
+import type { About } from '../../shared/src/api.ts';
 
 const COOKIE = 'rl_dev';
 
-export function createApp(store: Store, pairing: Pairing, push: Push, opts: { backupDir?: string } = {}) {
-  const app = new Hono();
+export function createApp(store: Store, pairing: Pairing, push: Push, opts: { backupDir?: string; about?: About } = {}) {
+  const app = new Hono<{ Variables: { device: string } }>();
 
   app.onError((err, c) => {
     if (err instanceof HttpError) return c.json({ error: err.message }, err.status);
@@ -29,9 +30,24 @@ export function createApp(store: Store, pairing: Pairing, push: Push, opts: { ba
   });
 
   app.use('/api/*', async (c, next) => {
-    if (!pairing.check(getCookie(c, COOKIE))) return c.json({ error: 'unpaired' }, 401);
+    const device = pairing.check(getCookie(c, COOKIE));
+    if (!device) return c.json({ error: 'unpaired' }, 401);
+    c.set('device', device);
     await next();
   });
+
+  app.get('/api/profile', c => c.json(store.profile()));
+  app.patch('/api/profile', async c => c.json(store.patchProfile(await c.req.json())));
+
+  app.get('/api/devices', c => c.json(pairing.list(c.get('device'))));
+  app.delete('/api/devices/:id', c => {
+    const id = c.req.param('id');
+    if (id === c.get('device')) return c.json({ error: 'you cannot remove this device here' }, 409);
+    if (!pairing.remove(id, c.get('device'))) return c.json({ error: 'device not found' }, 404);
+    return c.json(pairing.list(c.get('device')));
+  });
+
+  app.get('/api/about', c => c.json(opts.about ?? { version: 'dev', build: null }));
 
   app.post('/api/pair/new', c => c.json(pairing.newCode()));
 

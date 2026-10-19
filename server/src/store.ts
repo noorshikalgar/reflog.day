@@ -4,7 +4,7 @@ import * as R from '../../shared/src/rules.ts';
 import { MISS_TITLES, pick } from '../../shared/src/messages.ts';
 import { uuidv7 } from '../../shared/src/ids.ts';
 import type {
-  Entry, Habit, HabitDetail, HabitInput, HabitView, LogCell, LogView, ReleaseNotes, Settings, StripDay, TodayView, UnseenMiss,
+  Entry, Habit, HabitDetail, HabitInput, HabitView, LogCell, LogView, Profile, ReleaseNotes, Settings, StripDay, TodayView, UnseenMiss,
 } from '../../shared/src/api.ts';
 
 export const MAX_BRANCHES = 12;
@@ -402,6 +402,47 @@ export class Store {
       days: out.map(x => ({ day: x.day, cells: x.cells.filter((_, i) => keep[i]) })),
       next: first && d >= first ? R.addDays(d, 1) : null,
     };
+  }
+
+  // ---------- profile ----------
+
+  profile(): Profile {
+    const today = this.today();
+    const habits = this.habits(true);
+    const all = this.entries(habits.map(h => h.id));
+    const since = habits.map(h => this.dayOf(h.created_at)).sort()[0] ?? today;
+    let commits = 0, best = 0, tags = 0;
+    for (const h of habits) {
+      const m = all.get(h.id)!;
+      const log = this.kinds(m);
+      const from = this.dayOf(h.created_at);
+      for (const e of m.values()) if (e.kind === 'done') commits++;
+      if (!h.archived_at) best = Math.max(best, R.streak(log, h.days_mask, today, from));
+      tags += R.tagsEarned(log, h.days_mask, today, from);
+    }
+    const days = Math.round((Date.parse(today) - Date.parse(since)) / 864e5) + 1;
+    return {
+      name: this.get('profile_name') ?? 'you',
+      avatar: this.get('profile_avatar') ?? '🌱',
+      since,
+      totals: { commits, best_now: best, tags, days },
+    };
+  }
+
+  patchProfile(p: { name?: string; avatar?: string }): Profile {
+    if (p.name !== undefined) {
+      const name = String(p.name).trim();
+      if (name.length < 1 || name.length > 24) throw new HttpError(400, 'name: 1–24 characters');
+      this.set('profile_name', name);
+    }
+    if (p.avatar !== undefined) {
+      const a = String(p.avatar).trim();
+      // Two capital initials, or one short emoji (no letters, digits or markup).
+      const ok = /^[A-Z]{1,2}$/.test(a) || (a.length > 0 && a.length <= 8 && !/[\p{L}\p{N}<>&"']/u.test(a));
+      if (!ok) throw new HttpError(400, 'avatar: one emoji or 1–2 capital letters');
+      this.set('profile_avatar', a);
+    }
+    return this.profile();
   }
 
   // ---------- rollover ----------
