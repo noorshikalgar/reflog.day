@@ -51,6 +51,8 @@ export interface HabitView extends Habit {
 export interface StripDay {
   day: string;
   state: 'full' | 'half' | 'miss' | 'open' | 'none';
+  /** Done or rest, divided by scheduled branches (0–1). 0 when nothing was scheduled. */
+  p: number;
 }
 
 export interface UnseenMiss {
