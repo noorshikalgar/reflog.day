@@ -96,6 +96,8 @@ The theme is a calm terminal theme. Dark is the default. Light is "paper".
 
 ### 3.1 Color tokens
 
+`web/src/lib/theme.css` is the source of truth. Some values below were tuned after this table to pass WCAG AA (4.5:1) for text; `shared/test/contrast.test.ts` checks all four themes.
+
 | Token | Dark | Light | Use |
 |-------|------|-------|-----|
 | `--bg` | `#0b0d12` | `#f5f4ef` | Page |

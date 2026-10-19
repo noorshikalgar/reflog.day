@@ -18,6 +18,16 @@
     setTimeout(() => (app.focus = null), 2600);
   }
 
+  // Desktop (≥ 900 px): status and log side by side. Refer to docs/03-ux-ui.md U-08.
+  const wideQuery = matchMedia('(min-width: 900px)');
+  let wide = $state(wideQuery.matches);
+  $effect(() => {
+    const on = () => (wide = wideQuery.matches);
+    wideQuery.addEventListener('change', on);
+    return () => wideQuery.removeEventListener('change', on);
+  });
+  const split = $derived(wide && !app.show && app.tab !== 'branches');
+
   $effect(() => {
     const onVis = () => document.visibilityState === 'visible' && refresh();
     const onOnline = () => refresh();
@@ -44,8 +54,11 @@
     <p>can't reach the server.<br /><span>is reflog running? retrying…</span></p>
   </div>
 {:else}
-  <div class="shell">
-    {#if app.show}<Show id={app.show} />
+  <div class="shell" class:split>
+    {#if split}
+      <section aria-label="status"><Status /></section>
+      <section aria-label="log"><Log /></section>
+    {:else if app.show}<Show id={app.show} />
     {:else if app.tab === 'status'}<Status />
     {:else if app.tab === 'log'}<Log />
     {:else}<Branches />{/if}
@@ -56,6 +69,8 @@
 
 <style>
   .shell { max-width: 520px; margin: 0 auto; }
+  .shell.split { max-width: 1120px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; padding: 0 24px; }
+  .shell.split section { min-width: 0; }
   .boot { min-height: 100dvh; display: grid; place-items: center; }
   .boot i { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--ok); animation: pulse 1s var(--ease) infinite alternate; }
   .boot.off p { font-family: var(--font-mono); font-size: 14px; color: var(--muted); text-align: center; line-height: 1.6; }

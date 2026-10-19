@@ -10,6 +10,8 @@ export const app = $state({
   online: true,
   /** Commits waiting in the offline outbox. */
   queued: 0,
+  /** Bumped after each local write, so other open screens can reload. */
+  rev: 0,
   tab: 'status' as Tab,
   newBranch: false,
   /** Branch id shown on the `show` screen, over the current tab. */
@@ -69,6 +71,7 @@ export async function refresh() {
     const queued = await outbox.all();
     app.queued = queued.length;
     app.today = overlay(view, queued);
+    app.rev++;
     app.paired = true;
     app.online = !fromCache(view);
     applyTheme(app.today.settings.theme);

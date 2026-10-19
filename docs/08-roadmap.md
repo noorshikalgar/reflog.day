@@ -37,7 +37,9 @@ Goal: log habits on the phone every day. Status: steps 1–8 done. Step 9 needs 
 3. Add the scheduler: reminders, evening summary, rollover.
 4. Add the `send test` button.
 
-## Phase 4 — Solid (v1.0)
+## Phase 4 — Solid (v0.4) — done
+
+v1.0.0 comes after the app runs on the host and the iPhone for one week (Phase 1 step 9, real push test).
 
 1. Add the offline outbox.
 2. Add backups, export and import.

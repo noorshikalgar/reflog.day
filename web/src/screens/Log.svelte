@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import type { LogCell, LogDay, LogView } from '../../../shared/src/api.ts';
   import { api } from '../lib/api.ts';
@@ -40,9 +41,10 @@
       days = more ? [...days.map(d => remap(d, habits)), ...v.days.map(d => remap(d, v.habits))] : v.days;
       habits = merged;
       if (!more) {
+        // Keep the user's folds on a reload; new days start folded after the first two.
+        const first = !today;
         today = v.today;
-        closed.clear();
-        v.days.slice(2).forEach(d => closed.add(d.day));
+        if (first) v.days.slice(2).forEach(d => closed.add(d.day));
       } else {
         v.days.forEach(d => closed.add(d.day));
       }
@@ -60,7 +62,11 @@
     return out;
   }
 
-  load();
+  // Load the first page now, and again after each write on another screen.
+  $effect(() => {
+    void app.rev;
+    untrack(() => load());
+  });
 
   $effect(() => {
     if (!sentinel) return;

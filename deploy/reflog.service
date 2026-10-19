@@ -1,0 +1,27 @@
+# systemd unit for Linux. Refer to docs/07-hosting.md §5.1.
+# 1. sudo useradd --system --home /var/lib/reflog reflog
+# 2. sudo cp deploy/reflog.service /etc/systemd/system/
+# 3. sudo systemctl enable --now reflog
+#    The first start prints the pairing code: journalctl -u reflog -n 20
+
+[Unit]
+Description=reflog habit tracker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=reflog
+WorkingDirectory=/opt/reflog
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning server/src/index.ts
+Environment=NODE_ENV=production
+Environment=REFLOG_DATA=/var/lib/reflog
+Environment=PORT=8740
+Environment=HOST=127.0.0.1
+Environment=TZ=Asia/Kolkata
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/reflog
+
+[Install]
+WantedBy=multi-user.target
