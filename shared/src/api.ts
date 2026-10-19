@@ -68,3 +68,25 @@ export interface TodayView {
   strip: StripDay[];
   misses: UnseenMiss[];
 }
+
+export type CellState = Kind | 'open' | 'none';
+
+export interface LogCell {
+  state: CellState;
+  entry: Pick<Entry, 'id' | 'hash' | 'message' | 'created_at' | 'amended'> | null;
+  rebase: boolean;
+}
+
+export interface LogDay {
+  day: string;
+  /** One cell for each item of `LogView.habits`, same order. */
+  cells: LogCell[];
+}
+
+export interface LogView {
+  today: string;
+  habits: Pick<Habit, 'id' | 'slug' | 'emoji' | 'lane' | 'archived_at'>[];
+  days: LogDay[];
+  /** Pass as `before` to load older days, or null at the start of the history. */
+  next: string | null;
+}

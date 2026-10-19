@@ -205,3 +205,53 @@ describe('settings and export', () => {
     expect(json.entries).toHaveLength(1);
   });
 });
+
+describe('log', () => {
+  let walk: string, read: string;
+  beforeEach(async () => {
+    await pairDevice();
+    walk = (await req('POST', '/api/habits', { slug: 'walk' })).json.id;
+    read = (await req('POST', '/api/habits', { slug: 'read', days_mask: 0b0000001 })).json.id; // Mondays
+    store.rollover();
+  });
+
+  it('returns days newest first with one cell for each branch', async () => {
+    await commit(walk, { message: 'park' });
+    at('2026-10-21T03:30:00Z'); // Wed; 20th skipped
+    store.rollover();
+    const { json } = await req('GET', '/api/log');
+    expect(json.habits.map((h: any) => h.slug)).toEqual(['walk', 'read']);
+    expect(json.days.map((d: any) => d.day)).toEqual(['2026-10-21', '2026-10-20', '2026-10-19']);
+    const [wed, tue, mon] = json.days;
+    expect(wed.cells.map((c: any) => c.state)).toEqual(['open', 'none']);
+    expect(tue.cells.map((c: any) => c.state)).toEqual(['miss', 'none']);
+    expect(mon.cells.map((c: any) => c.state)).toEqual(['done', 'miss']);
+    expect(mon.cells[0].entry.message).toBe('park');
+    expect(json.next).toBeNull();
+  });
+
+  it('marks the second miss as a rebase', async () => {
+    at('2026-10-22T03:30:00Z');
+    store.rollover();
+    const { json } = await req('GET', '/api/log');
+    const walkCells = json.days.map((d: any) => d.cells[0]);
+    expect(walkCells.map((c: any) => [c.state, c.rebase])).toEqual([['open', false], ['miss', true], ['miss', true], ['miss', false]]);
+  });
+
+  it('pages with before and next', async () => {
+    at('2026-11-10T03:30:00Z');
+    const p1 = (await req('GET', '/api/log?days=7')).json;
+    expect(p1.days).toHaveLength(7);
+    expect(p1.next).toBe('2026-11-04');
+    const p2 = (await req('GET', `/api/log?days=7&before=${p1.next}`)).json;
+    expect(p2.days[0].day).toBe('2026-11-03');
+    expect((await req('GET', '/api/log?before=bad')).status).toBe(400);
+  });
+
+  it('hides archived branches without entries in the page', async () => {
+    await req('PATCH', `/api/habits/${read}`, { archived: true });
+    at('2026-10-20T03:30:00Z');
+    const { json } = await req('GET', '/api/log?days=1');
+    expect(json.habits.map((h: any) => h.slug)).toEqual(['walk']);
+  });
+});

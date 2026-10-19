@@ -16,7 +16,8 @@
     "start": "NODE_ENV=production node --disable-warning=ExperimentalWarning server/src/index.ts",
     "check": "tsc -p tsconfig.json && npm run check -w web",
     "test": "vitest run",
-    "secrets": "node scripts/check-secrets.mjs --all"
+    "secrets": "node scripts/check-secrets.mjs --all",
+    "seed": "node --disable-warning=ExperimentalWarning server/src/seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.5",

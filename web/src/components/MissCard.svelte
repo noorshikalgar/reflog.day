@@ -11,6 +11,8 @@
   const yesterday = $derived(addDays(today, -1));
   const title = $derived(misses[misses.length - 1].title);
   const restable = $derived(canAmend && misses.length === 1 && misses[0].day === yesterday && !misses[0].rebase);
+  // Newest first, max 3 lines. A long break must not fill the screen.
+  const shown = $derived([...misses].reverse().slice(0, 3));
   const when = (d: string) => (d === yesterday ? 'yesterday' : d);
   let busy = $state(false);
 
@@ -37,10 +39,11 @@
 <div class="card" out:slide={{ duration: 300 }}>
   <h3>{title}</h3>
   <p>
-    {#each misses as m (m.id)}
+    {#each shown as m (m.id)}
       <span><b>{m.slug}</b> — {m.rebase ? `rebased. best streak stays yours.` : `no commit ${when(m.day)}.`}</span>
     {/each}
-    {#if misses.some(m => !m.rebase)}<span class="rule">streak safe. never miss twice.</span>{/if}
+    {#if misses.length > shown.length}<span>+{misses.length - shown.length} older miss{misses.length - shown.length > 1 ? 'es' : ''}. all in the log.</span>{/if}
+    {#if shown.some(m => !m.rebase)}<span class="rule">streak safe. never miss twice.</span>{/if}
   </p>
   <div class="acts">
     <button class="chip" onclick={ok} disabled={busy}>ok</button>
