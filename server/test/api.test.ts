@@ -154,6 +154,18 @@ describe('commits', () => {
     at('2026-10-21T07:00:00Z'); // 12:30 IST
     expect((await commit(walk, { day: '2026-10-20' })).status).toBe(409);
   });
+  it('accepts an offline commit with its tap time', async () => {
+    const tapped = '2026-10-19T15:30:00Z'; // 21:00 IST on the 19th
+    at('2026-10-20T07:30:00Z'); // uploaded at 13:00 IST on the 20th, too late to amend
+    const { status, json } = await commit(walk, { at: tapped });
+    expect(status).toBe(200);
+    expect(json.entry).toMatchObject({ day: '2026-10-19', amended: false, created_at: new Date(tapped).toISOString() });
+  });
+  it('rejects a tap time from the future or older than 48 h', async () => {
+    expect((await commit(walk, { at: '2026-10-19T04:00:00Z' })).status).toBe(400); // 30 min ahead
+    expect((await commit(walk, { at: '2026-10-17T03:00:00Z' })).status).toBe(400);
+    expect((await commit(walk, { at: 'nope' })).status).toBe(400);
+  });
   it('rejects a day before the branch existed', async () => {
     at('2026-10-20T03:30:00Z');
     const late = (await req('POST', '/api/habits', { slug: 'late' })).json.id;

@@ -1,5 +1,6 @@
 import type { Theme, TodayView } from '../../../shared/src/api.ts';
-import { api, ApiError } from './api.ts';
+import { api, ApiError, fromCache } from './api.ts';
+import { flush, isNetworkError, outbox, type QueuedEntry } from './outbox.ts';
 
 export type Tab = 'status' | 'log' | 'branches';
 
@@ -7,6 +8,8 @@ export const app = $state({
   paired: true,
   loading: true,
   online: true,
+  /** Commits waiting in the offline outbox. */
+  queued: 0,
   tab: 'status' as Tab,
   newBranch: false,
   /** Branch id shown on the `show` screen, over the current tab. */
@@ -43,16 +46,38 @@ export function applyTheme(t: Theme) {
   try { if (t === 'terminal') localStorage.removeItem('rl_theme'); else localStorage.setItem('rl_theme', t); } catch { /* private mode */ }
 }
 
+/** Show queued (offline) commits on top of the view from the server or the cache. */
+export function overlay(view: TodayView, queued: QueuedEntry[]): TodayView {
+  for (const q of queued) {
+    if (q.day !== view.day) continue;
+    const h = view.habits.find(x => x.id === q.habit_id);
+    if (!h || (h.entry && h.entry.kind !== 'miss')) continue;
+    h.entry = { id: q.id, habit_id: q.habit_id, day: q.day, kind: q.kind, hash: '·······', message: q.message, amended: false, seen_at: null, created_at: q.queued_at };
+    if (q.kind === 'done') h.streak++;
+  }
+  return view;
+}
+
+let refreshing = false;
 export async function refresh() {
+  if (refreshing) return;
+  refreshing = true;
   try {
-    app.today = await api.today();
+    const sent = await flush();
+    if (sent.dropped.length) showToast(`dropped ${sent.dropped.length} queued commit(s): ${sent.dropped[0]}`, null, 5000);
+    const view = await api.today();
+    const queued = await outbox.all();
+    app.queued = queued.length;
+    app.today = overlay(view, queued);
     app.paired = true;
-    app.online = true;
+    app.online = !fromCache(view);
     applyTheme(app.today.settings.theme);
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) app.paired = false;
+    else if (isNetworkError(e)) app.online = false;
     else app.online = false;
   } finally {
+    refreshing = false;
     app.loading = false;
   }
 }

@@ -1,5 +1,5 @@
 // reflog service worker. Refer to docs/06-pwa-notifications.md §3.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = `reflog-shell-${VERSION}`;
 const DATA = `reflog-data-${VERSION}`;
 const SHELL_URLS = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/192.png'];
@@ -24,8 +24,11 @@ async function networkFirst(req, cacheName) {
     return res;
   } catch {
     const hit = await cache.match(req);
-    if (hit) return hit;
-    throw new Error('offline');
+    if (!hit) throw new Error('offline');
+    // Mark it, so the app can say "offline" while it shows the last data.
+    const headers = new Headers(hit.headers);
+    headers.set('x-reflog-cache', '1');
+    return new Response(hit.body, { status: hit.status, statusText: hit.statusText, headers });
   }
 }
 

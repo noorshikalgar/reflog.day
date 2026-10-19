@@ -11,6 +11,7 @@
   import Odometer from '../components/Odometer.svelte';
   import Strip from '../components/Strip.svelte';
   import { api } from '../lib/api.ts';
+  import { isNetworkError, outbox } from '../lib/outbox.ts';
   import { dayLabel } from '../lib/format.ts';
   import { app, go, hideToast, refresh, showToast } from '../lib/state.svelte.ts';
 
@@ -43,9 +44,10 @@
   async function commit(h: HabitView, req: CommitRequest = { kind: 'done', message: null, yesterday: false }) {
     sheetFor = null;
     const editing = !req.yesterday && h.entry && h.entry.kind !== 'miss' ? h.entry : null;
+    const id = editing?.id ?? uuidv7();
     if (!req.yesterday && !editing) pending.add(h.id);
     try {
-      const r = await api.putEntry(editing?.id ?? uuidv7(), {
+      const r = await api.putEntry(id, {
         habit_id: h.id, kind: req.kind, message: req.message, day: req.yesterday ? addDays(t.day, -1) : undefined,
       });
       replace(r.habit);
@@ -63,8 +65,28 @@
       else showToast(`committed ${r.entry.hash} ${(lastToast = pick(COMMIT_TOASTS, lastToast))}`, () => undo(r.entry.id));
     } catch (e) {
       pending.delete(h.id);
+      if (isNetworkError(e) && !editing) return queue(h, req, id);
       showToast(`commit failed: ${(e as Error).message}`, null, 4000);
     }
+  }
+
+  /** No network: keep the commit in the outbox and show it now. */
+  async function queue(h: HabitView, req: CommitRequest, id: string) {
+    const q = { id, habit_id: h.id, kind: req.kind, day: req.yesterday ? addDays(t.day, -1) : t.day, message: req.message, queued_at: new Date().toISOString() };
+    try { await outbox.put(q); } catch { showToast('offline, and this browser cannot store the commit.', null, 4000); return; }
+    app.queued++;
+    if (!req.yesterday) {
+      replace({ ...h, entry: { ...q, hash: '·······', amended: false, seen_at: null, created_at: q.queued_at }, streak: h.streak + (req.kind === 'done' ? 1 : 0) });
+    }
+    app.online = false;
+    showToast('offline. commit queued, pushes when online.', () => unqueue(h, id));
+  }
+
+  async function unqueue(h: HabitView, id: string) {
+    hideToast();
+    await outbox.remove(id);
+    app.queued = Math.max(0, app.queued - 1);
+    replace(h);
   }
 
   async function revert(h: HabitView) {
@@ -83,7 +105,9 @@
 <main>
   <div class="top">
     <span>{dayLabel(t.day)}</span>
-    <span class="sync" class:off={!app.online}>{app.online ? 'synced' : 'offline'}</span>
+    <span class="sync" class:off={!app.online} class:wait={app.queued > 0}>
+      {app.queued ? `${app.queued} queued` : app.online ? 'synced' : 'offline'}
+    </span>
   </div>
 
   {#if t.misses.length}
@@ -129,6 +153,8 @@
   .sync { display: inline-flex; gap: 6px; align-items: center; }
   .sync::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
   .sync.off::before { background: var(--miss); box-shadow: none; }
+  .sync.wait::before { background: var(--rest); box-shadow: 0 0 8px var(--rest); animation: blink 1.2s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
   .big { font-family: var(--font-display); font-weight: 200; font-size: 104px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; margin-top: 8px; }
   .of { color: var(--dim); }
   .state { font-family: var(--font-mono); font-size: 13px; color: var(--muted); margin-top: 10px; min-height: 40px; line-height: 1.55; }
