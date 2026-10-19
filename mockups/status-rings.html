@@ -42,8 +42,8 @@ body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#d
 .top .sync::before { content: "● "; color: var(--ok); }
 
 /* hero: number left, rings right */
-.hero { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
-.big { font-family: var(--font-display); font-weight: 200; font-size: 104px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 18px; }
+.big { font-family: var(--font-display); font-weight: 300; font-size: 104px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
 .big .of { color: var(--dim); }
 .rings { width: 118px; height: 118px; flex: none; position: relative; }
 .rings svg { display: block; transform: rotate(-90deg); overflow: visible; }
@@ -65,13 +65,14 @@ body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#d
 .dash { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 22px 2px 0; height: 16px; }
 .dash::before { content: ""; position: absolute; left: 6px; right: 6px; top: 50%; border-top: 2px dashed var(--line); }
 .dash i { position: relative; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); }
-.dash i.full { background: var(--ok); }
-.dash i.half { background: var(--bg); box-shadow: inset 0 0 0 2px var(--ok); }
-.dash i.half::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: conic-gradient(var(--ok) calc(var(--p) * 1%), transparent 0); }
+.dash { --dot: var(--muted); }
+.dash i.full { background: var(--dot); }
+.dash i.half { background: var(--bg); box-shadow: inset 0 0 0 2px var(--dot); }
+.dash i.half::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: conic-gradient(var(--dot) calc(var(--p) * 1%), transparent 0); }
 .dash i.miss { box-shadow: inset 0 0 0 2px var(--miss); }
 .dash i.miss::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--miss); opacity: .5; }
 .dash i.today { box-shadow: inset 0 0 0 2px var(--text); }
-.dash i.today.full { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 30%, transparent); }
+.dash i.today.full { background: var(--text); box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 18%, transparent); }
 .dlbl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin: 8px 0 0; }
 .dlbl span { width: 30px; text-align: center; }
 .dlbl span:first-child { text-align: left; } .dlbl span:last-child { text-align: right; color: var(--text); }
@@ -118,7 +119,7 @@ body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#d
 
 <main class="grid">
   <figure><div class="phone"><div class="screen" data-v="1"></div></div>
-    <figcaption><b>V1 · rings + dashed strip</b> (what you asked). Dots are bigger, on a dashed line. Full day = filled. Partial day = a pie that shows how much. Miss = ring with a small center. Today = outlined, fills when clean.</figcaption></figure>
+    <figcaption><b>V1 · rings + dashed strip</b> (what you asked). Dots are bigger, on a dashed line, in a neutral theme color (never a branch color). Full day = filled. Partial day = a pie that shows how much. Miss = ring with a small center. Today = outlined, fills when clean.</figcaption></figure>
   <figure><div class="phone"><div class="screen" data-v="2"></div></div>
     <figcaption><b>V2 · rings + contribution row</b> (GitHub vibe). Seven squares, 5 green levels like the GitHub graph, with the <code>less ▢▢▢▢ more</code> scale. No dates, no calendar feel.</figcaption></figure>
   <figure><div class="phone"><div class="screen" data-v="3"></div></div>
