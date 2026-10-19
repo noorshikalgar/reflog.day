@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Log rows</title>
+<style>
+:root { --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; --font-mono: ui-monospace, "SF Mono", Menlo, monospace; --ease: cubic-bezier(.2,.8,.2,1); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #06070a; color: #e7e9ee; font-family: system-ui, sans-serif; }
+body { padding: 32px 16px 80px; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: left; -webkit-tap-highlight-color: transparent; }
+.page-head { max-width: 1240px; margin: 0 auto 20px; font-family: var(--font-mono); }
+.page-head h1 { font-family: var(--font-display); font-weight: 300; font-size: 40px; letter-spacing: -.03em; }
+.page-head h1 b { color: #3ddc97; font-weight: 500; }
+.page-head p { color: #8b92a1; font-size: 13px; margin-top: 8px; line-height: 1.6; max-width: 860px; }
+.tbar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0 auto 32px; position: sticky; top: 0; z-index: 9; padding: 10px 0; background: color-mix(in srgb, #06070a 85%, transparent); backdrop-filter: blur(10px); }
+.tbtn { font-family: var(--font-mono); font-size: 13px; padding: 10px 16px; border-radius: 14px; background: #12151c; color: #8b92a1; }
+.tbtn.on { background: #e7e9ee; color: #0b0d12; }
+.grid { display: flex; flex-wrap: wrap; gap: 48px 36px; justify-content: center; max-width: 1600px; margin: 0 auto; }
+figure { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+figcaption { font-family: var(--font-mono); font-size: 12px; color: #8b92a1; max-width: 340px; line-height: 1.55; }
+figcaption b { color: #e7e9ee; font-weight: 500; }
+figcaption .pro { color: #3ddc97; } figcaption .con { color: #ff8a80; }
+
+.phone {
+  --bg:#0b0d12; --surface:#12151c; --surface-2:#1a1e28; --line:#252a36; --text:#e7e9ee; --muted:#8b92a1; --dim:#788092; --ok:#3ddc97; --rest:#f2b84b; --miss:#798194;
+  --l1:#3ddc97; --l2:#4cc9f0; --l3:#a78bfa; --l4:#ff9f5a; --l5:#f472b6; --l6:#6ea8ff; --l7:#c3e88d; --l8:#2dd4bf; --l9:#ff8a80; --l10:#b8c4d8;
+  width: min(360px, calc(100vw - 32px)); height: 740px; border-radius: 46px; padding: 10px; background: #1b1d22; box-shadow: 0 0 0 1px #2c2f36, 0 30px 80px -20px rgba(0,0,0,.8);
+}
+body.bathory .phone { --bg:#000; --surface:#0e0e0e; --surface-2:#1a1a1a; --line:#222; --text:#f1f1f1; --muted:#999; --dim:#7c7c7c; --ok:#fbcb97; --rest:#e78a43; --miss:#7d7d7d;
+  --l1:#fbcb97; --l2:#e78a43; --l3:#5f8787; --l4:#c1c1c1; --l5:#9b99a3; --l6:#d9a679; --l7:#8fb3b3; --l8:#aaa; --l9:#b5776a; --l10:#888; background:#141414; }
+body.gruvbox .phone { --bg:#282828; --surface:#32302f; --surface-2:#3c3836; --line:#504945; --text:#ebdbb2; --muted:#bdae93; --dim:#a3978c; --ok:#b8bb26; --rest:#fabd2f; --miss:#a4978b;
+  --l1:#b8bb26; --l2:#83a598; --l3:#d3869b; --l4:#fe8019; --l5:#8ec07c; --l6:#56a6aa; --l7:#a1a01b; --l8:#74a576; --l9:#c489a4; --l10:#f17626; background:#1d2021; }
+body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#dcdad2; --text:#1a1d24; --muted:#4f5562; --dim:#686f7a; --ok:#117d4e; --rest:#966319; --miss:#666d7e;
+  --l1:#107d4e; --l2:#0a769c; --l3:#6d4fd8; --l4:#b25210; --l5:#c0307a; --l6:#2a5fd0; --l7:#517813; --l8:#0d7a6d; --l9:#c2463c; --l10:#56657e; background:#d9d7d0; }
+.screen { height: 100%; border-radius: 36px; overflow: hidden auto; background: var(--bg); color: var(--text); padding: 46px 18px 20px; scrollbar-width: none; font-family: var(--font-mono); }
+.screen::-webkit-scrollbar { display: none; }
+.head { font-size: 12px; color: var(--muted); }
+.h1 { font-family: var(--font-display); font-weight: 300; font-size: 38px; letter-spacing: -.03em; margin-bottom: 8px; }
+
+/* shared fold mechanics: tap the header, no chevron */
+.body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .32s var(--ease); }
+.day.closed .body { grid-template-rows: 0fr; }
+.body > div { overflow: hidden; min-height: 0; }
+.sum { font-size: 11px; color: var(--dim); max-height: 0; opacity: 0; overflow: hidden; transition: max-height .25s, opacity .25s; }
+.day.closed .sum { max-height: 18px; opacity: 1; margin-top: 4px; }
+.dots { display: flex; gap: 4px; margin-top: 6px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.dots i.m { background: none; box-shadow: inset 0 0 0 1.5px var(--miss); }
+.dots i.r { background: var(--rest); border-radius: 2px; transform: scale(.85); }
+.dots i.o { background: none; box-shadow: inset 0 0 0 1.5px var(--line); }
+.tag { display: inline-block; font-size: 9px; padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px currentColor; }
+
+/* ---------- L1: tree (current, polished) ---------- */
+.L1 .day { position: relative; }
+.L1 .dh { display: grid; grid-template-columns: 26px 1fr auto; align-items: start; width: 100%; padding: 12px 0 10px; }
+.L1 .dh .node { width: 14px; height: 14px; border-radius: 50%; margin: 2px 0 0 6px; box-shadow: inset 0 0 0 2px var(--muted); background: var(--bg); position: relative; z-index: 1; }
+.L1 .day.clean .dh .node { background: var(--ok); box-shadow: none; }
+.L1 .day.today .dh .node { box-shadow: inset 0 0 0 2px var(--ok), 0 0 0 4px color-mix(in srgb, var(--ok) 18%, transparent); }
+.L1 .dh .lbl { font-size: 13px; font-weight: 600; }
+.L1 .dh .lbl small { font-weight: 400; font-size: 10px; color: var(--ok); margin-left: 6px; box-shadow: inset 0 0 0 1px var(--ok); padding: 1px 5px; border-radius: 5px; vertical-align: 1px; }
+.L1 .cnt { text-align: right; }
+.L1 .cnt b { font-family: var(--font-display); font-size: 22px; font-weight: 400; }
+.L1 .cnt small { color: var(--dim); font-size: 11px; }
+.L1 .cnt .bar { display: block; width: 44px; height: 3px; border-radius: 2px; background: var(--line); margin: 5px 0 0 auto; overflow: hidden; }
+.L1 .cnt .bar i { display: block; height: 100%; background: var(--ok); }
+.L1 .trunk { position: absolute; left: 12px; top: 0; bottom: 0; width: 2px; background: var(--line); }
+.L1 .day:first-child .trunk { top: 18px; }
+.L1 .kids { position: relative; margin-left: 26px; padding: 2px 0 10px; }
+.L1 .kids::before { content: ""; position: absolute; left: 4px; top: 0; bottom: 18px; width: 1.5px; background: color-mix(in srgb, var(--line) 70%, transparent); }
+.L1 .ev { position: relative; display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: center; min-height: 36px; font-size: 12px; }
+.L1 .ev .n { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px var(--bg); position: relative; }
+.L1 .ev.rest .n { border-radius: 2px; background: var(--rest); }
+.L1 .ev.miss .n { background: var(--bg); border: 1.5px dashed var(--miss); box-shadow: 0 0 0 3px var(--bg); }
+.L1 .ev .m { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.L1 .ev .hs { color: var(--dim); margin-right: 6px; }
+.L1 .ev .sl { color: var(--c); }
+.L1 .ev .ms { color: var(--text); }
+.L1 .ev.miss .m { color: var(--miss); font-style: italic; }
+.L1 .ev.miss .sl { opacity: .75; font-style: normal; }
+.L1 .ev .tm { font-size: 10px; color: var(--dim); }
+
+/* ---------- L2: cards with hash chips ---------- */
+.L2 .day { margin-bottom: 14px; }
+.L2 .dh { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; padding: 6px 4px 8px; }
+.L2 .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; }
+.L2 .lbl b { color: var(--text); font-weight: 600; }
+.L2 .pill { font-size: 11px; padding: 3px 9px; border-radius: 99px; background: var(--surface-2); color: var(--muted); }
+.L2 .day.clean .pill { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+.L2 .card { background: var(--surface); border-radius: 18px; overflow: hidden; }
+.L2 .ev { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 11px 14px; font-size: 12px; border-bottom: 1px solid var(--line); }
+.L2 .ev:last-child { border-bottom: 0; }
+.L2 .chip { font-size: 10.5px; padding: 3px 7px; border-radius: 7px; background: var(--surface-2); color: var(--dim); display: inline-flex; gap: 6px; align-items: center; }
+.L2 .chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+.L2 .ev.rest .chip i { border-radius: 2px; background: var(--rest); }
+.L2 .ev.miss .chip { background: none; box-shadow: inset 0 0 0 1px dashed; border: 1px dashed var(--miss); }
+.L2 .ev.miss .chip i { background: none; box-shadow: inset 0 0 0 1.5px var(--miss); }
+.L2 .m { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.L2 .sl { color: var(--c); font-weight: 600; }
+.L2 .ms { color: var(--muted); }
+.L2 .ev.miss .m { color: var(--miss); font-style: italic; }
+.L2 .tm { font-size: 10px; color: var(--dim); }
+
+/* ---------- L3: two-line, GitHub commit list ---------- */
+.L3 .day { margin-bottom: 6px; }
+.L3 .dh { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 0 8px; }
+.L3 .dh .ic { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); flex: none; }
+.L3 .dh .ic svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
+.L3 .day.clean .dh .ic { background: color-mix(in srgb, var(--ok) 20%, transparent); }
+.L3 .day.clean .dh .ic svg { stroke: var(--ok); }
+.L3 .dh .t { flex: 1; font-size: 12px; color: var(--muted); }
+.L3 .dh .t b { color: var(--text); font-weight: 600; font-size: 13px; }
+.L3 .dh .k { font-size: 11px; color: var(--dim); }
+.L3 .list { margin-left: 11px; border-left: 2px solid var(--line); padding-left: 14px; }
+.L3 .ev { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 9px 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.L3 .ev:last-child { border-bottom: 0; }
+.L3 .l1 { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: system-ui, sans-serif; }
+.L3 .l1 .sl { font-family: var(--font-mono); color: var(--c); font-size: 12px; margin-right: 6px; }
+.L3 .l2 { grid-column: 1; font-size: 10.5px; color: var(--dim); display: flex; gap: 8px; align-items: center; }
+.L3 .l2 .hs { background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
+.L3 .side { grid-row: 1 / 3; grid-column: 2; align-self: center; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.L3 .ev.rest .side { border-radius: 2px; background: var(--rest); }
+.L3 .ev.miss .side { background: none; border: 1.5px dashed var(--miss); }
+.L3 .ev.miss .l1 { color: var(--miss); font-style: italic; }
+
+/* ---------- L4: raw git log --graph ---------- */
+.L4 .screen-inner { font-size: 12px; line-height: 1.85; }
+.L4 .dh { display: block; width: 100%; padding: 6px 0 2px; white-space: nowrap; }
+.L4 .g { color: var(--dim); white-space: pre; }
+.L4 .star { color: var(--ok); }
+.L4 .ref { color: var(--rest); }
+.L4 .ref .hd { color: var(--l2); font-weight: 600; }
+.L4 .ref .br { color: var(--c); }
+.L4 .ev { display: flex; align-items: baseline; gap: 0; white-space: nowrap; overflow: hidden; }
+.L4 .ev .hs { color: var(--rest); margin-right: 6px; }
+.L4 .ev .m { overflow: hidden; text-overflow: ellipsis; }
+.L4 .ev .tm { color: var(--dim); margin-left: auto; padding-left: 8px; font-size: 10px; }
+.L4 .ev.miss .m { color: var(--miss); font-style: italic; }
+.L4 .ev.miss .g.n { color: var(--miss); }
+.L4 .sum { margin-left: 0; }
+</style>
+</head>
+<body>
+<header class="page-head">
+  <h1><b>log</b> — row styles</h1>
+  <p>Same data in four styles. The chevron is gone: tap a day header to fold or open it. Each day shows its count and a small summary when folded.</p>
+</header>
+<nav class="tbar" id="tbar">
+  <button class="tbtn on" data-t="">terminal</button><button class="tbtn" data-t="bathory">bathory</button><button class="tbtn" data-t="gruvbox">gruvbox</button><button class="tbtn" data-t="paper">paper</button>
+</nav>
+<main class="grid">
+  <figure><div class="phone"><div class="screen L1" data-v="L1"></div></div>
+    <figcaption><b>L1 · tree, polished</b> (today's design, cleaned up). Bigger day label, a HEAD badge, a count with a small bar instead of the chevron, quieter sub-line, slug then message, time at the end.<br><span class="pro">+ small change, keeps the git graph</span><br><span class="con">− still dense</span></figcaption></figure>
+  <figure><div class="phone"><div class="screen L2" data-v="L2"></div></div>
+    <figcaption><b>L2 · cards</b>. Each day is a card. The hash is a chip with the branch dot. Clean days get a green pill.<br><span class="pro">+ calm, easy to scan, looks like the status screen</span><br><span class="con">− loses the graph line</span></figcaption></figure>
+  <figure><div class="phone"><div class="screen L3" data-v="L3"></div></div>
+    <figcaption><b>L3 · two-line</b> (GitHub commit list). Line 1: branch + message. Line 2: hash chip · time · tag. A commit icon starts each day.<br><span class="pro">+ most readable, long messages fit</span><br><span class="con">− about 30% taller</span></figcaption></figure>
+  <figure><div class="phone"><div class="screen L4" data-v="L4"></div></div>
+    <figcaption><b>L4 · raw graph</b>. Real <code>git log --graph --oneline --decorate</code>: <code>*</code> and <code>|</code>, refs in parens, <code>(HEAD -&gt; today)</code>.<br><span class="pro">+ maximum developer vibe</span><br><span class="con">− small text, less friendly on a phone</span></figcaption></figure>
+</main>
+
+<script>
+const BR = { walk: 1, read: 2, water: 6, stretch: 3, gym: 4, meditate: 8, journal: 5, 'no-sugar': 7, 'sleep-11': 9, guitar: 10 };
+const DATA = [
+  { label: 'mon 19 oct', today: true, ev: [
+    ['sleep-11', 'done', 'ddcb870', '22:52', '15:27'], ['no-sugar', 'done', 'd698b55', 'skipped dessert', '13:48'], ['journal', 'done', 'b9e60aa', 'gratitude', '13:09'],
+    ['water', 'done', '4ac3f58', '2L before lunch', '12:24'], ['meditate', 'done', '03a052f', '5 min, still counts', '10:59'], ['gym', 'rest', '2238ccb', '', ''],
+    ['walk', 'done', '001081b', 'done', '09:57'], ['read', 'done', 'b1b59f1', 'finished ch. 4', '09:11'], ['guitar', 'miss', '', 'HEAD detached, briefly', ''] ], open: ['stretch'] },
+  { label: 'sun 18 oct', ev: [
+    ['walk', 'done', '7b56d50', 'park, 4.2k', '18:40'], ['read', 'done', 'c330852', '20 pages', '22:10', 'amended'], ['water', 'done', 'a377fc4', '2.5L', '16:02'],
+    ['stretch', 'done', '4d24414', 'yoga', '12:15'], ['meditate', 'done', '3d7bc18', '10 min', '08:22'], ['journal', 'done', 'c15a9d2', '3 lines', '22:41'] ] },
+  { label: 'sat 17 oct', ev: [['walk', 'done', 'e1f02a1', 'done', '08:05'], ['read', 'done', 'a9c1e33', '15 pages', '23:10'], ['gym', 'miss', '', 'merge conflict with the couch', '', 'rebased']] },
+];
+const days = DATA.map(d => {
+  const ev = d.ev.map(([s, k, h, m, t, tag]) => ({ s, k, h, m, t, tag, lane: BR[s] }));
+  const done = ev.filter(e => e.k !== 'miss').length, total = ev.length + (d.open?.length ?? 0);
+  return { ...d, ev, done, total, clean: done === total };
+});
+const summary = d => { const c = d.ev.filter(e => e.k === 'done').length, r = d.ev.filter(e => e.k === 'rest').length, m = d.ev.filter(e => e.k === 'miss').length; return [c && `${c} commits`, r && `${r} rest`, m && `${m} miss`].filter(Boolean).join(' · '); };
+const dots = d => `<span class="dots">${d.ev.map(e => `<i class="${e.k === 'miss' ? 'm' : e.k === 'rest' ? 'r' : ''}" style="--c:var(--l${e.lane})"></i>`).join('')}${(d.open ?? []).map(() => '<i class="o"></i>').join('')}</span>`;
+const lane = e => `--c:var(--l${e.lane})`;
+
+const R = {
+  L1(d, i) {
+    return `<div class="day ${d.today ? 'today' : ''} ${d.clean ? 'clean' : ''} ${i === 2 ? 'closed' : ''}"><span class="trunk"></span>
+      <button class="dh"><span class="node"></span><span><span class="lbl">${d.label}${d.today ? '<small>HEAD</small>' : ''}</span>${dots(d)}<div class="sum">${summary(d)}</div></span>
+        <span class="cnt"><b>${d.done}</b><small>/${d.total}</small><span class="bar"><i style="width:${d.done / d.total * 100}%"></i></span></span></button>
+      <div class="body"><div><div class="kids">${d.ev.map(e => `<div class="ev ${e.k}" style="${lane(e)}"><span class="n"></span>
+        <span class="m">${e.k === 'miss' ? `<span class="sl">${e.s}</span> — ${e.m}` : e.k === 'rest' ? `<span class="hs">${e.h}</span><span style="color:var(--rest)">${e.s} --allow-empty</span>` : `<span class="hs">${e.h}</span><span class="sl">${e.s}</span>: <span class="ms">${e.m}</span>`}</span>
+        <span class="tm">${e.tag ? `<span class="tag">${e.tag}</span>` : e.k === 'rest' ? 'rest' : e.t}</span></div>`).join('')}</div></div></div></div>`;
+  },
+  L2(d, i) {
+    return `<div class="day ${d.clean ? 'clean' : ''} ${i === 2 ? 'closed' : ''}">
+      <button class="dh"><span><span class="lbl"><b>${d.label}</b>${d.today ? ' · head' : ''}</span><div class="sum">${summary(d)}</div></span><span class="pill">${d.clean ? '✓ clean' : `${d.done}/${d.total}`}</span></button>
+      <div class="body"><div><div class="card">${d.ev.map(e => `<div class="ev ${e.k}" style="${lane(e)}">
+        <span class="chip"><i></i>${e.k === 'miss' ? 'miss' : e.h}</span>
+        <span class="m">${e.k === 'miss' ? `${e.s} — ${e.m}` : `<span class="sl">${e.s}</span> <span class="ms">${e.k === 'rest' ? 'rest day' : e.m}</span>`}</span>
+        <span class="tm">${e.tag ? `<span class="tag">${e.tag}</span>` : e.t}</span></div>`).join('')}</div></div></div></div>`;
+  },
+  L3(d, i) {
+    const icon = `<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3"/><path d="M1 8h4M11 8h4"/></svg>`;
+    return `<div class="day ${d.clean ? 'clean' : ''} ${i === 2 ? 'closed' : ''}">
+      <button class="dh"><span class="ic">${icon}</span><span class="t">commits on <b>${d.label}</b>${d.today ? ' · HEAD' : ''}<div class="sum">${summary(d)}</div></span><span class="k">${d.done}/${d.total}</span></button>
+      <div class="body"><div><div class="list">${d.ev.map(e => `<div class="ev ${e.k}" style="${lane(e)}">
+        <span class="l1"><span class="sl">${e.s}</span>${e.k === 'miss' ? e.m : e.k === 'rest' ? 'rest day' : e.m}</span>
+        <span class="side"></span>
+        <span class="l2">${e.k === 'miss' ? '<span>no commit</span>' : `<span class="hs">${e.h}</span><span>${e.k === 'rest' ? '--allow-empty' : e.t}</span>`}${e.tag ? `<span class="tag">${e.tag}</span>` : ''}</span></div>`).join('')}</div></div></div></div>`;
+  },
+  L4(d, i) {
+    return `<div class="day ${i === 2 ? 'closed' : ''}">
+      <button class="dh"><span class="g star">*</span> <span class="ref">(${d.today ? '<span class="hd">HEAD -&gt; today</span>, ' : ''}${d.label})</span> <span style="color:var(--dim)">${d.done}/${d.total}</span><div class="sum"><span class="g">| </span>${summary(d)}</div></button>
+      <div class="body"><div>${d.ev.map(e => `<div class="ev ${e.k}" style="${lane(e)}"><span class="g">| </span><span class="g n" style="color:${e.k === 'miss' ? 'var(--miss)' : 'var(--c)'}">${e.k === 'miss' ? 'o' : '*'}</span>&nbsp;
+        ${e.k === 'miss' ? '' : `<span class="hs">${e.h}</span>`}<span class="m">${e.k === 'miss' ? `${e.s}: ${e.m}` : `<span class="ref">(<span class="br" style="color:var(--c)">${e.s}</span>)</span> ${e.k === 'rest' ? '--allow-empty' : e.m}`}</span>
+        <span class="tm">${e.tag || e.t}</span></div>`).join('')}<div class="g">|</div></div></div></div>`;
+  },
+};
+
+document.querySelectorAll('.screen[data-v]').forEach(root => {
+  const v = root.dataset.v;
+  root.innerHTML = `<div class="head">$ git log${v === 'L4' ? ' --graph --oneline --decorate' : ' --oneline'}</div><div class="h1">log</div><div class="${v === 'L4' ? 'screen-inner' : ''}">${days.map((d, i) => R[v](d, i)).join('')}</div>`;
+  root.querySelectorAll('.dh').forEach(h => h.onclick = () => h.parentElement.classList.toggle('closed'));
+});
+document.getElementById('tbar').addEventListener('click', e => {
+  const b = e.target.closest('.tbtn'); if (!b) return;
+  document.querySelectorAll('.tbtn').forEach(x => x.classList.toggle('on', x === b));
+  document.body.className = b.dataset.t;
+});
+</script>
+</body>
+</html>
