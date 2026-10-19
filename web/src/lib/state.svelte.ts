@@ -61,10 +61,32 @@ export function overlay(view: TodayView, queued: QueuedEntry[]): TodayView {
 }
 
 let refreshing = false;
+const PENDING_THEME = 'rl_theme_pending';
+const readPending = () => { try { return localStorage.getItem(PENDING_THEME) as Theme | null; } catch { return null; } };
+const writePending = (t: Theme | null) => { try { if (t) localStorage.setItem(PENDING_THEME, t); else localStorage.removeItem(PENDING_THEME); } catch { /* private mode */ } };
+
+/** Apply a theme at once and save it to the server. Offline, it waits and goes with the next refresh. */
+export async function setTheme(t: Theme) {
+  applyTheme(t);
+  if (app.today) app.today.settings.theme = t;
+  writePending(t);
+  await syncTheme();
+}
+
+async function syncTheme() {
+  const t = readPending();
+  if (!t) return;
+  try {
+    await api.patchSettings({ theme: t });
+    if (readPending() === t) writePending(null);
+  } catch { /* offline: keep it for the next refresh */ }
+}
+
 export async function refresh() {
   if (refreshing) return;
   refreshing = true;
   try {
+    await syncTheme();
     const sent = await flush();
     if (sent.dropped.length) showToast(`dropped ${sent.dropped.length} queued commit(s): ${sent.dropped[0]}`, null, 5000);
     const view = await api.today();
@@ -74,6 +96,9 @@ export async function refresh() {
     app.rev++;
     app.paired = true;
     app.online = !fromCache(view);
+    // A theme picked offline wins over the older one from the server.
+    const pending = readPending();
+    if (pending) app.today.settings.theme = pending;
     applyTheme(app.today.settings.theme);
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) app.paired = false;
