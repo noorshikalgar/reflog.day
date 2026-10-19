@@ -31,6 +31,7 @@
   function replace(h: HabitView) {
     const i = t.habits.findIndex(x => x.id === h.id);
     if (i >= 0) t.habits[i] = h;
+    app.rev++;
   }
 
   function celebrate() {

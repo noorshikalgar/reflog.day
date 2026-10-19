@@ -126,7 +126,7 @@ WantedBy=multi-user.target
 
 ### 5.2 macOS (launchd)
 
-Put a plist in `~/Library/LaunchAgents/dev.reflog.plist` with `RunAtLoad` and `KeepAlive` set to true. The repository gives a template in `deploy/`.
+Use the template `deploy/day.reflog.app.plist`. It sets `RunAtLoad` and `KeepAlive`. The comment at the top gives the steps. The nginx and systemd templates are `deploy/nginx.conf` and `deploy/reflog.service`.
 
 ## 6. Use outside the home (optional)
 

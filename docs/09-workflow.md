@@ -43,7 +43,8 @@ git push origin v0.2.0
 | `v0.1.0` | Phase 1 — core loop |
 | `v0.2.0` | Phase 2 — fun |
 | `v0.3.0` | Phase 3 — notifications |
-| `v1.0.0` | Phase 4 — solid |
+| `v0.4.0` | Phase 4 — solid |
+| `v1.0.0` | One week of real use on the host and the iPhone |
 
 ## 5. Secrets
 

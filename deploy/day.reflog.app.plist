@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- launchd agent for macOS. Refer to docs/07-hosting.md §5.2.
+     1. Change REPLACE_HOME to your home folder (for example /Users/you) and the node path (`which node`).
+     2. cp deploy/day.reflog.app.plist ~/Library/LaunchAgents/
+     3. launchctl load ~/Library/LaunchAgents/day.reflog.app.plist
+        The first start prints the pairing code to ~/reflog/data/reflog.log -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>day.reflog.app</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>--disable-warning=ExperimentalWarning</string>
+    <string>server/src/index.ts</string>
+  </array>
+  <key>WorkingDirectory</key><string>REPLACE_HOME/projects/reflog</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>NODE_ENV</key><string>production</string>
+    <key>REFLOG_DATA</key><string>REPLACE_HOME/reflog/data</string>
+    <key>PORT</key><string>8740</string>
+    <key>HOST</key><string>127.0.0.1</string>
+    <key>TZ</key><string>Asia/Kolkata</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>REPLACE_HOME/reflog/data/reflog.log</string>
+  <key>StandardErrorPath</key><string>REPLACE_HOME/reflog/data/reflog.log</string>
+</dict>
+</plist>
