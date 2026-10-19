@@ -49,6 +49,7 @@ Read the documents in this sequence.
 | 07 | [Hosting](docs/07-hosting.md) | nginx, local DNS, TLS, service |
 | 08 | [Roadmap](docs/08-roadmap.md) | Phases and tasks |
 | 09 | [Workflow](docs/09-workflow.md) | Branches, pull requests, releases |
+| 10 | [Profile](docs/10-profile.md) | 4th tab: stats, settings, devices, backups (plan) |
 
 ## Mockups
 
