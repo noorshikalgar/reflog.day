@@ -48,6 +48,7 @@ Read the documents in this sequence.
 | 06 | [PWA and notifications](docs/06-pwa-notifications.md) | Install, offline, Web Push |
 | 07 | [Hosting](docs/07-hosting.md) | nginx, local DNS, TLS, service |
 | 08 | [Roadmap](docs/08-roadmap.md) | Phases and tasks |
+| 09 | [Workflow](docs/09-workflow.md) | Branches, pull requests, releases |
 
 ## Mockups
 
