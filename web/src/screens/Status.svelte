@@ -3,13 +3,14 @@
   import type { HabitView } from '../../../shared/src/api.ts';
   import { uuidv7 } from '../../../shared/src/ids.ts';
   import { CLEAN, COMMIT_TOASTS, REST_TOASTS, pick } from '../../../shared/src/messages.ts';
-  import { addDays, tagFor } from '../../../shared/src/rules.ts';
+  import { addDays, tagFor, tagProgress } from '../../../shared/src/rules.ts';
   import BranchRow from '../components/BranchRow.svelte';
   import CommitSheet, { type CommitRequest } from '../components/CommitSheet.svelte';
   import Confetti from '../components/Confetti.svelte';
   import MissCard from '../components/MissCard.svelte';
   import ReleaseNotes from '../components/ReleaseNotes.svelte';
   import Odometer from '../components/Odometer.svelte';
+  import Rings from '../components/Rings.svelte';
   import Strip from '../components/Strip.svelte';
   import { api } from '../lib/api.ts';
   import { isNetworkError, outbox } from '../lib/outbox.ts';
@@ -22,7 +23,18 @@
   const isDone = (h: HabitView) => pending.has(h.id) || h.entry?.kind === 'done' || h.entry?.kind === 'rest';
   const done = $derived(rows.filter(isDone).length);
   const left = $derived(rows.length - done);
-  const strip = $derived(t.strip.map((d, i) => i === t.strip.length - 1 && rows.length && left === 0 ? { ...d, state: 'full' as const } : d));
+  // Today's strip day follows local taps at once; older days come from the server.
+  const strip = $derived(t.strip.map((d, i) => i === t.strip.length - 1 && rows.length
+    ? { ...d, p: done / rows.length, state: left === 0 ? 'full' as const : d.state } : d));
+
+  // Rings: today, last 7 days, best current streak toward its next tag.
+  const p7 = $derived.by(() => {
+    const days = strip.filter(d => d.state !== 'none');
+    return days.length ? days.reduce((a, d) => a + d.p, 0) / days.length : 0;
+  });
+  const best = $derived(Math.max(0, ...t.habits.map(h => h.streak)));
+  const tag = $derived(tagProgress(best));
+  const ringValues = $derived<[number, number, number]>([rows.length ? done / rows.length : 0, p7, tag.p]);
 
   let big: HTMLElement | undefined = $state();
   let burst = $state<{ x: number; y: number; id: number } | null>(null);
@@ -119,7 +131,10 @@
   {/if}
 
   {#if rows.length}
-    <div class="big" bind:this={big}><Odometer value={done} /><span class="of">/{rows.length}</span></div>
+    <div class="hero">
+      <div class="big" bind:this={big}><Odometer value={done} /><span class="of">/{rows.length}</span></div>
+      <Rings values={ringValues} label="today {done} of {rows.length}, last 7 days {Math.round(p7 * 100)} percent, {best} of {tag.next} days to the next tag" />
+    </div>
     <div class="state">
       {#key left === 0}
         <span class="swap">
@@ -127,6 +142,11 @@
           {:else}on branch <span class="br">today</span><br />{left} change{left > 1 ? 's' : ''} not committed{/if}
         </span>
       {/key}
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span style:--c="var(--ring1)"><i></i>today <b>{done}/{rows.length}</b></span>
+      <span style:--c="var(--ring2)"><i></i>7d <b>{Math.round(p7 * 100)}%</b></span>
+      <span style:--c="var(--ring3)"><i></i>tag <b>{best}/{tag.next}</b></span>
     </div>
     <Strip days={strip} />
     <div class="rows">
@@ -159,7 +179,12 @@
   .sync.off::before { background: var(--miss); box-shadow: none; }
   .sync.wait::before { background: var(--rest); box-shadow: 0 0 8px var(--rest); animation: blink 1.2s steps(2) infinite; }
   @keyframes blink { 50% { opacity: .3; } }
-  .big { font-family: var(--font-display); font-weight: 200; font-size: 104px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; margin-top: 8px; }
+  .hero { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 18px; }
+  .big { font-family: var(--font-display); font-weight: 300; font-size: 104px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 11px; color: var(--dim); margin-top: 10px; }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+  .legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .legend b { color: var(--text); font-weight: 500; }
   .of { color: var(--dim); }
   .state { font-family: var(--font-mono); font-size: 13px; color: var(--muted); margin-top: 10px; min-height: 40px; line-height: 1.55; }
   .swap { display: block; animation: swap .35s var(--ease); }

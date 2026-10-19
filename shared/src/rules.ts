@@ -132,6 +132,15 @@ export function restLeftThisWeek(log: DayLog, day: string, perWeek = REST_PER_WE
   return Math.max(0, perWeek - used);
 }
 
+/** Progress (0–1) from the last milestone to the next one. 1 after the last milestone. */
+export function tagProgress(n: number): { p: number; next: number; prev: number } {
+  const steps = [0, ...Object.keys(TAGS).map(Number).sort((a, b) => a - b)];
+  const next = steps.find(t => t > n);
+  if (next === undefined) return { p: 1, next: steps[steps.length - 1], prev: steps[steps.length - 1] };
+  const prev = steps.filter(t => t <= n).pop()!;
+  return { p: (n - prev) / (next - prev), next, prev };
+}
+
 /** The next milestone above a streak, or null after the last one. */
 export function nextTag(n: number): { name: string; at: number; to_go: number } | null {
   const at = Object.keys(TAGS).map(Number).sort((a, b) => a - b).find(t => t > n);

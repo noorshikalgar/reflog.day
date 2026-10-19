@@ -215,6 +215,7 @@ describe('misses and streaks', () => {
     store.rollover();
     const strip = (await today()).strip;
     expect(strip.slice(-3).map(s => s.state)).toEqual(['full', 'miss', 'open']);
+    expect(strip.slice(-3).map(s => s.p)).toEqual([1, 0, 0]);
     expect(strip[0].state).toBe('none');
   });
 });

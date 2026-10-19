@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, addMinutes, bestStreak, dayStats, nextTag, tagsEarned, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
+  addDays, addMinutes, bestStreak, dayStats, nextTag, tagProgress, tagsEarned, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
   patina, restLeftThisWeek, streak, tagFor, weekday, EVERY_DAY, type Kind,
 } from '../src/rules.ts';
 
@@ -158,6 +158,15 @@ describe('tagsEarned', () => {
     for (let i = 0; i < 7; i++) l.set(addDays('2026-10-10', i), 'done');      // run 2: 7 → v0.1.0
     expect(tagsEarned(l, EVERY_DAY, '2026-10-16', '2026-10-01')).toBe(2);
     expect(tagsEarned(l, EVERY_DAY, '2026-10-15', '2026-10-01')).toBe(1);
+  });
+});
+
+describe('tagProgress', () => {
+  it('measures from the last milestone to the next', () => {
+    expect(tagProgress(0)).toEqual({ p: 0, next: 7, prev: 0 });
+    expect(tagProgress(29)).toEqual({ p: 22 / 23, next: 30, prev: 7 });
+    expect(tagProgress(30).p).toBe(0);
+    expect(tagProgress(400)).toEqual({ p: 1, next: 365, prev: 365 });
   });
 });
 
