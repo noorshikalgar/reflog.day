@@ -1,4 +1,4 @@
-import type { Entry, Habit, HabitInput, HabitView, LogView, Settings, TodayView } from '../../../shared/src/api.ts';
+import type { Entry, Habit, HabitDetail, HabitInput, HabitView, LogView, Settings, TodayView } from '../../../shared/src/api.ts';
 
 export class ApiError extends Error {
   status: number;
@@ -26,6 +26,7 @@ export const api = {
   today: () => call<TodayView>('GET', '/api/today'),
   log: (before?: string, days = 14) => call<LogView>('GET', `/api/log?days=${days}${before ? `&before=${before}` : ''}`),
   habits: () => call<Habit[]>('GET', '/api/habits'),
+  habit: (id: string) => call<HabitDetail>('GET', `/api/habits/${id}`),
   createHabit: (h: HabitInput) => call<Habit>('POST', '/api/habits', h),
   updateHabit: (id: string, h: HabitInput & { archived?: boolean }) => call<Habit>('PATCH', `/api/habits/${id}`, h),
   putEntry: (id: string, body: { habit_id: string; kind: 'done' | 'rest'; day?: string; message?: string | null }) =>

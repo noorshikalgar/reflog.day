@@ -5,6 +5,7 @@
   import Branches from './screens/Branches.svelte';
   import Log from './screens/Log.svelte';
   import Pair from './screens/Pair.svelte';
+  import Show from './screens/Show.svelte';
   import Status from './screens/Status.svelte';
 
   refresh();
@@ -36,7 +37,8 @@
   </div>
 {:else}
   <div class="shell">
-    {#if app.tab === 'status'}<Status />
+    {#if app.show}<Show id={app.show} />
+    {:else if app.tab === 'status'}<Status />
     {:else if app.tab === 'log'}<Log />
     {:else}<Branches />{/if}
   </div>

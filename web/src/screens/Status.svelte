@@ -59,7 +59,7 @@
       const tag = tagFor(r.habit.streak);
       if (rows.length && rows.every(isDone)) { showToast(CLEAN, () => undo(r.entry.id)); celebrate(); }
       else if (req.kind === 'rest') showToast(pick(REST_TOASTS), () => undo(r.entry.id));
-      else if (tag) showToast(`tag ${tag} — ${h.slug} ${r.habit.streak}d`, () => undo(r.entry.id));
+      else if (tag) { showToast(`tag ${tag} — ${h.slug} ${r.habit.streak}d`, () => undo(r.entry.id)); celebrate(); }
       else showToast(`committed ${r.entry.hash} ${(lastToast = pick(COMMIT_TOASTS, lastToast))}`, () => undo(r.entry.id));
     } catch (e) {
       pending.delete(h.id);

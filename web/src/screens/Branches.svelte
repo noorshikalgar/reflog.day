@@ -37,6 +37,12 @@
   $effect(() => {
     if (app.newBranch) { app.newBranch = false; edit(null); }
   });
+  $effect(() => {
+    const id = app.editId;
+    if (!id) return;
+    const h = habits.find(x => x.id === id);
+    if (h) { app.editId = null; edit(h); }
+  });
 
   function freeLane() {
     const used = new Set(active.map(h => h.lane));
@@ -107,7 +113,7 @@
   {#if active.length}
     <div class="list">
       {#each active as h (h.id)}
-        <button class="item" style:--c="var(--l{h.lane})" onclick={() => edit(h)}>
+        <button class="item" style:--c="var(--l{h.lane})" onclick={() => (app.show = h.id)}>
           <i class="dot"></i>
           <span><span class="n">{h.emoji ? h.emoji + ' ' : ''}{h.slug}</span><span class="days">{daysText(h.days_mask)}</span></span>
           <span class="r">{h.remind_at ? `⏰ ${h.remind_at}` : '—'}</span>

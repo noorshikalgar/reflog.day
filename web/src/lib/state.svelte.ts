@@ -9,6 +9,10 @@ export const app = $state({
   online: true,
   tab: 'status' as Tab,
   newBranch: false,
+  /** Branch id shown on the `show` screen, over the current tab. */
+  show: null as string | null,
+  /** Branch id to open in the editor on the branches tab. */
+  editId: null as string | null,
   today: null as TodayView | null,
 });
 
@@ -52,6 +56,7 @@ export async function refresh() {
 }
 
 export function go(tab: Tab) {
+  app.show = null;
   if (tab === app.tab) return;
   const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

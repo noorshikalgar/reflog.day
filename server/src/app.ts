@@ -43,6 +43,7 @@ export function createApp(store: Store, pairing: Pairing) {
 
   app.get('/api/habits', c => c.json(store.habits(true)));
   app.post('/api/habits', async c => c.json(store.createHabit(await c.req.json()), 201));
+  app.get('/api/habits/:id', c => c.json(store.habitDetail(c.req.param('id'))));
   app.patch('/api/habits/:id', async c => c.json(store.updateHabit(c.req.param('id'), await c.req.json())));
 
   app.put('/api/entries/:id', async c => c.json(store.putEntry(c.req.param('id'), await c.req.json())));

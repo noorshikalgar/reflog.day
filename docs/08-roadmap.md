@@ -22,7 +22,7 @@ Goal: log habits on the phone every day. Status: steps 1–8 done. Step 9 needs 
 8. Add device pairing.
 9. Deploy behind nginx. Install on the iPhone.
 
-## Phase 2 — Fun (v0.2)
+## Phase 2 — Fun (v0.2) — done
 
 1. Add the `log --graph` screen with lanes, detours and breaks.
 2. Add the miss card, rest days and amend.

@@ -125,6 +125,12 @@ export function restLeftThisWeek(log: DayLog, day: string, perWeek = REST_PER_WE
   return Math.max(0, perWeek - used);
 }
 
+/** The next milestone above a streak, or null after the last one. */
+export function nextTag(n: number): { name: string; at: number; to_go: number } | null {
+  const at = Object.keys(TAGS).map(Number).sort((a, b) => a - b).find(t => t > n);
+  return at ? { name: TAGS[at], at, to_go: at - n } : null;
+}
+
 /** Milestone tag for an exact streak value, or null. */
 export function tagFor(n: number): string | null {
   return TAGS[n] ?? null;
