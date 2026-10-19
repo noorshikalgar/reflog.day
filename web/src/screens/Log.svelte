@@ -154,7 +154,7 @@
             </span>
             <span><span class="cnt">{k.complete}<small>/{k.total}</small></span><span class="chev">▾</span></span>
           </button>
-          <div class="ev-wrap"><div>
+          <div class="ev-wrap"><div class="kids" class:empty={!evs.length}>
             {#each evs as e (e.h.id)}{@render row(e)}{/each}
           </div></div>
         </div>
@@ -176,7 +176,7 @@
   {#if e.c.state === 'miss'}
     <div class="ev miss" style:--c={lane}>
       <div class="rail">
-        <svg width="28" height="42" viewBox="0 0 28 42" aria-hidden="true"><path d="M14 0 C14 11 22 10 22 21 C22 32 14 31 14 42" stroke="var(--tc)" stroke-width="2" fill="none" opacity=".7" /></svg>
+        <svg width="28" height="42" viewBox="0 0 28 42" aria-hidden="true"><path d="M14 0 C14 11 22 10 22 21 C22 32 14 31 14 42" stroke="var(--kc, var(--tc))" stroke-width="2" fill="none" opacity=".7" /></svg>
         <i class="n"></i>
       </div>
       <span class="m">{#if day}<span class="dl">{dayLabel(day)}</span> · {/if}◌ {#if !day}<span class="b" style:color={lane}>{e.h.slug}</span> — {/if}{e.c.entry?.message ?? 'no commit'}</span>
@@ -242,6 +242,15 @@
   .ev-wrap { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .32s var(--ease); }
   .d.closed .ev-wrap { grid-template-rows: 0fr; }
   .ev-wrap > div { overflow: hidden; min-height: 0; }
+
+  /* Commits of a day sit on their own lighter line, indented, that branches off the trunk. */
+  .kids { --kc: var(--line); position: relative; padding-left: 20px; }
+  .kids::before { content: ""; position: absolute; left: 13px; top: 0; bottom: 0; width: 2px; background: var(--tc); opacity: .7; }
+  .kids:not(.empty)::after { content: ""; position: absolute; left: 13px; top: -2px; width: 22px; height: 23px; border-left: 2px solid var(--kc); border-bottom: 2px solid var(--kc); border-bottom-left-radius: 12px; }
+  .kids .rail::before { background: var(--kc); opacity: 1; }
+  .kids .ev:first-child .rail::before { top: 50%; }
+  .kids .ev:last-child .rail::before { bottom: 50%; }
+  .d:last-child .kids::before { bottom: 0; }
 
   .ev { display: grid; grid-template-columns: 28px 1fr auto; gap: 0 6px; height: 42px; font-family: var(--font-mono); font-size: 12px; align-items: center; }
   .n { position: absolute; left: 9px; top: 50%; margin-top: -5px; width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px var(--bg); }
