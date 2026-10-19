@@ -1,0 +1,32 @@
+{
+  "name": "reflog",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
+    "dev:server": "node --watch --disable-warning=ExperimentalWarning server/src/index.ts",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "start": "NODE_ENV=production node --disable-warning=ExperimentalWarning server/src/index.ts",
+    "check": "tsc -p tsconfig.json && npm run check -w web",
+    "test": "vitest run",
+    "secrets": "node scripts/check-secrets.mjs --all"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/web-push": "^3.6.4",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
