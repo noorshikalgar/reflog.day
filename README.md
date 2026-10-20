@@ -50,6 +50,7 @@ Read the documents in this sequence.
 | 08 | [Roadmap](docs/08-roadmap.md) | Phases and tasks |
 | 09 | [Workflow](docs/09-workflow.md) | Branches, pull requests, releases |
 | 10 | [Profile](docs/10-profile.md) | 4th tab: stats, settings, devices, backups (plan) |
+| 11 | [iPhone app (Expo)](docs/11-expo.md) | Native iPhone app, plan and phases |
 
 ## Mockups
 
