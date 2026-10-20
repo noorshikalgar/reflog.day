@@ -25,7 +25,7 @@ Keep a branch short: one task, one pull request. Delete the branch after the mer
 ## 3. Rules for `main`
 
 - No direct push. No force push. No branch deletion.
-- Required checks: `secrets`, `test`. The branch must be up to date with `main` (strict).
+- Required checks: `secrets`, `test`. The branch does not need to be up to date with `main` (not strict): squash merges keep `main` linear, and GitHub still blocks a merge with conflicts.
 - Merge method: squash only. Merge commits and rebase merges are off.
 - The history of `main` is linear: one commit for each pull request.
 

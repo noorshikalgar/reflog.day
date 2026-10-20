@@ -1,5 +1,7 @@
 import { createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import type { DB } from './db.ts';
+import type { Device } from '../../shared/src/api.ts';
+import { uuidv7 } from '../../shared/src/ids.ts';
 
 const CODE_TTL_MS = 10 * 60 * 1000;
 const MAX_TRIES = 5;
@@ -43,19 +45,31 @@ export class Pairing {
     this.code = null;
     const token = randomBytes(32).toString('base64url');
     const at = new Date(this.now()).toISOString();
-    this.db.prepare('INSERT INTO device (token_hash, name, created_at, last_seen_at) VALUES (?, ?, ?, ?)')
-      .run(sha256(token), name?.slice(0, 40) ?? null, at, at);
+    this.db.prepare('INSERT INTO device (id, token_hash, name, created_at, last_seen_at) VALUES (?, ?, ?, ?, ?)')
+      .run(uuidv7(this.now()), sha256(token), name?.slice(0, 40) ?? null, at, at);
     return token;
   }
 
-  check(token: string | undefined): boolean {
-    if (!token) return false;
+  /** Returns the device id for a valid token, or null. */
+  check(token: string | undefined): string | null {
+    if (!token) return null;
     const h = sha256(token);
-    const row = this.db.prepare('SELECT last_seen_at FROM device WHERE token_hash = ?').get(h) as { last_seen_at: string } | undefined;
-    if (!row) return false;
+    const row = this.db.prepare('SELECT id, last_seen_at FROM device WHERE token_hash = ?').get(h) as { id: string; last_seen_at: string } | undefined;
+    if (!row) return null;
     if (this.now() - new Date(row.last_seen_at).getTime() > 36e5) {
       this.db.prepare('UPDATE device SET last_seen_at = ? WHERE token_hash = ?').run(new Date(this.now()).toISOString(), h);
     }
-    return true;
+    return row.id;
+  }
+
+  list(currentId: string): Device[] {
+    const rows = this.db.prepare('SELECT id, name, created_at, last_seen_at FROM device ORDER BY created_at').all() as Omit<Device, 'current'>[];
+    return rows.map(r => ({ ...r, current: r.id === currentId }));
+  }
+
+  /** Remove another device. Its cookie stops working at once. */
+  remove(id: string, currentId: string): boolean {
+    if (id === currentId) return false;
+    return Number(this.db.prepare('DELETE FROM device WHERE id = ?').run(id).changes) > 0;
   }
 }

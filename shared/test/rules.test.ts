@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, addMinutes, bestStreak, dayStats, nextTag, tagProgress, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
+  addDays, addMinutes, bestStreak, dayStats, nextTag, tagProgress, tagsEarned, isScheduled, isoWeekLabel, logicalDay, missIsRebase,
   patina, restLeftThisWeek, streak, tagFor, weekday, EVERY_DAY, type Kind,
 } from '../src/rules.ts';
 
@@ -147,6 +147,17 @@ describe('nextTag', () => {
     expect(nextTag(0)).toEqual({ name: 'v0.1.0', at: 7, to_go: 7 });
     expect(nextTag(7)).toEqual({ name: 'v1.0.0', at: 30, to_go: 23 });
     expect(nextTag(365)).toBeNull();
+  });
+});
+
+describe('tagsEarned', () => {
+  it('counts each time a run reaches a milestone', () => {
+    const l = new Map<string, Kind>();
+    for (let i = 0; i < 7; i++) l.set(addDays('2026-10-01', i), 'done');      // run 1: 7 → v0.1.0
+    l.set('2026-10-08', 'miss'); l.set('2026-10-09', 'miss');                 // rebase
+    for (let i = 0; i < 7; i++) l.set(addDays('2026-10-10', i), 'done');      // run 2: 7 → v0.1.0
+    expect(tagsEarned(l, EVERY_DAY, '2026-10-16', '2026-10-01')).toBe(2);
+    expect(tagsEarned(l, EVERY_DAY, '2026-10-15', '2026-10-01')).toBe(1);
   });
 });
 

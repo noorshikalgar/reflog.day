@@ -5,6 +5,7 @@
   import Branches from './screens/Branches.svelte';
   import Log from './screens/Log.svelte';
   import Pair from './screens/Pair.svelte';
+  import Profile from './screens/Profile.svelte';
   import Show from './screens/Show.svelte';
   import Status from './screens/Status.svelte';
 
@@ -26,7 +27,7 @@
     wideQuery.addEventListener('change', on);
     return () => wideQuery.removeEventListener('change', on);
   });
-  const split = $derived(wide && !app.show && app.tab !== 'branches');
+  const split = $derived(wide && !app.show && (app.tab === 'status' || app.tab === 'log'));
 
   $effect(() => {
     const onVis = () => document.visibilityState === 'visible' && refresh();
@@ -61,6 +62,7 @@
     {:else if app.show}<Show id={app.show} />
     {:else if app.tab === 'status'}<Status />
     {:else if app.tab === 'log'}<Log />
+    {:else if app.tab === 'profile'}<Profile />
     {:else}<Branches />{/if}
   </div>
   <TabBar />
