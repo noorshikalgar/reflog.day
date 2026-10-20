@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import TabBar from './components/TabBar.svelte';
-  import { edgeSwipe } from './lib/gestures.ts';
+  import { edgeSwipe, pullRefresh } from './lib/gestures.ts';
   import Toast from './components/Toast.svelte';
   import { app, refresh } from './lib/state.svelte.ts';
   import Branches from './screens/Branches.svelte';
@@ -12,6 +12,12 @@
   import Status from './screens/Status.svelte';
 
   refresh();
+
+  // Pull to refresh: same as refresh, but fail loudly when offline so the label can say so.
+  async function pull() {
+    await refresh();
+    if (!app.online) throw new Error('offline');
+  }
 
   // A notification tap opens /?focus=<slug>. Light that row once, then clean the URL.
   const focus = new URL(location.href).searchParams.get('focus');
@@ -69,7 +75,8 @@
     <div class="panes" class:split>
       {#each TABS as t (t)}
         {#if visited[t] || (split && (t === 'status' || t === 'log'))}
-          <div class="pane" class:on={visible(t)} data-pane={t} aria-hidden={!visible(t)}>
+          <div class="pane" class:on={visible(t)} data-pane={t} aria-hidden={!visible(t)}
+            use:pullRefresh={{ enabled: t === 'status' || t === 'log', onrefresh: pull }}>
             <div class="inner">
               {#if t === 'status'}<Status />
               {:else if t === 'log'}<Log />
@@ -97,6 +104,12 @@
   }
   .pane::-webkit-scrollbar { display: none; }
   .pane.on { visibility: visible; pointer-events: auto; }
+  /* pull-to-refresh label (made by the pullRefresh action) */
+  .pane :global(.ptr) { position: absolute; left: 0; right: 0; top: calc(10px + env(safe-area-inset-top)); display: flex; justify-content: center; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--muted); opacity: 0; pointer-events: none; height: 40px; }
+  .pane :global(.ptr i) { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--ok); }
+  .pane :global(.ptr.busy i) { animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .pane.show { z-index: 2; background: var(--bg); box-shadow: -8px 0 24px rgba(0, 0, 0, .25); }
   .inner { max-width: 520px; margin: 0 auto; min-height: calc(100% + 1px); /* always scrollable, so iOS bounces the content, never the chrome */ }
   .panes.split { display: grid; grid-template-columns: 1fr 1fr; max-width: 1180px; margin: 0 auto; width: 100%; }

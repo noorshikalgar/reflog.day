@@ -108,7 +108,6 @@ export async function refresh() {
     applyTheme(app.today.settings.theme);
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) app.paired = false;
-    else if (isNetworkError(e)) app.online = false;
     else app.online = false;
   } finally {
     refreshing = false;

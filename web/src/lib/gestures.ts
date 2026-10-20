@@ -101,3 +101,73 @@ export function dragDown(node: HTMLElement, opts: { onclose: () => void }) {
     },
   };
 }
+
+// Pull down at the top of a screen to refresh: `git pull`. The content follows the finger with
+// resistance; past the threshold a haptic tick says "let go"; the label shows the result.
+export function pullRefresh(node: HTMLElement, opts: { enabled: boolean; onrefresh: () => Promise<unknown> }) {
+  let o = opts;
+  const TH = 64, MAX = 110;
+  const ind = document.createElement('div');
+  ind.className = 'ptr';
+  ind.setAttribute('aria-hidden', 'true');
+  ind.innerHTML = '<i></i><span>git pull</span>';
+  node.prepend(ind);
+  const label = ind.querySelector('span')!;
+  const content = () => node.children[1] as HTMLElement | undefined;
+
+  let y0 = 0, dy = 0, active = false, armed = false, busy = false;
+  const set = (y: number, anim = false) => {
+    const c = content();
+    if (!c) return;
+    const t = anim ? 'transform .3s cubic-bezier(.2,.8,.2,1)' : 'none';
+    c.style.transition = t; ind.style.transition = anim ? 'opacity .3s, transform .3s cubic-bezier(.2,.8,.2,1)' : 'none';
+    c.style.transform = y ? `translateY(${y}px)` : '';
+    ind.style.opacity = String(Math.min(1, y / TH));
+    ind.style.transform = `translateY(${Math.min(y, TH) - TH}px) rotate(0)`;
+    ind.querySelector('i')!.style.transform = `rotate(${Math.min(1, y / TH) * 180}deg)`;
+  };
+  const start = (e: TouchEvent) => {
+    if (!o.enabled || busy || node.scrollTop > 0 || e.touches.length > 1) return;
+    y0 = e.touches[0].clientY; dy = 0; active = true; armed = false;
+  };
+  const move = (e: TouchEvent) => {
+    if (!active) return;
+    const d = e.touches[0].clientY - y0;
+    if (d <= 0 || node.scrollTop > 0) { if (dy) set(0); active = d > 0 && node.scrollTop <= 0; dy = 0; return; }
+    e.preventDefault();
+    dy = Math.min(MAX, d * 0.45);
+    const nowArmed = dy >= TH;
+    if (nowArmed !== armed) { armed = nowArmed; label.textContent = armed ? 'release to pull' : 'git pull'; if (armed) tick(); }
+    set(dy);
+  };
+  const end = async () => {
+    if (!active) return;
+    active = false;
+    if (!armed) { set(0, true); return; }
+    busy = true;
+    ind.classList.add('busy');
+    label.textContent = 'pulling…';
+    set(TH * 0.8, true);
+    const t0 = performance.now();
+    try { await o.onrefresh(); label.textContent = 'Already up to date.'; }
+    catch { label.textContent = 'fatal: offline'; }
+    await new Promise(r => setTimeout(r, Math.max(0, 500 - (performance.now() - t0))));
+    ind.classList.remove('busy');
+    set(0, true);
+    setTimeout(() => { label.textContent = 'git pull'; busy = false; }, 320);
+  };
+  node.addEventListener('touchstart', start, { passive: true });
+  node.addEventListener('touchmove', move, { passive: false });
+  node.addEventListener('touchend', end);
+  node.addEventListener('touchcancel', end);
+  return {
+    update(n: typeof opts) { o = n; },
+    destroy() {
+      ind.remove();
+      node.removeEventListener('touchstart', start);
+      node.removeEventListener('touchmove', move);
+      node.removeEventListener('touchend', end);
+      node.removeEventListener('touchcancel', end);
+    },
+  };
+}
