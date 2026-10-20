@@ -7,7 +7,7 @@ export const TITLES: Record<PageId, string> = {
   notifications: 'Notifications', data: 'Export & import', devices: 'Devices', pair: 'Pair device', about: 'About',
 };
 
-export const nav = $state({ stack: ['root'] as PageId[], dir: 1 as 1 | -1 });
+export const nav = $state({ stack: ['root'] as PageId[], dir: 1 as 1 | -1, instant: false });
 
 export function push(id: PageId) {
   if (nav.stack[nav.stack.length - 1] === id) return;
@@ -29,4 +29,11 @@ export function popToRoot() {
   nav.dir = -1;
   nav.stack.splice(1);
   toTop();
+}
+
+/** Pop after an edge swipe: the page already slid away, so skip the out animation. */
+export function swipePop() {
+  nav.instant = true;
+  pop();
+  setTimeout(() => (nav.instant = false), 50);
 }

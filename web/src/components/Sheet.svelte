@@ -1,14 +1,19 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import { fade, fly } from 'svelte/transition';
+  import { dragDown } from '../lib/gestures.ts';
   let { open, onclose, children }: { open: boolean; onclose: () => void; children: Snippet } = $props();
+  // After a drag-down the sheet is already off screen: close without the slide.
+  let dragged = $state(false);
+  $effect(() => { if (open) dragged = false; });
+  const dragClose = () => { dragged = true; onclose(); };
 </script>
 
 <svelte:window onkeydown={e => open && e.key === 'Escape' && onclose()} />
 
 {#if open}
-  <div class="scrim" transition:fade={{ duration: 200 }} onclick={onclose} aria-hidden="true"></div>
-  <div class="sheet" role="dialog" aria-modal="true" transition:fly={{ y: 420, duration: 300, opacity: 1 }}>
+  <div class="scrim" in:fade={{ duration: 200 }} out:fade={{ duration: dragged ? 0 : 200 }} onclick={onclose} aria-hidden="true"></div>
+  <div class="sheet" role="dialog" aria-modal="true" use:dragDown={{ onclose: dragClose }} in:fly={{ y: 420, duration: 300, opacity: 1 }} out:fly={{ y: 420, duration: dragged ? 0 : 300, opacity: 1 }}>
     <div class="grab"></div>
     {@render children()}
   </div>

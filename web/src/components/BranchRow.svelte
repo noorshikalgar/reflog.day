@@ -2,6 +2,7 @@
   import type { HabitView } from '../../../shared/src/api.ts';
   import { untrack } from 'svelte';
   import { clock, daysText } from '../lib/format.ts';
+  import { tick } from '../lib/haptics.ts';
 
   let { habit, pending = false, lit = false, ontap, onlong }: {
     habit: HabitView;
@@ -44,7 +45,7 @@
     longFired = false;
     start = { x: e.clientX, y: e.clientY };
     pressed = true;
-    pressTimer = setTimeout(() => { longFired = true; pressed = false; navigator.vibrate?.(10); onlong(habit); }, LONG_MS);
+    pressTimer = setTimeout(() => { longFired = true; pressed = false; tick(); onlong(habit); }, LONG_MS);
   }
   function cancel() { clearTimeout(pressTimer); pressed = false; }
   function move(e: PointerEvent) {
@@ -55,6 +56,7 @@
     cancel();
     if (longFired) { longFired = false; return; }
     if (state !== 'open') { onlong(habit); return; }
+    tick();
     just++;
     ontap(habit);
   }

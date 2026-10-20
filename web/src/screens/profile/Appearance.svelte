@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Theme } from '../../../../shared/src/api.ts';
   import Group from '../../components/ui/Group.svelte';
+  import { tick } from '../../lib/haptics.ts';
   import { app, setLogView, setTheme, type LogMode } from '../../lib/state.svelte.ts';
 
   // Small previews. Colors copied from theme.css so each card shows its own theme.
@@ -20,7 +21,7 @@
 <Group title="Theme" foot="Synced to all your devices.">
   <div class="themes" role="radiogroup" aria-label="theme">
     {#each THEMES as t (t.id)}
-      <button class="th" class:on={theme === t.id} role="radio" aria-checked={theme === t.id} onclick={() => setTheme(t.id)}>
+      <button class="th" class:on={theme === t.id} role="radio" aria-checked={theme === t.id} onclick={() => { tick(); setTheme(t.id); }}>
         <span class="pv" style:background={t.bg} style:color={t.t}>
           <span class="n">6<span class="of">/9</span></span>
           <span class="bars">{#each t.a as c (c)}<i style:background={t.s}><b style:background={c}></b></i>{/each}</span>
@@ -34,7 +35,7 @@
 
 <Group title="Log view" foot="This device only.">
   {#each VIEWS as v (v.id)}
-    <button class="opt" role="radio" aria-checked={app.logView === v.id} onclick={() => setLogView(v.id)}>
+    <button class="opt" role="radio" aria-checked={app.logView === v.id} onclick={() => { tick(); setLogView(v.id); }}>
       <span class="tx">
         <span class="lb">{v.label}</span>
         <span class="sb">{v.sub}</span>

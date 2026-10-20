@@ -2,6 +2,7 @@
   // One settings row: label on top, help text under it, value or control on the right.
   import type { Snippet } from 'svelte';
   import Icon, { type IconName } from './Icon.svelte';
+  import { tick } from '../../lib/haptics.ts';
 
   let { icon, label, sub = '', value = '', chevron = false, danger = false, center = false, disabled = false, onclick, right }: {
     icon?: IconName; label: string; sub?: string; value?: string; chevron?: boolean;
@@ -24,7 +25,7 @@
 {/snippet}
 
 {#if onclick}
-  <button class="r" class:noi={!icon} class:danger class:center {disabled} onclick={onclick}>{@render body()}</button>
+  <button class="r" class:noi={!icon} class:danger class:center {disabled} onclick={() => { tick(); onclick?.(); }}>{@render body()}</button>
 {:else}
   <div class="r" class:noi={!icon} class:center>{@render body()}</div>
 {/if}

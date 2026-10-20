@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { tick } from '../lib/haptics.ts';
   import { toast, hideToast } from '../lib/state.svelte.ts';
 </script>
 
 <div class="toast" class:show={!!toast.text} role="status" aria-live="polite">
   <span>{toast.text}</span>
-  {#if toast.undo}<button onclick={() => toast.undo?.()}>undo</button>{:else}<button onclick={hideToast} aria-label="close">×</button>{/if}
+  {#if toast.undo}<button onclick={() => { tick(); toast.undo?.(); }}>undo</button>{:else}<button onclick={hideToast} aria-label="close">×</button>{/if}
   {#key toast.seq}<i class="bar" class:run={!!toast.text}></i>{/key}
 </div>
 

@@ -5,6 +5,7 @@
 <script lang="ts">
   import type { HabitView } from '../../../shared/src/api.ts';
   import Sheet from './Sheet.svelte';
+  import { tick } from '../lib/haptics.ts';
 
   let { habit, canAmend, onclose, oncommit, onrevert }: {
     habit: HabitView | null;
@@ -38,6 +39,7 @@
 
   function submit(e: SubmitEvent) {
     e.preventDefault();
+    tick();
     if (habit) oncommit(habit, { kind: committed?.kind === 'rest' && !amend ? 'rest' : 'done', message: message.trim() || null, yesterday: amend });
   }
 </script>
