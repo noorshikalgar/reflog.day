@@ -2,7 +2,8 @@
   // Profile tab: iOS Settings style pages on a small navigation stack. Refer to docs/10-profile.md §3.
   import { cubicOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
-  import { nav, pop, TITLES } from '../lib/profile.svelte.ts';
+  import { edgeSwipe } from '../lib/gestures.ts';
+  import { nav, pop, swipePop, TITLES } from '../lib/profile.svelte.ts';
   import About from './profile/About.svelte';
   import Appearance from './profile/Appearance.svelte';
   import Data from './profile/Data.svelte';
@@ -26,7 +27,9 @@
 
 <div class="stack">
   {#key top}
-    <main class="page" in:fly={{ x: inX(), duration: D, easing: ease, opacity: nav.dir === 1 ? 1 : 0.4 }} out:fly={{ x: outX(), duration: D, easing: ease, opacity: nav.dir === 1 ? 0.4 : 1 }}>
+    <main class="page" use:edgeSwipe={{ enabled: !!parent, onback: swipePop }}
+      in:fly={{ x: inX(), duration: D, easing: ease, opacity: nav.dir === 1 ? 1 : 0.4 }}
+      out:fly={{ x: outX(), duration: nav.instant ? 0 : D, easing: ease, opacity: nav.dir === 1 ? 0.4 : 1 }}>
       <header class="bar" class:sub={!!parent}>
         <span>{#if parent}<button class="back" onclick={pop}><svg viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8" /></svg>{TITLES[parent]}</button>{/if}</span>
         {#if parent}<h1 class="ttl">{TITLES[top]}</h1>{/if}

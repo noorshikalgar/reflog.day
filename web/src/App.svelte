@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { fly } from 'svelte/transition';
   import TabBar from './components/TabBar.svelte';
+  import { edgeSwipe } from './lib/gestures.ts';
   import Toast from './components/Toast.svelte';
   import { app, refresh } from './lib/state.svelte.ts';
   import Branches from './screens/Branches.svelte';
@@ -34,7 +36,8 @@
   const TABS = ['status', 'log', 'branches', 'profile'] as const;
   const visited = $state<Record<string, boolean>>({ status: true });
   $effect(() => { visited[app.tab] = true; });
-  const visible = (t: string) => (split ? t === 'status' || t === 'log' : !app.show && app.tab === t);
+  // The tab under the branch detail stays visible, so an edge swipe reveals it like iOS.
+  const visible = (t: string) => (split ? t === 'status' || t === 'log' : app.tab === t);
 
   $effect(() => {
     const onVis = () => document.visibilityState === 'visible' && refresh();
@@ -77,7 +80,7 @@
         {/if}
       {/each}
       {#if app.show && !split}
-        <div class="pane on" data-pane="show"><div class="inner"><Show id={app.show} /></div></div>
+        <div class="pane on show" data-pane="show" use:edgeSwipe={{ enabled: true, onback: () => (app.show = null) }} transition:fly={{ x: 400, duration: 300, opacity: 1 }}><div class="inner"><Show id={app.show} /></div></div>
       {/if}
     </div>
     <TabBar />
@@ -94,6 +97,7 @@
   }
   .pane::-webkit-scrollbar { display: none; }
   .pane.on { visibility: visible; pointer-events: auto; }
+  .pane.show { z-index: 2; background: var(--bg); box-shadow: -8px 0 24px rgba(0, 0, 0, .25); }
   .inner { max-width: 520px; margin: 0 auto; min-height: calc(100% + 1px); /* always scrollable, so iOS bounces the content, never the chrome */ }
   .panes.split { display: grid; grid-template-columns: 1fr 1fr; max-width: 1180px; margin: 0 auto; width: 100%; }
   .panes.split .pane { position: relative; inset: auto; }
