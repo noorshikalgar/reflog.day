@@ -21,16 +21,20 @@ export function createApp(store: Store, pairing: Pairing, push: Push, opts: { ba
   app.get('/api/health', c => c.json({ ok: true }));
 
   app.post('/api/pair', async c => {
-    const { code, name } = await c.req.json<{ code?: string; name?: string }>();
+    const { code, name, client } = await c.req.json<{ code?: string; name?: string; client?: string }>();
     const token = pairing.pair(String(code ?? ''), name ?? null);
     if (!token) return c.json({ error: 'wrong or expired code' }, 401);
+    // The native app keeps the token in the iOS Keychain and sends it as a Bearer header.
+    if (client === 'app') return c.json({ ok: true, token });
     const https = c.req.header('x-forwarded-proto') === 'https' || new URL(c.req.url).protocol === 'https:';
     setCookie(c, COOKIE, token, { httpOnly: true, secure: https, sameSite: 'Strict', path: '/', maxAge: 400 * 24 * 3600 });
     return c.json({ ok: true });
   });
 
   app.use('/api/*', async (c, next) => {
-    const device = pairing.check(getCookie(c, COOKIE));
+    const auth = c.req.header('authorization');
+    const bearer = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : undefined;
+    const device = pairing.check(bearer || getCookie(c, COOKIE));
     if (!device) return c.json({ error: 'unpaired' }, 401);
     c.set('device', device);
     await next();

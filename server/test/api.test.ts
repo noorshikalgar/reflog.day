@@ -466,3 +466,16 @@ describe('about', () => {
     expect((await req('GET', '/api/about')).json).toEqual({ version: 'dev', build: null });
   });
 });
+
+describe('app token auth', () => {
+  it('returns a token for the native app and accepts it as Bearer', async () => {
+    const { code } = pairing.newCode();
+    const { json } = await req('POST', '/api/pair', { code, name: 'iphone', client: 'app' });
+    expect(json.token).toMatch(/^[A-Za-z0-9_-]{40,}$/);
+    cookie = '';
+    const ok = await app.request('/api/today', { headers: { authorization: `Bearer ${json.token}` } });
+    expect(ok.status).toBe(200);
+    const bad = await app.request('/api/today', { headers: { authorization: 'Bearer nope' } });
+    expect(bad.status).toBe(401);
+  });
+});
