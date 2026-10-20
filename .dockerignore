@@ -1,0 +1,21 @@
+# Never send data, secrets or build output into the image.
+**/node_modules
+data
+backups
+**/*.db
+**/*.db-wal
+**/*.db-shm
+.env
+.env.*
+**/*.pem
+**/*.key
+.secrets
+web/dist
+mobile/ios
+mobile/android
+mobile/.expo
+.git
+.github
+mockups
+docs
+coverage

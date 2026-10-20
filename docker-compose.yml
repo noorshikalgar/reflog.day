@@ -1,0 +1,23 @@
+# Deploy with Portainer: Stacks → Add stack → Repository (this repo), compose path docker-compose.yml.
+# Portainer builds the image on the server. Or on the server itself: docker compose up -d --build
+services:
+  reflog:
+    build:
+      context: .
+      args:
+        REFLOG_BUILD: ${REFLOG_BUILD:-local}
+    image: reflog:local
+    container_name: reflog
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Kolkata}
+      REFLOG_PUSH_SUBJECT: ${REFLOG_PUSH_SUBJECT:-https://reflog.day}
+    ports:
+      # Host port 8740 → app. Put your nginx / Nginx Proxy Manager in front for HTTPS.
+      - "${REFLOG_PORT:-8740}:8740"
+    volumes:
+      - reflog-data:/data
+
+volumes:
+  # SQLite database, VAPID keys and daily backups. Back this volume up.
+  reflog-data:

@@ -33,6 +33,12 @@ npm run dev:web
 
 Open http://localhost:5173. Tests: `npm test`. Types: `npm run check`.
 
+With Docker (or as a Portainer stack, refer to [07 §8](docs/07-hosting.md)):
+
+```bash
+docker compose up -d --build
+```
+
 ## Documents
 
 Read the documents in this sequence.
@@ -46,7 +52,7 @@ Read the documents in this sequence.
 | 04 | [Architecture](docs/04-architecture.md) | Stack and components |
 | 05 | [Data and API](docs/05-data-api.md) | SQLite schema and HTTP API |
 | 06 | [PWA and notifications](docs/06-pwa-notifications.md) | Install, offline, Web Push |
-| 07 | [Hosting](docs/07-hosting.md) | nginx, local DNS, TLS, service |
+| 07 | [Hosting](docs/07-hosting.md) | nginx, local DNS, TLS, service, Docker + Portainer |
 | 08 | [Roadmap](docs/08-roadmap.md) | Phases and tasks |
 | 09 | [Workflow](docs/09-workflow.md) | Branches, pull requests, releases |
 | 10 | [Profile](docs/10-profile.md) | 4th tab: stats, settings, devices, backups (plan) |

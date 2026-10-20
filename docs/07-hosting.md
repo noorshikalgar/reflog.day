@@ -138,3 +138,47 @@ Install Tailscale on the host and the phone. Add a Tailscale IP record (for exam
 2. Run `npm ci && npm run build`.
 3. Restart the service.
 4. Open the PWA. The new service worker activates on the next open.
+
+## 8. Docker and Portainer (alternative to §5)
+
+The repository has a `Dockerfile` and a `docker-compose.yml`. The image holds the server and the built web app. All data is in the volume `reflog-data` (SQLite file, VAPID keys, daily backups). The image holds no secrets.
+
+### 8.1 Deploy with Portainer
+
+1. In Portainer, open your Docker environment. Go to **Stacks** → **Add stack**.
+2. Name: `reflog`.
+3. Build method: **Repository**.
+4. Repository URL: `https://github.com/noorshikalgar/reflog.day`. Reference: `refs/heads/main`. Compose path: `docker-compose.yml`.
+5. Environment variables (optional): `TZ` (default `Asia/Kolkata`), `REFLOG_PORT` (host port, default `8740`).
+6. Click **Deploy the stack**. Portainer clones the repository and builds the image on the server.
+7. Open **Containers** → `reflog` → **Logs**. Find the line `pairing code: 123456`.
+8. Open `http://<server-ip>:8740` and type the code.
+
+If your Portainer environment cannot build images (for example Docker Swarm), build on the server once: `docker compose build`, then deploy the stack.
+
+### 8.2 Deploy without Portainer
+
+```bash
+git clone https://github.com/noorshikalgar/reflog.day.git reflog && cd reflog
+docker compose up -d --build
+docker compose logs reflog | grep "pairing code"
+```
+
+### 8.3 Update
+
+- Portainer: open the stack → **Pull and redeploy** (turn on "re-pull image and redeploy" / re-build). The volume and the data stay.
+- Without Portainer: `git pull && docker compose up -d --build`.
+
+### 8.4 Back up the volume
+
+The app makes a daily backup inside the volume (`/data/backups`). To copy everything off the server:
+
+```bash
+docker run --rm -v reflog_reflog-data:/data -v "$PWD":/out alpine tar czf /out/reflog-data.tgz -C /data .
+```
+
+The volume name has the stack name as a prefix (`reflog_reflog-data`). Check it with `docker volume ls`.
+
+### 8.5 HTTPS
+
+The container serves plain HTTP on port 8740. Put nginx (§4) or Nginx Proxy Manager in front of it for `https://app.reflog.day`. Point the proxy to `http://<server-ip>:8740` instead of `127.0.0.1:8740`. HTTPS is needed for the PWA service worker and Web Push.

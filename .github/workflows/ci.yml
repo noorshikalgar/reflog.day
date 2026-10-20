@@ -35,3 +35,15 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: build image
+        run: docker build --build-arg REFLOG_BUILD=${GITHUB_SHA::7} -t reflog:ci .
+      - name: smoke test
+        run: |
+          docker run -d --name reflog -p 8740:8740 reflog:ci
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8740/api/health && exit 0; sleep 1; done
+          docker logs reflog; exit 1
