@@ -41,7 +41,7 @@ function inside(s, x, y) {
   return false;
 }
 
-function render(size, scale) {
+function renderRGB(size, scale) {
   const list = shapes(size, scale);
   const SS = 3;
   const px = Buffer.alloc(size * size * 3);
@@ -58,12 +58,14 @@ function render(size, scale) {
       px[i] = r / n; px[i + 1] = g / n; px[i + 2] = b / n;
     }
   }
-  return png(size, px);
+  return px;
 }
+const render = (size, scale) => png(size, renderRGB(size, scale));
 
-function png(size, rgb) {
-  const raw = Buffer.alloc((size * 3 + 1) * size);
-  for (let y = 0; y < size; y++) rgb.copy(raw, y * (size * 3 + 1) + 1, y * size * 3, (y + 1) * size * 3);
+const png = (size, rgb) => pngWH(size, size, rgb);
+function pngWH(w, h, rgb) {
+  const raw = Buffer.alloc((w * 3 + 1) * h);
+  for (let y = 0; y < h; y++) rgb.copy(raw, y * (w * 3 + 1) + 1, y * w * 3, (y + 1) * w * 3);
   const crcT = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
   const crc = buf => { let c = 0xffffffff; for (const b of buf) c = crcT[(c ^ b) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
   const chunk = (type, data) => {
@@ -73,13 +75,28 @@ function png(size, rgb) {
     return Buffer.concat([len, td, c]);
   };
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0); ihdr.writeUInt32BE(size, 4); ihdr[8] = 8; ihdr[9] = 2;
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2;
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0))]);
 }
 
 for (const [name, size, scale] of [['180.png', 180, .78], ['192.png', 192, .78], ['512.png', 512, .78], ['maskable.png', 512, .6]]) {
   writeFileSync(new URL(name, OUT), render(size, scale));
   console.log('icons/' + name);
+}
+
+// Launch screens: theme background with the icon in the middle (iOS shows them while the app opens).
+const SPLASH = new URL('../web/public/splash/', import.meta.url);
+mkdirSync(SPLASH, { recursive: true });
+const SIZES = [[750, 1334], [828, 1792], [1125, 2436], [1170, 2532], [1179, 2556], [1206, 2622], [1284, 2778], [1290, 2796], [1320, 2868]];
+for (const [w, h] of SIZES) {
+  const box = Math.round(w * 0.24);
+  const icon = renderRGB(box, 0.78);
+  const px = Buffer.alloc(w * h * 3);
+  for (let i = 0; i < w * h; i++) { px[i * 3] = BG[0]; px[i * 3 + 1] = BG[1]; px[i * 3 + 2] = BG[2]; }
+  const ox = Math.round((w - box) / 2), oy = Math.round((h - box) / 2);
+  for (let y = 0; y < box; y++) icon.copy(px, ((oy + y) * w + ox) * 3, y * box * 3, (y + 1) * box * 3);
+  writeFileSync(new URL(`${w}x${h}.png`, SPLASH), pngWH(w, h, px));
+  console.log(`splash/${w}x${h}.png`);
 }
 
 writeFileSync(new URL('icon.svg', OUT), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">

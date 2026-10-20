@@ -238,7 +238,7 @@
 {/snippet}
 
 <style>
-  main { padding: calc(14px + env(safe-area-inset-top)) 20px calc(130px + env(safe-area-inset-bottom)); }
+  main { padding: calc(14px + env(safe-area-inset-top)) 20px 32px; }
   .head { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 6px; }
   h1 { font-family: var(--font-display); font-weight: 300; font-size: 40px; letter-spacing: -.03em; margin-bottom: 10px; }
 

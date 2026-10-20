@@ -172,7 +172,7 @@
 {#if burst}{#key burst.id}<Confetti x={burst.x} y={burst.y} />{/key}{/if}
 
 <style>
-  main { padding: calc(14px + env(safe-area-inset-top)) 20px calc(130px + env(safe-area-inset-bottom)); }
+  main { padding: calc(14px + env(safe-area-inset-top)) 20px 32px; }
   .top { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin: 6px 0 4px; }
   .sync { display: inline-flex; gap: 6px; align-items: center; }
   .sync::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }

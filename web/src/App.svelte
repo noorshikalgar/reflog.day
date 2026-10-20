@@ -29,6 +29,13 @@
   });
   const split = $derived(wide && !app.show && (app.tab === 'status' || app.tab === 'log'));
 
+  // Native feel: every tab is its own scroll container and stays mounted once opened,
+  // so it keeps its scroll position and loaded data. Only the active one is visible.
+  const TABS = ['status', 'log', 'branches', 'profile'] as const;
+  const visited = $state<Record<string, boolean>>({ status: true });
+  $effect(() => { visited[app.tab] = true; });
+  const visible = (t: string) => (split ? t === 'status' || t === 'log' : !app.show && app.tab === t);
+
   $effect(() => {
     const onVis = () => document.visibilityState === 'visible' && refresh();
     const onOnline = () => refresh();
@@ -55,24 +62,42 @@
     <p>can't reach the server.<br /><span>is reflog running? retrying…</span></p>
   </div>
 {:else}
-  <div class="shell" class:split>
-    {#if split}
-      <section aria-label="status"><Status /></section>
-      <section aria-label="log"><Log /></section>
-    {:else if app.show}<Show id={app.show} />
-    {:else if app.tab === 'status'}<Status />
-    {:else if app.tab === 'log'}<Log />
-    {:else if app.tab === 'profile'}<Profile />
-    {:else}<Branches />{/if}
+  <div class="app">
+    <div class="panes" class:split>
+      {#each TABS as t (t)}
+        {#if visited[t] || (split && (t === 'status' || t === 'log'))}
+          <div class="pane" class:on={visible(t)} data-pane={t} aria-hidden={!visible(t)}>
+            <div class="inner">
+              {#if t === 'status'}<Status />
+              {:else if t === 'log'}<Log />
+              {:else if t === 'branches'}<Branches />
+              {:else}<Profile />{/if}
+            </div>
+          </div>
+        {/if}
+      {/each}
+      {#if app.show && !split}
+        <div class="pane on" data-pane="show"><div class="inner"><Show id={app.show} /></div></div>
+      {/if}
+    </div>
+    <TabBar />
   </div>
-  <TabBar />
   <Toast />
 {/if}
 
 <style>
-  .shell { max-width: 520px; margin: 0 auto; }
-  .shell.split { max-width: 1120px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; padding: 0 24px; }
-  .shell.split section { min-width: 0; }
+  .app { position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--bg); }
+  .panes { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+  .pane {
+    position: absolute; inset: 0; overflow: hidden auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch;
+    visibility: hidden; pointer-events: none; scrollbar-width: none;
+  }
+  .pane::-webkit-scrollbar { display: none; }
+  .pane.on { visibility: visible; pointer-events: auto; }
+  .inner { max-width: 520px; margin: 0 auto; min-height: calc(100% + 1px); /* always scrollable, so iOS bounces the content, never the chrome */ }
+  .panes.split { display: grid; grid-template-columns: 1fr 1fr; max-width: 1180px; margin: 0 auto; width: 100%; }
+  .panes.split .pane { position: relative; inset: auto; }
+  .panes.split .pane:not(.on) { display: none; }
   .boot { min-height: 100dvh; display: grid; place-items: center; }
   .boot i { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--ok); animation: pulse 1s var(--ease) infinite alternate; }
   .boot.off p { font-family: var(--font-mono); font-size: 14px; color: var(--muted); text-align: center; line-height: 1.6; }

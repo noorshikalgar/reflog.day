@@ -69,7 +69,7 @@
 </main>
 
 <style>
-  main { padding: calc(14px + env(safe-area-inset-top)) 20px calc(130px + env(safe-area-inset-bottom)); }
+  main { padding: calc(14px + env(safe-area-inset-top)) 20px 32px; }
   .back { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding: 10px 0; min-height: 44px; }
   .head { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
   .giant { font-family: var(--font-display); font-weight: 200; font-size: 168px; line-height: 1; letter-spacing: -.07em; color: var(--c); font-variant-numeric: tabular-nums; margin: 4px 0 0 -6px; }

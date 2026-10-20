@@ -53,8 +53,13 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
-body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; }
+/* Native feel: the page itself never scrolls or bounces (each screen scrolls inside),
+   no double-tap zoom, no text selection or long-press callouts on UI chrome. */
+html, body { overflow: hidden; overscroll-behavior: none; }
+body { -webkit-tap-highlight-color: transparent; touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+img, svg { -webkit-user-drag: none; }
 button, input, select { font: inherit; color: inherit; }
 button { background: none; border: 0; cursor: pointer; }
 .mono { font-family: var(--font-mono); }

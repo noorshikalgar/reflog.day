@@ -18,10 +18,9 @@
 
 <style>
   .tabs {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr);
+    position: relative; flex: none; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr);
     padding: 8px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line);
     background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    view-transition-name: tabs;
   }
   button { display: flex; flex-direction: column; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; color: var(--dim); padding: 6px 0; min-height: 56px; justify-content: center; }
   svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

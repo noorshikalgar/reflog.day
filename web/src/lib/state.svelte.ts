@@ -116,13 +116,34 @@ export async function refresh() {
   }
 }
 
+/** Scroll container of the visible screen. */
+export const activePane = () => document.querySelector<HTMLElement>(`.pane.on[data-pane="${app.show ? 'show' : app.tab}"]`);
+
+/** Ease the scroller back to the top (native 'tap the tab bar' feel). */
+export function scrollToTop(el: HTMLElement) {
+  const from = el.scrollTop;
+  if (from <= 0) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.scrollTop = 0; return; }
+  const start = performance.now(), D = Math.min(500, 200 + from / 6);
+  const step = (now: number) => {
+    const t = Math.min(1, (now - start) / D);
+    el.scrollTop = from * Math.pow(1 - t, 3);
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/** Switch tabs at once, like a native tab bar. Tap the current tab again: scroll to top (and pop profile pages). */
 export function go(tab: Tab) {
+  const wasShow = !!app.show;
   app.show = null;
-  if (tab === app.tab) { if (tab === 'profile') popToRoot(); return; }
-  const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (doc.startViewTransition && !reduce) doc.startViewTransition(() => { app.tab = tab; });
-  else app.tab = tab;
+  if (tab === app.tab && !wasShow) {
+    if (tab === 'profile') popToRoot();
+    const el = activePane();
+    if (el) scrollToTop(el);
+    return;
+  }
+  app.tab = tab;
 }
 
 export function setLogView(v: LogMode) {

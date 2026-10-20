@@ -49,7 +49,7 @@
 
 <style>
   .stack { display: grid; overflow-x: clip; }
-  .page { grid-area: 1 / 1; min-width: 0; padding: calc(4px + env(safe-area-inset-top)) 16px calc(130px + env(safe-area-inset-bottom)); background: var(--bg); }
+  .page { grid-area: 1 / 1; min-width: 0; padding: calc(4px + env(safe-area-inset-top)) 16px 32px; background: var(--bg); }
   .bar { position: sticky; top: 0; z-index: 5; height: 48px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin: 0 -16px; padding: env(safe-area-inset-top) 8px 0; box-sizing: content-box;
     background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
   .back { display: inline-flex; align-items: center; gap: 4px; color: var(--ok); font-family: var(--font-ui); font-size: 16px; padding: 8px 6px; min-height: 44px; }
