@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Status rings</title>
+<style>
+:root { --font-display: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; --font-mono: ui-monospace, "SF Mono", Menlo, monospace; --ease: cubic-bezier(.2,.8,.2,1); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #06070a; color: #e7e9ee; font-family: system-ui, sans-serif; }
+body { padding: 32px 16px 80px; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.page-head { max-width: 1240px; margin: 0 auto 20px; font-family: var(--font-mono); }
+.page-head h1 { font-family: var(--font-display); font-weight: 300; font-size: 40px; letter-spacing: -.03em; }
+.page-head h1 b { color: #3ddc97; font-weight: 500; }
+.page-head p { color: #8b92a1; font-size: 13px; margin-top: 8px; line-height: 1.6; max-width: 860px; }
+.page-head code { color: #c3e88d; }
+.tbar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0 auto 32px; position: sticky; top: 0; z-index: 9; padding: 10px 0; background: color-mix(in srgb, #06070a 85%, transparent); backdrop-filter: blur(10px); }
+.tbtn { font-family: var(--font-mono); font-size: 13px; padding: 10px 16px; border-radius: 14px; background: #12151c; color: #8b92a1; }
+.tbtn.on { background: #e7e9ee; color: #0b0d12; }
+.grid { display: flex; flex-wrap: wrap; gap: 48px 36px; justify-content: center; max-width: 1240px; margin: 0 auto; }
+figure { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+figcaption { font-family: var(--font-mono); font-size: 12px; color: #8b92a1; max-width: 340px; line-height: 1.55; }
+figcaption b { color: #e7e9ee; font-weight: 500; }
+
+.phone {
+  --bg:#0b0d12; --surface:#12151c; --surface-2:#1a1e28; --line:#252a36; --text:#e7e9ee; --muted:#8b92a1; --dim:#788092;
+  --ok:#3ddc97; --rest:#f2b84b; --miss:#798194; --r1:#3ddc97; --r2:#4cc9f0; --r3:#a78bfa;
+  --l1:#3ddc97; --l2:#4cc9f0; --l3:#a78bfa; --l4:#ff9f5a; --l5:#f472b6; --l6:#6ea8ff; --l8:#2dd4bf; --l10:#b8c4d8;
+  width: min(360px, calc(100vw - 32px)); height: 720px; border-radius: 46px; padding: 10px; background: #1b1d22; box-shadow: 0 0 0 1px #2c2f36, 0 30px 80px -20px rgba(0,0,0,.8);
+}
+body.bathory .phone { --bg:#000; --surface:#0e0e0e; --surface-2:#222; --line:#222; --text:#f1f1f1; --muted:#999; --dim:#7c7c7c; --ok:#fbcb97; --rest:#e78a43; --miss:#7d7d7d;
+  --r1:#fbcb97; --r2:#e78a43; --r3:#8fb3b3; --l1:#fbcb97; --l2:#e78a43; --l3:#5f8787; --l4:#c1c1c1; --l5:#9b99a3; --l6:#d9a679; --l8:#aaa; --l10:#888; background:#141414; }
+body.gruvbox .phone { --bg:#282828; --surface:#32302f; --surface-2:#3c3836; --line:#504945; --text:#ebdbb2; --muted:#bdae93; --dim:#a3978c; --ok:#b8bb26; --rest:#fabd2f; --miss:#a4978b;
+  --r1:#b8bb26; --r2:#83a598; --r3:#d3869b; --l1:#b8bb26; --l2:#83a598; --l3:#d3869b; --l4:#fe8019; --l5:#8ec07c; --l6:#56a6aa; --l8:#74a576; --l10:#f17626; background:#1d2021; }
+body.paper .phone { --bg:#f5f4ef; --surface:#fff; --surface-2:#ecebe5; --line:#dcdad2; --text:#1a1d24; --muted:#4f5562; --dim:#686f7a; --ok:#117d4e; --rest:#966319; --miss:#666d7e;
+  --r1:#117d4e; --r2:#0a769c; --r3:#6d4fd8; --l1:#107d4e; --l2:#0a769c; --l3:#6d4fd8; --l4:#b25210; --l5:#c0307a; --l6:#2a5fd0; --l8:#0d7a6d; --l10:#56657e; background:#d9d7d0; }
+.screen { height: 100%; border-radius: 36px; overflow: hidden auto; background: var(--bg); color: var(--text); padding: 46px 20px 20px; scrollbar-width: none; }
+.screen::-webkit-scrollbar { display: none; }
+
+.top { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.top .sync::before { content: "● "; color: var(--ok); }
+
+/* hero: number left, rings right */
+.hero { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 18px; }
+.big { font-family: var(--font-display); font-weight: 300; font-size: 104px; line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.big .of { color: var(--dim); }
+.rings { width: 118px; height: 118px; flex: none; position: relative; }
+.rings svg { display: block; transform: rotate(-90deg); overflow: visible; }
+.rings .track { fill: none; opacity: .16; }
+.rings .arc { fill: none; stroke-linecap: round; transition: stroke-dashoffset .8s var(--ease); }
+.rings .arc.full { filter: drop-shadow(0 0 4px currentColor); }
+.rings .tip { transition: opacity .4s; }
+.rings .done-mark { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 11px; color: var(--ok); opacity: 0; transition: opacity .4s .4s; }
+.rings.all .done-mark { opacity: 1; }
+
+.state { font-family: var(--font-mono); font-size: 13px; color: var(--muted); line-height: 1.55; margin-top: 8px; }
+.state .br { color: var(--ok); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 11px; color: var(--dim); margin-top: 10px; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.legend b { color: var(--text); font-weight: 500; }
+
+/* V1: dashed line + dots */
+.dash { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 22px 2px 0; height: 16px; }
+.dash::before { content: ""; position: absolute; left: 6px; right: 6px; top: 50%; border-top: 2px dashed var(--line); }
+.dash i { position: relative; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); }
+.dash { --dot: var(--muted); }
+.dash i.full { background: var(--dot); }
+.dash i.half { background: var(--bg); box-shadow: inset 0 0 0 2px var(--dot); }
+.dash i.half::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: conic-gradient(var(--dot) calc(var(--p) * 1%), transparent 0); }
+.dash i.miss { box-shadow: inset 0 0 0 2px var(--miss); }
+.dash i.miss::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--miss); opacity: .5; }
+.dash i.today { box-shadow: inset 0 0 0 2px var(--text); }
+.dash i.today.full { background: var(--text); box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 18%, transparent); }
+.dlbl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin: 8px 0 0; }
+.dlbl span { width: 30px; text-align: center; }
+.dlbl span:first-child { text-align: left; } .dlbl span:last-child { text-align: right; color: var(--text); }
+
+/* V2/V3: contribution squares */
+.contrib { margin-top: 20px; }
+.contrib .row7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.contrib .sq { aspect-ratio: 1; border-radius: 6px; background: var(--surface-2); position: relative; transition: background .3s; }
+.contrib .sq.l1 { background: color-mix(in srgb, var(--ok) 28%, var(--surface-2)); }
+.contrib .sq.l2 { background: color-mix(in srgb, var(--ok) 52%, var(--surface-2)); }
+.contrib .sq.l3 { background: color-mix(in srgb, var(--ok) 76%, var(--surface-2)); }
+.contrib .sq.l4 { background: var(--ok); }
+.contrib .sq.today { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--text); }
+.contrib .sq.small { border-radius: 3px; }
+.contrib .foot { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin-top: 8px; }
+.contrib .scale { display: inline-flex; gap: 3px; align-items: center; }
+.contrib .scale .sq { width: 10px; border-radius: 2px; }
+.contrib .two { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
+.contrib .wk { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--dim); margin-bottom: 6px; }
+
+/* rows */
+.rows { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.row { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: center; height: 62px; padding: 0 16px; border-radius: 18px; background: var(--surface); font-family: var(--font-mono); text-align: left; width: 100%; transition: transform .12s var(--ease); }
+.row:active { transform: scale(.98); }
+.row .n { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 2.5px var(--c); transition: background .3s, box-shadow .3s; }
+.row.done .n { background: var(--c); box-shadow: inset 0 0 0 10px var(--c); }
+.row.rest .n { width: 16px; height: 16px; margin-left: 2px; border-radius: 5px; background: var(--rest); box-shadow: none; }
+.row .nm { font-size: 15px; }
+.row .r { font-size: 11px; color: var(--dim); text-align: right; }
+.row.done .r { color: var(--c); }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1><b>status</b> — rings</h1>
+  <p>Current layout stays. The empty space to the right of the big number now holds three rings. The strip stays read-only, like <code>git status</code>: history lives in <code>log</code>.<br>
+  Rings, outside to inside: <b style="color:#3ddc97">today</b> (done of scheduled) · <b style="color:#4cc9f0">7d</b> (last 7 days done %) · <b style="color:#a78bfa">tag</b> (best current streak toward its next tag). All phones are live: tap a row.</p>
+</header>
+
+<nav class="tbar" id="tbar">
+  <button class="tbtn on" data-t="">terminal</button><button class="tbtn" data-t="bathory">bathory</button><button class="tbtn" data-t="gruvbox">gruvbox</button><button class="tbtn" data-t="paper">paper</button>
+</nav>
+
+<main class="grid">
+  <figure><div class="phone"><div class="screen" data-v="1"></div></div>
+    <figcaption><b>V1 · rings + dashed strip</b> (what you asked). Dots are bigger, on a dashed line, in a neutral theme color (never a branch color). Full day = filled. Partial day = a pie that shows how much. Miss = ring with a small center. Today = outlined, fills when clean.</figcaption></figure>
+  <figure><div class="phone"><div class="screen" data-v="2"></div></div>
+    <figcaption><b>V2 · rings + contribution row</b> (GitHub vibe). Seven squares, 5 green levels like the GitHub graph, with the <code>less ▢▢▢▢ more</code> scale. No dates, no calendar feel.</figcaption></figure>
+  <figure><div class="phone"><div class="screen" data-v="3"></div></div>
+    <figcaption><b>V3 · rings + 2-week graph</b>. Same idea, 14 small squares in one strip, oldest left, today right. More history in the same height; still read-only.</figcaption></figure>
+</main>
+
+<script>
+const DAYS = ['tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'today'];
+// Done fraction for the 13 days before today (oldest first). Today is live.
+const PAST = [1, .78, .89, 1, .56, 1, .67, 1, .89, .44, 1, .89, 1];
+const BR = [['walk', 1, 25], ['read', 2, 29], ['water', 6, 28], ['stretch', 3, 20], ['gym', 4, 12], ['meditate', 8, 27], ['journal', 5, 25], ['no-sugar', 10, 24], ['sleep-11', 10, 29]];
+const INIT = ['done', 'done', 'done', 'open', 'rest', 'done', 'open', 'open', 'done'];
+const hex = () => Array.from({ length: 7 }, () => '0123456789abcdef'[Math.random() * 16 | 0]).join('');
+const TAGS = [7, 30, 100, 365];
+
+function ringsSVG(vals) {
+  const S = 118, W = 11, G = 3;
+  return `<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">${vals.map((v, i) => {
+    const r = S / 2 - W / 2 - i * (W + G), c = 2 * Math.PI * r, p = Math.max(0, Math.min(1, v.p));
+    return `<circle class="track" cx="${S / 2}" cy="${S / 2}" r="${r}" stroke="${v.c}" stroke-width="${W}"/>
+      <circle class="arc ${p >= 1 ? 'full' : ''}" cx="${S / 2}" cy="${S / 2}" r="${r}" stroke="${v.c}" style="color:${v.c}" stroke-width="${W}"
+        stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - Math.max(p, .001))}" data-c="${c}"/>`;
+  }).join('')}</svg><div class="done-mark">✓</div>`;
+}
+
+function level(p) { return p >= 1 ? 4 : p >= .75 ? 3 : p >= .5 ? 2 : p > 0 ? 1 : 0; }
+
+function mount(root) {
+  const v = +root.dataset.v;
+  const rows = BR.map(([slug, lane, streak], i) => ({ slug, lane, streak, k: INIT[i], hash: INIT[i] === 'done' ? hex() : '', at: `0${7 + (i % 3)}:${10 + i * 4}` }));
+
+  const calc = () => {
+    const done = rows.filter(r => r.k !== 'open').length;
+    const p = done / rows.length;
+    const last7 = [...PAST.slice(-6), p];
+    const p7 = last7.reduce((a, b) => a + b, 0) / 7;
+    const best = Math.max(...rows.map(r => r.streak + (r.k === 'done' ? 0 : 0)));
+    const next = TAGS.find(t => t > best) ?? 365;
+    const prev = [0, ...TAGS].filter(t => t <= best).pop();
+    return { done, p, p7, last7, best, next, ptag: (best - prev) / (next - prev) };
+  };
+
+  function stripHTML(c) {
+    if (v === 1) return `
+      <div class="dash" aria-label="last 7 days">${c.last7.map((p, i) => {
+        const today = i === 6, cls = p >= 1 ? 'full' : p === 0 ? 'miss' : today ? '' : p < .5 ? 'miss' : 'half';
+        return `<i class="${cls} ${today ? 'today' : ''}" style="--p:${Math.round(p * 100)}" title="${DAYS[i]} ${Math.round(p * 100)}%"></i>`; }).join('')}</div>
+      <div class="dlbl">${DAYS.map(d => `<span>${d}</span>`).join('')}</div>`;
+    if (v === 2) return `
+      <div class="contrib">
+        <div class="row7">${c.last7.map((p, i) => `<span class="sq l${level(p)} ${i === 6 ? 'today' : ''}" title="${DAYS[i]} ${Math.round(p * 100)}%"></span>`).join('')}</div>
+        <div class="foot"><span>last 7 days</span><span class="scale">less ${[0, 1, 2, 3, 4].map(l => `<span class="sq l${l}"></span>`).join('')} more</span></div>
+      </div>`;
+    const all = [...PAST, c.p];
+    return `
+      <div class="contrib">
+        <div class="wk"><span>14 days ago</span><span>today</span></div>
+        <div class="two">${all.map((p, i) => `<span class="sq small l${level(p)} ${i === 13 ? 'today' : ''}"></span>`).join('')}</div>
+        <div class="foot"><span>${all.filter(p => p >= 1).length} clean days of 14</span><span class="scale">less ${[0, 1, 2, 3, 4].map(l => `<span class="sq l${l}"></span>`).join('')} more</span></div>
+      </div>`;
+  }
+
+  function render(first) {
+    const c = calc(), left = rows.length - c.done;
+    const vals = [{ p: c.p, c: 'var(--r1)' }, { p: c.p7, c: 'var(--r2)' }, { p: c.ptag, c: 'var(--r3)' }];
+    root.innerHTML = `
+      <div class="top"><span>mon 19 oct</span><span class="sync">synced</span></div>
+      <div class="hero">
+        <div class="big">${c.done}<span class="of">/${rows.length}</span></div>
+        <div class="rings ${c.p >= 1 ? 'all' : ''}" aria-label="today ${c.done} of ${rows.length}, last 7 days ${Math.round(c.p7 * 100)}%, ${c.best} of ${c.next} to the next tag">${ringsSVG(first ? vals.map(x => ({ ...x, p: 0 })) : vals)}</div>
+      </div>
+      <div class="state">${left ? `on branch <span class="br">today</span><br>${left} change${left > 1 ? 's' : ''} not committed` : `working tree clean.<br><span class="br">all ${rows.length} branches pushed.</span>`}</div>
+      <div class="legend">
+        <span style="--c:var(--r1)"><i></i>today <b>${c.done}/${rows.length}</b></span>
+        <span style="--c:var(--r2)"><i></i>7d <b>${Math.round(c.p7 * 100)}%</b></span>
+        <span style="--c:var(--r3)"><i></i>tag <b>${c.best}/${c.next}</b></span>
+      </div>
+      ${stripHTML(c)}
+      <div class="rows">${rows.map((r, i) => `
+        <button class="row ${r.k}" data-i="${i}" style="--c:var(--l${r.lane})"><span class="n"></span><span class="nm">${r.slug}</span>
+        <span class="r">${r.k === 'done' ? `${r.hash} · ${r.at}` : r.k === 'rest' ? '--allow-empty' : 'tap →'}</span></button>`).join('')}</div>`;
+    root.querySelectorAll('.row').forEach(b => b.onclick = () => {
+      const r = rows[+b.dataset.i];
+      if (r.k === 'open') { r.k = 'done'; r.hash = hex(); r.at = '09:41'; }
+      else if (r.k === 'done') { r.k = 'open'; r.hash = ''; }
+      animateTo(vals, calc());
+    });
+    if (first) requestAnimationFrame(() => requestAnimationFrame(() => setArcs(vals)));
+  }
+
+  function setArcs(vals) {
+    root.querySelectorAll('.rings .arc').forEach((a, i) => {
+      const p = Math.max(0, Math.min(1, vals[i].p));
+      a.style.strokeDashoffset = a.dataset.c * (1 - Math.max(p, .001));
+      a.classList.toggle('full', p >= 1);
+    });
+  }
+
+  function animateTo(_, c) {
+    // Re-render text and strip, but put the old ring nodes back so the arcs animate to the new values.
+    const svg = root.querySelector('.rings').innerHTML;
+    render(false);
+    root.querySelector('.rings').innerHTML = svg;
+    requestAnimationFrame(() => setArcs([{ p: c.p }, { p: c.p7 }, { p: c.ptag }]));
+  }
+
+  render(true);
+}
+
+document.querySelectorAll('.screen[data-v]').forEach(mount);
+document.getElementById('tbar').addEventListener('click', e => {
+  const b = e.target.closest('.tbtn'); if (!b) return;
+  document.querySelectorAll('.tbtn').forEach(x => x.classList.toggle('on', x === b));
+  document.body.className = b.dataset.t;
+});
+</script>
+</body>
+</html>

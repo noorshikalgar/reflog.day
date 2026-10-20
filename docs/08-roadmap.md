@@ -47,6 +47,14 @@ v1.0.0 comes after the app runs on the host and the iPhone for one week (Phase 1
 4. Add weekly release notes.
 5. Do an accessibility check (contrast, VoiceOver labels, reduced motion).
 
+## Phase 5 — Profile (v0.5–v0.7)
+
+Refer to [10 — Profile](10-profile.md) §6: 5a tab + settings + identity + devices, 5b–5c stats, 5d local backups.
+
+## Phase 6 — Backup remotes (v0.8)
+
+Folder, S3-compatible, WebDAV, git remote. Encrypted. Refer to [10 §4.2](10-profile.md).
+
 ## Open decisions
 
 | ID | Question | Default if no answer |
