@@ -7,7 +7,8 @@
     "node": ">=22.18"
   },
   "workspaces": [
-    "web"
+    "web",
+    "mobile"
   ],
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
@@ -15,10 +16,11 @@
     "dev:web": "npm run dev -w web",
     "build": "npm run build -w web",
     "start": "NODE_ENV=production node --disable-warning=ExperimentalWarning server/src/index.ts",
-    "check": "tsc -p tsconfig.json && npm run check -w web",
+    "check": "tsc -p tsconfig.json && npm run check -w web && npm run check -w mobile",
     "test": "vitest run",
     "secrets": "node scripts/check-secrets.mjs --all",
-    "seed": "node --disable-warning=ExperimentalWarning server/src/seed.ts"
+    "seed": "node --disable-warning=ExperimentalWarning server/src/seed.ts",
+    "dev:mobile": "npm run start -w mobile"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.5",
